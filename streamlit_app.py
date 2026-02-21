@@ -19,74 +19,100 @@ from HMO_Checklist_Legal_Generator import create_legal_checklist
 # Configuración de página
 st.set_page_config(page_title="HMO Auditor Pro - V1.4 Elite", layout="wide", page_icon="🛡️")
 
-# --- SISTEMA DE DISEÑO ELITE V1.4 (CSS AVANZADO) ---
+# --- SISTEMA DE DISEÑO ELITE V2.0 (FUTURISTA & GLASSMORPHIC) ---
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap');
     
-    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+    html, body, [class*="css"] { 
+        font-family: 'Inter', sans-serif; 
+        color: #E2E8F0;
+    }
     
     .stApp {
-        background: radial-gradient(circle at top right, #F1F4F8, #FFFFFF);
+        background: #0B0E14;
+        background-image: 
+            radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.15) 0px, transparent 50%),
+            radial-gradient(at 100% 100%, rgba(0, 194, 255, 0.05) 0px, transparent 50%);
     }
     
-    /* Panel de Navegación */
+    /* Panel de Navegación Glassmorphic */
     [data-testid="stSidebar"] {
-        background-color: #0E1117;
-        border-right: 1px solid #1E293B;
+        background-color: rgba(14, 17, 23, 0.85);
+        backdrop-filter: blur(10px);
+        border-right: 1px solid rgba(0, 194, 255, 0.2);
     }
     
-    /* Botones Elite */
+    [data-testid="stSidebar"] .stMarkdown h1 {
+        font-family: 'Orbitron', sans-serif;
+        color: #00C2FF;
+        text-shadow: 0 0 10px rgba(0, 194, 255, 0.5);
+    }
+
+    /* Botones Neon */
     .stButton>button {
         width: 100%;
-        border-radius: 12px;
-        height: 3.8em;
-        background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
-        color: white;
+        border-radius: 8px;
+        height: 3.5em;
+        background: rgba(30, 58, 138, 0.3);
+        color: #00C2FF;
+        font-family: 'Orbitron', sans-serif;
         font-weight: 700;
-        border: none;
-        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+        border: 1px solid #00C2FF;
+        box-shadow: 0 0 10px rgba(0, 194, 255, 0.2);
         transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
     .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(30, 58, 138, 0.3);
+        background: #00C2FF;
+        color: #0B0E14;
+        box-shadow: 0 0 20px rgba(0, 194, 255, 0.6);
+        transform: scale(1.02);
     }
     
-    /* Tarjetas de Información */
+    /* Tarjetas Glass */
     .elite-card {
-        background: white;
+        background: rgba(30, 41, 59, 0.4);
+        backdrop-filter: blur(10px);
         padding: 1.5rem;
-        border-radius: 16px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 194, 255, 0.15);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         margin-bottom: 1rem;
     }
     
     .norm-header {
-        color: #1E3A8A;
+        font-family: 'Orbitron', sans-serif;
+        color: #00C2FF;
         font-size: 1.8rem;
         font-weight: 700;
-        margin-bottom: 0.5rem;
+        text-shadow: 0 0 8px rgba(0, 194, 255, 0.4);
+        margin-bottom: 1rem;
     }
     
-    /* Tabs Custom */
+    /* Tabs Neon */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 10px;
-        background-color: transparent;
+        background: rgba(14, 17, 23, 0.5);
+        padding: 5px;
+        border-radius: 8px;
     }
     .stTabs [data-baseweb="tab"] {
-        height: 45px;
-        white-space: pre-wrap;
-        background-color: #F1F5F9;
-        border-radius: 8px 8px 0px 0px;
-        gap: 1px;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        color: #94A3B8;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.8rem;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #1E3A8A !important;
+        background: transparent !important;
+        color: #00C2FF !important;
+        border-bottom: 2px solid #00C2FF !important;
+    }
+
+    /* Inputs Dark */
+    .stTextInput>div>div>input, .stSelectbox>div>div>div {
+        background-color: #1A1F2B !important;
         color: white !important;
+        border: 1px solid rgba(0, 194, 255, 0.2) !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -259,13 +285,31 @@ else:
         fase_b_ok = st.session_state['empresa_tamanio'] != ""
         progreso_c = (st.session_state['paso_ingesta'] / len(cartas)) * 100
         
+        # METRICS GAUGES (STILO REFERENCIA ELITE V2.0)
+        def draw_donut(value, label, color):
+            fig = go.Figure(go.Pie(
+                values=[value, 100-value if value <= 100 else 0],
+                labels=["", ""],
+                hole=0.75,
+                marker_colors=[color, "rgba(255,255,255,0.05)"],
+                sort=False
+            ))
+            fig.update_traces(textinfo='none', hoverinfo='none')
+            fig.update_layout(
+                showlegend=False,
+                margin=dict(t=0, b=0, l=10, r=10),
+                height=180,
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                annotations=[dict(text=f"{int(value)}%", x=0.5, y=0.5, font_size=24, font_color="white", font_family="Orbitron", showarrow=False)]
+            )
+            st.plotly_chart(fig, use_container_width=True)
+            st.markdown(f"<p style='text-align: center; color: #00C2FF; font-family: Orbitron; font-size: 0.8rem; margin-top: -20px; text-shadow: 0 0 5px rgba(0,194,255,0.3);'>{label}</p>", unsafe_allow_html=True)
+
         c1, c2, c3 = st.columns(3)
-        with c1:
-            st.metric("Fase A: Identidad", "COMPLETA ✅" if fase_a_ok else "PENDIENTE ⏳")
-        with c2:
-            st.metric("Fase B: Dimensión", "COMPLETA ✅" if fase_b_ok else "PENDIENTE ⏳")
-        with c3:
-            st.metric("Fase C: Normativa", f"{progreso_c:.0f}%")
+        with c1: draw_donut(progreso_total*100, "CUMPLIMIENTO TOTAL", "#00C2FF")
+        with c2: draw_donut(30 if not fase_a_ok else 12, "RIESGO OPERATIVO", "#F87171")
+        with c3: draw_donut(progreso_c, "CALIDAD DE DATOS", "#34D399")
         
         st.divider()
         
