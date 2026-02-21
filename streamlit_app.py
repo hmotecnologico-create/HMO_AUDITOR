@@ -83,7 +83,12 @@ if st.session_state['env'] is None:
     st.divider()
     st.write("### 🆕 Nueva Auditoría")
     col1, col2 = st.columns(2)
-    st.session_state['norma'] = col1.selectbox("Norma:", ["Calidad (ISO 9001)", "Seguridad (ISO 27001)", "Académico (Ley 115 / Dec. 1330)"])
+    st.session_state['norma'] = col1.selectbox("Norma:", [
+        "Calidad (ISO 9001)", 
+        "Seguridad (ISO 27001)", 
+        "Ambiental (ISO 14001)",
+        "Académico (Ley 115 / Dec. 1330)"
+    ])
     new_company = col1.text_input("Empresa:", placeholder="Ej: Universidad San José")
     logo_file = col2.file_uploader("Logo (PNG/JPG)", type=['png', 'jpg', 'jpeg'])
 
@@ -125,14 +130,35 @@ else:
         st.session_state['env'] = None
         st.rerun()
 
-    cartas = [
-        {"doc": "PEI", "ref": "Ley 115", "just": "Base académica."} if "Académico" in st.session_state['norma'] else {"doc": "Contexto", "ref": "ISO 9001", "just": "Entorno."}
-    ] # Simplificado para estabilidad inicial
+    if "Académico" in st.session_state['norma']:
+        cartas = [
+            {"doc": "PEI (Proyecto Educativo)", "ref": "Ley 115", "just": "Columna vertebral académica."},
+            {"doc": "Registro Calificado", "ref": "Dec. 1330", "just": "Existencia legal del programa."},
+            {"doc": "Estatuto Docente", "ref": "Dec. 1278", "just": "Garantía de idoneidad."}
+        ]
+    elif "Seguridad" in st.session_state['norma']:
+        cartas = [
+            {"doc": "Política de Seguridad", "ref": "ISO 27001 Cl. 5.2", "just": "Compromiso de protección."},
+            {"doc": "Análisis de Riesgos", "ref": "ISO 27001 Cl. 6.1", "just": "Identificación de amenazas."},
+            {"doc": "Inventario de Activos", "ref": "ISO 27001 Cl. 5.9", "just": "Control de recursos."}
+        ]
+    elif "Ambiental" in st.session_state['norma']:
+        cartas = [
+            {"doc": "Aspectos Ambientales", "ref": "ISO 14001 Cl. 6.1.2", "just": "Impactos significativos."},
+            {"doc": "Objetivos Ambientales", "ref": "ISO 14001 Cl. 6.2", "just": "Metas de sostenibilidad."},
+            {"doc": "Control Operacional", "ref": "ISO 14001 Cl. 8.1", "just": "Gestión de residuos/energía."}
+        ]
+    else: # Calidad ISO 9001
+        cartas = [
+            {"doc": "Contexto de la Organización", "ref": "ISO 9001 Cl. 4.1", "just": "Comprensión del entorno."},
+            {"doc": "Política de Calidad", "ref": "ISO 9001 Cl. 5.2", "just": "Compromiso de dirección."},
+            {"doc": "Mapa de Procesos", "ref": "ISO 9001 Cl. 4.4", "just": "Gestión por procesos."}
+        ]
 
     if menu == "Dashboard":
         st.title(f"📊 Dashboard: {company}")
         m1, m2, m3 = st.columns(3)
-        m1.metric("Ingesta", f"{(st.session_state['paso_ingesta']/3)*100:.0f}%")
+        m1.metric("Ingesta", f"{(st.session_state['paso_ingesta']/len(cartas))*100:.0f}%")
         m2.metric("Motor RAG", "ACTIVO")
         m3.metric("Seguridad", "SHA-256")
         
@@ -155,7 +181,11 @@ else:
         st.title("💎 Centro de Ayuda & Veracidad")
         tab1, tab2 = st.tabs(["📖 Guía", "🏛️ Normas"])
         tab1.write("Manual interactivo de operación local.")
-        tab2.table(pd.DataFrame({"Norma": ["ISO 9001", "ISO 27001"], "Estado": ["Anclado", "Anclado"]}))
+        tab2.table(pd.DataFrame({
+            "Norma": ["ISO 9001", "ISO 27001", "ISO 14001", "Dec. 1330"],
+            "Especialidad": ["Calidad", "Seguridad", "Ambiental", "Académico"],
+            "Estado": ["Anclado", "Anclado", "Anclado", "Anclado"]
+        }))
 
 st.divider()
-st.caption("HMO Auditor Pro v1.3.3 | 🔒 Conexión Raíz Validada")
+st.caption("HMO Auditor Pro v1.3.4 | 🔒 Biblioteca Multi-Norma Expandida")
