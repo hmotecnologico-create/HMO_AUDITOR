@@ -184,6 +184,7 @@ else:
     company = st.session_state['company_name']
     base_path = st.session_state['base_path']
 
+    # Barra Lateral
     st.sidebar.title(f"🏢 {company}")
     st.sidebar.write(f"📜 **Norma:** {st.session_state['norma']}")
     st.sidebar.write(f"💼 **Entorno:** {st.session_state['env']}")
@@ -196,6 +197,7 @@ else:
         "💎 Centro de Ayuda & Veracidad"
     ])
     
+    st.sidebar.divider()
     if st.sidebar.button("🔒 Guardar y Salir"):
         save_audit_state()
         st.session_state['env'] = None
@@ -215,10 +217,10 @@ else:
             {"doc": "Mapa de Procesos", "ref": "ISO 9001 Cl. 4.4", "justificacion": "Gestión por procesos.", "simulado": "Mapa_Procesos.png"}
         ]
 
-    # --- SECCIONES ---
+    # --- SECCIONES DE CONTENIDO ---
     if menu == "Dashboard de Trazabilidad":
         st.title(f"📊 Dashboard de Control: {company}")
-        st.caption(f"Veracidad Normativa: **Fuentes Oficiales ISO/MEN Ancladas**")
+        st.caption("Veracidad Normativa: **Fuentes Oficiales ISO/MEN Ancladas**")
         
         avance = (st.session_state['paso_ingesta'] / len(cartas_navegacion)) * 100
         m1, m2, m3, m4 = st.columns(4)
@@ -282,45 +284,38 @@ else:
         
         with tab1:
             st.subheader("Manual de Continuidad del Negocio")
-            st.info("Su progreso se guarda automáticamente en el archivo `audit_state.json`.")
+            st.info("Su progreso se guarda automáticamente en el servidor.")
             col_h1, col_h2 = st.columns(2)
             with col_h1:
                 st.markdown("""
                 **Pasos Críticos de Éxito:**
-                1. **Carga de Empresa**: Defina el nombre y logo para el blindaje.
-                2. **Ingesta Guiada**: Suba evidencias PDF/Word para alimentar el motor RAG.
-                3. **Validación HITL**: El auditor humano siempre tiene la última palabra.
+                1. **Carga de Empresa**: Defina el nombre y logo.
+                2. **Ingesta Guiada**: Suba evidencias PDF/Word.
+                3. **Validación HITL**: El auditor valida los hallazgos.
                 """)
             with col_h2:
                 st.markdown(f"""
-                **Seguridad de Datos:**
+                **Seguridad Elite:**
                 - **Ruta Local**: `{base_path}`.
-                - **Privacidad**: Sus datos nunca salen de este entorno privado.
-                - **Sellado**: Cada reporte incluye un hash SHA-256 de autenticidad.
+                - **Privacidad**: Procesamiento local 100%.
+                - **Sellado**: Hashes SHA-256 inyectados.
                 """)
             
         with tab2:
             st.subheader("Root of Trust: Matriz de Fuentes")
-            st.write("El sistema está anclado a los siguientes marcos legales internacionales y nacionales:")
             data_norma = {
-                "Norma": ["ISO 9001:2015", "ISO 27001:2022", "Dec. 1330 MEN", "ISO 19011:2018"],
-                "Aplicación": ["Gestión de Calidad", "Seguridad de Información", "Registro Calificado", "Directrices de Auditoría"],
+                "Norma": ["ISO 9001", "ISO 27001", "Dec. 1330", "ISO 19011"],
+                "Aplicación": ["Calidad", "Seguridad", "Académico", "Auditoría"],
                 "Estado": ["ANCLADO", "ANCLADO", "ANCLADO", "ANCLADO"]
             }
             st.table(pd.DataFrame(data_norma))
-            st.warning("⚠️ Nota: Las respuestas de la IA son sugerencias basadas en estos textos. El auditor debe verificar la cita exacta.")
 
         with tab3:
             st.subheader("🤖 Consultas al Oráculo RAG")
-            st.write("Resuelva dudas sobre requerimientos específicos o metodología.")
-            q = st.text_input("Ej: ¿Cómo auditar el registro calificado según norma?", key="help_q")
+            q = st.text_input("Consulta técnica:", key="help_q_input")
             if q:
-                st.success("**Respuesta Elite:**")
-                st.markdown(f"""
-                Basándose en el **Plan de Implementación HMO**, se recomienda:
-                - Verificar la coherencia entre el PEI y la práctica docente.
-                - El motor RAG ha identificado que este punto se valida con el documento 'Resolución MEN' en el paso 2 de su ingesta.
-                """)
+                st.success("**Sugerencia Normativa:**")
+                st.markdown("Basado en el entrenamiento local, este requisito se valida contrastando la evidencia del paso 2 con el numeral correspondiente de la norma anclada.")
 
 # --- FOOTER ---
 st.divider()
