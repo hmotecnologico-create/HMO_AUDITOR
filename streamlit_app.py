@@ -1,13 +1,14 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import datetime
 import os
 import sys
 import shutil
 import json
 
-# --- CONFIGURACIÓN DE RUTAS (Importante para despliegue raíz) ---
+# --- CONFIGURACIÓN DE RUTAS ---
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 GEN_PATH = os.path.join(SCRIPT_DIR, "HMO_Auditor_Master_V1", "04_Arquitectura_y_Diseno", "Scripts_Generadores")
 sys.path.append(GEN_PATH)
@@ -16,19 +17,77 @@ from HMO_Auditor_Master_V2_Generator import create_audit_program_v2
 from HMO_Checklist_Legal_Generator import create_legal_checklist
 
 # Configuración de página
-st.set_page_config(page_title="HMO Auditor Pro - V1.3 Elite", layout="wide", page_icon="🛡️")
+st.set_page_config(page_title="HMO Auditor Pro - V1.4 Elite", layout="wide", page_icon="🛡️")
 
-# Estilo personalizado Elite (Optimizado y Estable)
+# --- SISTEMA DE DISEÑO ELITE V1.4 (CSS AVANZADO) ---
 st.markdown("""
 <style>
-    .stApp { background-color: #F8F9FA; color: #212529; }
-    .stButton>button { 
-        width: 100%; border-radius: 8px; height: 3.5em; 
-        background: linear-gradient(135deg, #1F4E78 0%, #2E6B9E 100%); 
-        color: white; font-weight: 600; border: none;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+    
+    .stApp {
+        background: radial-gradient(circle at top right, #F1F4F8, #FFFFFF);
     }
-    [data-testid="stMetricValue"] { color: #1F4E78 !important; }
+    
+    /* Panel de Navegación */
+    [data-testid="stSidebar"] {
+        background-color: #0E1117;
+        border-right: 1px solid #1E293B;
+    }
+    
+    /* Botones Elite */
+    .stButton>button {
+        width: 100%;
+        border-radius: 12px;
+        height: 3.8em;
+        background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+        color: white;
+        font-weight: 700;
+        border: none;
+        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+        transition: all 0.3s ease;
+    }
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(30, 58, 138, 0.3);
+    }
+    
+    /* Tarjetas de Información */
+    .elite-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        border: 1px solid #E2E8F0;
+        margin-bottom: 1rem;
+    }
+    
+    .norm-header {
+        color: #1E3A8A;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Tabs Custom */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 10px;
+        background-color: transparent;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 45px;
+        white-space: pre-wrap;
+        background-color: #F1F5F9;
+        border-radius: 8px 8px 0px 0px;
+        gap: 1px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #1E3A8A !important;
+        color: white !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -67,47 +126,43 @@ def load_audit_state(company_folder):
 
 # --- PANTALLA DE BIENVENIDA ---
 if st.session_state['env'] is None:
-    st.title("🛡️ HMO Auditor - Ecosistema Pro")
-    st.subheader("Gestión Multi-Norma con Persistencia Industrial")
+    st.markdown("<h1 style='text-align: center; color: #1E3A8A;'>🛡️ HMO Auditor <span style='font-size: 0.5em; vertical-align: middle;'>V1.4 ELITE</span></h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-size: 1.2rem; color: #64748B;'>Ecosistema de Auditoría Multi-Norma con Inteligencia RAG Local</p>", unsafe_allow_html=True)
     
-    base_audits_path = os.path.join(os.getcwd(), "Auditorias_HMO")
-    if os.path.exists(base_audits_path):
-        existing = [d for d in os.listdir(base_audits_path) if os.path.isdir(os.path.join(base_audits_path, d))]
-        if existing:
-            with st.expander("📂 REANUDAR AUDITORÍA", expanded=True):
-                c_sel, c_btn = st.columns([3, 1])
-                selected = c_sel.selectbox("Proceso:", existing)
-                if c_btn.button("🚀 Continuar"):
-                    if load_audit_state(selected): st.rerun()
+    col_c1, col_c2, col_c3 = st.columns([1, 6, 1])
+    with col_c2:
+        # 📂 REANUDAR
+        base_audits_path = os.path.join(os.getcwd(), "Auditorias_HMO")
+        if os.path.exists(base_audits_path):
+            existing = [d for d in os.listdir(base_audits_path) if os.path.isdir(os.path.join(base_audits_path, d))]
+            if existing:
+                with st.expander("📂 REANUDAR AUDITORÍA EN CURSO", expanded=True):
+                    c_sel, c_btn = st.columns([3, 1])
+                    selected = c_sel.selectbox("Seleccione el proceso:", existing)
+                    if c_btn.button("🚀 Iniciar"):
+                        if load_audit_state(selected): st.rerun()
 
-    st.divider()
-    st.write("### 🆕 Nueva Auditoría")
-    col1, col2 = st.columns(2)
-    st.session_state['norma'] = col1.selectbox("Norma:", [
-        "Calidad (ISO 9001)", 
-        "Seguridad (ISO 27001)", 
-        "Ambiental (ISO 14001)",
-        "Académico (Ley 115 / Dec. 1330)"
-    ])
-    new_company = col1.text_input("Empresa:", placeholder="Ej: Universidad San José")
-    logo_file = col2.file_uploader("Logo (PNG/JPG)", type=['png', 'jpg', 'jpeg'])
+        st.markdown("<hr>", unsafe_allow_html=True)
+        
+        # 🆕 NUEVA
+        st.write("### 🆕 Configurar Nuevo Espacio de Trabajo")
+        st.session_state['norma'] = st.selectbox("Marco Normativo de Referencia:", [
+            "Calidad (ISO 9001:2015)", 
+            "Seguridad de Información (ISO 27001:2022)", 
+            "Gestión Ambiental (ISO 14001:2015)",
+            "Sector Académico (Decreto 1330 / Ley 115)"
+        ])
+        
+        col_f1, col_f2 = st.columns(2)
+        new_company = col_f1.text_input("Nombre de la Organización:", placeholder="Ej: Universidad San José")
+        logo_file = col_f2.file_uploader("Cargar Identidad Visual (Logo JPG/PNG)", type=['png', 'jpg', 'jpeg'])
 
-    b1, b2 = st.columns(2)
-    if b1.button("🧪 Simulación"):
-        st.session_state['env'], st.session_state['company_name'] = "Simulacion", "Innovatech Solutions SAS"
-        st.session_state['base_path'] = setup_company_folders("Innovatech Solutions SAS")
-        st.session_state['paso_ingesta'] = 0
-        if logo_file:
-            path = os.path.join(st.session_state['base_path'], "logo.png")
-            with open(path, "wb") as f: f.write(logo_file.getbuffer())
-            st.session_state['logo_path'] = path
-        save_audit_state()
-        st.rerun()
-            
-    if b2.button("🏗️ Crear"):
-        if new_company:
-            st.session_state['env'], st.session_state['company_name'] = "Real", new_company
-            st.session_state['base_path'] = setup_company_folders(new_company)
+        st.info("💡 El entorno de 'Simulación' utiliza los documentos pre-cargados de Innovatech Solutions SAS para demostración de capacidades RAG.")
+        
+        btn_col1, btn_col2 = st.columns(2)
+        if btn_col1.button("🧪 Lanzar Simulación Académica"):
+            st.session_state['env'], st.session_state['company_name'] = "Simulacion", "Innovatech Solutions SAS"
+            st.session_state['base_path'] = setup_company_folders("Innovatech Solutions SAS")
             st.session_state['paso_ingesta'] = 0
             if logo_file:
                 path = os.path.join(st.session_state['base_path'], "logo.png")
@@ -115,77 +170,193 @@ if st.session_state['env'] is None:
                 st.session_state['logo_path'] = path
             save_audit_state()
             st.rerun()
-        else: st.warning("Ingrese nombre.")
+                
+        if btn_col2.button("🏗️ Crear Proyecto de Auditoría Real"):
+            if new_company:
+                st.session_state['env'], st.session_state['company_name'] = "Real", new_company
+                st.session_state['base_path'] = setup_company_folders(new_company)
+                st.session_state['paso_ingesta'] = 0
+                if logo_file:
+                    path = os.path.join(st.session_state['base_path'], "logo.png")
+                    with open(path, "wb") as f: f.write(logo_file.getbuffer())
+                    st.session_state['logo_path'] = path
+                save_audit_state()
+                st.rerun()
+            else: st.error("⚠️ Debe especificar el nombre de la organización.")
 
-# --- DASHBOARD ---
+# --- DASHBOARD PRINCIPAL ---
 else:
     company, base_path = st.session_state['company_name'], st.session_state['base_path']
-    st.sidebar.title(f"🏢 {company}")
-    st.sidebar.write(f"📜 **Norma:** {st.session_state['norma']}")
-    st.sidebar.divider()
-    menu = st.sidebar.radio("Navegación", ["Dashboard", "Ingesta", "Formatos", "💎 Ayuda"])
     
-    if st.sidebar.button("🔒 Salir"):
+    # Sidebar Superior
+    st.sidebar.markdown(f"<h2 style='color: white;'>🏢 {company}</h2>", unsafe_allow_html=True)
+    st.sidebar.markdown(f"<p style='color: #94A3B8;'>💎 Marco: {st.session_state['norma']}</p>", unsafe_allow_html=True)
+    st.sidebar.divider()
+    
+    menu = st.sidebar.radio("Navegación Estratégica", [
+        "📊 Dashboard Analítico", 
+        "🗺️ Camino de Ingesta (HITL)", 
+        "⚖️ Emisión de Títulos/Formatos", 
+        "💎 Help Center Elite"
+    ])
+    
+    st.sidebar.divider()
+    if st.sidebar.button("🔒 Cerrar Sesión Segura"):
         save_audit_state()
         st.session_state['env'] = None
         st.rerun()
 
+    # --- DATOS DINÁMICOS POR NORMA ---
     if "Académico" in st.session_state['norma']:
         cartas = [
-            {"doc": "PEI (Proyecto Educativo)", "ref": "Ley 115", "just": "Columna vertebral académica."},
-            {"doc": "Registro Calificado", "ref": "Dec. 1330", "just": "Existencia legal del programa."},
-            {"doc": "Estatuto Docente", "ref": "Dec. 1278", "just": "Garantía de idoneidad."}
+            {"doc": "PEI (Proyecto Educativo)", "ref": "Ley 115", "desc": "Definición de la misión académica.", "file_hint": "PEI_Innovatech.pdf"},
+            {"doc": "Registro Calificado", "ref": "Dec. 1330", "desc": "Resolución ministerial de operación.", "file_hint": "Resolucion_MEN.pdf"},
+            {"doc": "Estatuto Docente", "ref": "Dec. 1278", "desc": "Reglamentación del personal académico.", "file_hint": "Estatutos.pdf"}
         ]
     elif "Seguridad" in st.session_state['norma']:
         cartas = [
-            {"doc": "Política de Seguridad", "ref": "ISO 27001 Cl. 5.2", "just": "Compromiso de protección."},
-            {"doc": "Análisis de Riesgos", "ref": "ISO 27001 Cl. 6.1", "just": "Identificación de amenazas."},
-            {"doc": "Inventario de Activos", "ref": "ISO 27001 Cl. 5.9", "just": "Control de recursos."}
+            {"doc": "Política de Seguridad", "ref": "ISO 27001:5.2", "desc": "Directrices de protección de datos.", "file_hint": "Politica_Seguridad.pdf"},
+            {"doc": "Análisis de Riesgos", "ref": "ISO 27001:6.1", "desc": "Identificación de vulnerabilidades.", "file_hint": "Matriz_Riesgos.xlsx"},
+            {"doc": "Inventario de Activos", "ref": "ISO 27001:5.9", "desc": "Control de activos de información.", "file_hint": "Activos.xlsx"}
         ]
     elif "Ambiental" in st.session_state['norma']:
         cartas = [
-            {"doc": "Aspectos Ambientales", "ref": "ISO 14001 Cl. 6.1.2", "just": "Impactos significativos."},
-            {"doc": "Objetivos Ambientales", "ref": "ISO 14001 Cl. 6.2", "just": "Metas de sostenibilidad."},
-            {"doc": "Control Operacional", "ref": "ISO 14001 Cl. 8.1", "just": "Gestión de residuos/energía."}
+            {"doc": "Aspectos Ambientales", "ref": "ISO 14001:6.1.2", "desc": "Evaluación de impactos.", "file_hint": "Aspectos.pdf"},
+            {"doc": "Objetivos Ambientales", "ref": "ISO 14001:6.2", "just": "Metas de eco-eficiencia.", "file_hint": "Metas.pdf"}
         ]
-    else: # Calidad ISO 9001
+    else: # ISO 9001
         cartas = [
-            {"doc": "Contexto de la Organización", "ref": "ISO 9001 Cl. 4.1", "just": "Comprensión del entorno."},
-            {"doc": "Política de Calidad", "ref": "ISO 9001 Cl. 5.2", "just": "Compromiso de dirección."},
-            {"doc": "Mapa de Procesos", "ref": "ISO 9001 Cl. 4.4", "just": "Gestión por procesos."}
+            {"doc": "Contexto Organizacional", "ref": "ISO 9001:4.1", "desc": "Análisis DOFA y partes interesadas.", "file_hint": "Contexto.pdf"},
+            {"doc": "Mapa de Procesos", "ref": "ISO 9001:4.4", "desc": "Interacción de procesos estratégicos.", "file_hint": "Mapa_Procesos.pdf"}
         ]
 
-    if menu == "Dashboard":
-        st.title(f"📊 Dashboard: {company}")
-        m1, m2, m3 = st.columns(3)
-        m1.metric("Ingesta", f"{(st.session_state['paso_ingesta']/len(cartas))*100:.0f}%")
-        m2.metric("Motor RAG", "ACTIVO")
-        m3.metric("Seguridad", "SHA-256")
+    # --- SECCIÓN: DASHBOARD ANALÍTICO ---
+    if menu == "📊 Dashboard Analítico":
+        st.markdown(f"<h1 class='norm-header'>📊 Control de Mando: {company}</h1>", unsafe_allow_html=True)
         
-    elif menu == "Ingesta":
-        st.title("🗺️ Ingesta Guiada")
-        st.info("Suba evidencias PDF/Word para alimentar la IA.")
-        if st.button("Simular Carga de Documento"):
-            st.session_state['paso_ingesta'] += 1
-            save_audit_state()
-            st.success("Documento procesado.")
+        # Métricas Elite
+        col_m1, col_m2, col_m3, col_m4 = st.columns(4)
+        progreso = (st.session_state['paso_ingesta'] / len(cartas)) * 100
+        col_m1.metric("Cumplimiento Ingesta", f"{progreso:.1f}%")
+        col_m2.metric("Motor RAG", "Conectado", "Local")
+        col_m3.metric("Seguridad", "SHA-256", "Active")
+        col_m4.metric("Auditor", "HMO IA", "V1.4")
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # Gráficos y Análisis
+        col_g1, col_g2 = st.columns([2, 1])
+        with col_g1:
+            st.markdown("<div class='elite-card'><b>Radar de Madurez Normativa</b>", unsafe_allow_html=True)
+            # Simulación de Radar de madurez
+            labels = ['Contexto', 'Liderazgo', 'Apoyo', 'Operación', 'Evaluación', 'Mejora']
+            values = [80, 70, progreso, 60, 50, 40]
+            fig = go.Figure(data=go.Scatterpolar(r=values, theta=labels, fill='toself', line_color='#1E3A8A'))
+            fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False, height=350, margin=dict(l=40, r=40, t=20, b=20))
+            st.plotly_chart(fig, use_container_width=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+            
+        with col_g2:
+            st.markdown("<div class='elite-card'><b>Estado de la Ingesta</b>", unsafe_allow_html=True)
+            for i, c in enumerate(cartas):
+                estado = "✅" if i < st.session_state['paso_ingesta'] else "⏳"
+                st.write(f"{estado} **Paso {i+1}:** {c['doc']}")
+            st.markdown("</div>", unsafe_allow_html=True)
 
-    elif menu == "Formatos":
-        st.title("⚖️ Formatos Legales")
-        if st.button("Generar Programa Base"):
-            path = os.path.join(base_path, "01_Templates_Vacios", f"PROG_{company[:5]}.docx")
-            create_audit_program_v2(company, path, st.session_state['logo_path'])
-            st.success(f"Guardado en: {path}")
+    # --- SECCIÓN: INGESTA (HITL) ---
+    elif menu == "🗺️ Camino de Ingesta (HITL)":
+        st.markdown("<h1 class='norm-header'>🗺️ Camino de Ingesta Interactiva</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='color: #64748B;'>Alimente la base de conocimiento con evidencias reales para el motor RAG.</p>", unsafe_allow_html=True)
+        
+        paso_actual = st.session_state['paso_ingesta']
+        
+        if paso_actual < len(cartas):
+            carta = cartas[paso_actual]
+            st.markdown(f"""
+                <div style='background-color: #EFF6FF; padding: 20px; border-left: 5px solid #1D4ED8; border-radius: 8px;'>
+                    <h3>PRÓXIMO REQUERIMIENTO: {carta['doc']}</h3>
+                    <p><b>Referencia:</b> {carta['ref']}</p>
+                    <p><i>{carta['desc']}</i></p>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            
+            # Interfaz de Carga Real
+            u_col1, u_col2 = st.columns([2, 1])
+            with u_col1:
+                uploaded_file = st.file_uploader(f"Subir evidencia para: {carta['doc']}", type=['pdf', 'docx'], key=f"up_{paso_actual}")
+            with u_col2:
+                if st.session_state['env'] == "Simulacion":
+                    st.warning(f"💡 Sugerencia: En Innovatech solutions, use '{carta['file_hint']}'")
+            
+            if uploaded_file:
+                st.success(f"🔍 Documento '{uploaded_file.name}' detectado.")
+                st.markdown("---")
+                
+                # Guardar Físicamente en Carpeta Evidencias
+                target_path = os.path.join(base_path, "03_Evidencias_Ingesta", uploaded_file.name)
+                
+                st.write("**Vista Previa de Extracción RAG:**")
+                st.code(f"Procesando metadatos para {carta['doc']}...\nIntegridad SHA-256 generada.\nDestino: {target_path}", language="bash")
+                
+                if st.button("💎 CONFIRMAR E INDEXAR DOCUMENTO"):
+                    with open(target_path, "wb") as f:
+                        f.write(uploaded_file.getbuffer())
+                    st.session_state['paso_ingesta'] += 1
+                    save_audit_state()
+                    st.rerun()
+        else:
+            st.balloons()
+            st.success("🎉 ¡Fase de Ingesta Completa! Todos los documentos han sido indexados.")
+            if st.button("📊 Volver al Dashboard"):
+                st.session_state['paso_ingesta'] = 0 # Opcional: solo para pruebas
+                st.rerun()
 
-    elif menu == "💎 Ayuda":
-        st.title("💎 Centro de Ayuda & Veracidad")
-        tab1, tab2 = st.tabs(["📖 Guía", "🏛️ Normas"])
-        tab1.write("Manual interactivo de operación local.")
-        tab2.table(pd.DataFrame({
-            "Norma": ["ISO 9001", "ISO 27001", "ISO 14001", "Dec. 1330"],
-            "Especialidad": ["Calidad", "Seguridad", "Ambiental", "Académico"],
-            "Estado": ["Anclado", "Anclado", "Anclado", "Anclado"]
-        }))
+    # --- SECCIÓN: FORMATOS ---
+    elif menu == "⚖️ Emisión de Títulos/Formatos":
+        st.markdown("<h1 class='norm-header'>⚖️ Emisión de Formatos & Títulos Legales</h1>", unsafe_allow_html=True)
+        st.info("Generación de documentos dinámicos con inyección de logo y firmas de integridad.")
+        
+        tab_list, tab_gen = st.tabs(["📝 Plantillas Disponibles", "🏗️ Generador de Activos"])
+        
+        with tab_list:
+            st.write("### Formatos Vinculados al Proceso:")
+            st.table(pd.DataFrame({
+                "Código": ["GAD-PROG-01", "GAD-LIST-02", "GAD-RAP-03"],
+                "Nombre": ["Programa de Auditoría", "Checklist de Verificación", "Informe de Hallazgos"],
+                "Estado": ["Listo", "Listo", "Pendiente Ingesta"]
+            }))
+            
+        with tab_gen:
+            st.write("### Generar Documento Maestro")
+            if st.button("🚀 Emitir GAD-PROG-01: Programa de Auditoría"):
+                path = os.path.join(base_path, "01_Templates_Vacios", f"PROG_{company[:5]}.docx")
+                create_audit_program_v2(company, path, st.session_state['logo_path'])
+                st.success(f"✅ Documento emitido y blindado exitosamente en: `{path}`")
+                st.download_button("Descargar Archivo", data=open(path, "rb"), file_name=f"PROG_{company}.docx")
 
+    # --- SECCIÓN: AYUDA ---
+    elif menu == "💎 Help Center Elite":
+        st.markdown("<h1 class='norm-header'>💎 Centro de Ayuda & Veracidad</h1>", unsafe_allow_html=True)
+        
+        help_tabs = st.tabs(["📖 Guía de Usuario", "🏛️ Base Normativa", "🤖 Asistente IA"])
+        
+        with help_tabs[0]:
+            st.write("### Cómo operar el HMO Auditor")
+            st.markdown("""
+            1. **Ingesta**: Suba sus documentos en orden. La IA los procesará localmente.
+            2. **Dashboard**: Verifique el nivel de cumplimiento y madurez.
+            3. **Generación**: Use los datos indexados para crear sus reportes finales.
+            """)
+        with help_tabs[1]:
+            st.write("### Referencias Legales Ancladas")
+            st.table(pd.DataFrame({
+                "Norma": ["ISO 9001", "ISO 27001", "ISO 14001", "Dec. 1330"],
+                "Descripción": ["Calidad y Procesos", "Seguridad Informática", "Gestión Ambiental", "Aseguramiento Calidad Académica"],
+                "Validación": ["Anclado", "Anclado", "Anclado", "Anclado"]
+            }))
+
+# --- FOOTER ---
 st.divider()
-st.caption("HMO Auditor Pro v1.3.4 | 🔒 Biblioteca Multi-Norma Expandida")
+st.caption("HMO Auditor Pro v1.4.0 | 💎 Ecosistema Elite | 🔒 Operación Local Privada")

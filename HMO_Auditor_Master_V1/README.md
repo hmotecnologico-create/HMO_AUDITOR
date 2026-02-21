@@ -1,4 +1,4 @@
-# HMO Auditor - Ecosistema de Auditoría Local Profesional (V1.3 Elite)
+# HMO Auditor - Ecosistema de Auditoría Local Profesional (V1.4 Elite)
 
 Este es un producto de ingeniería diseñado para el SENA, enfocado en la automatización de auditorías internas bajo estándares internacionales (ISO) y académicos. El sistema utiliza una arquitectura RAG (Retrieval-Augmented Generation) operando 100% en local para garantizar la privacidad y veracidad normativa.
 
