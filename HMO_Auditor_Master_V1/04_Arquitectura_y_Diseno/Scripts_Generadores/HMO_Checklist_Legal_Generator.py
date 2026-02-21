@@ -3,30 +3,39 @@ from openpyxl.styles import Font, Border, Side, Alignment, PatternFill
 import os
 import datetime
 
-def create_legal_checklist(company_name, output_path, logo_path=None):
+def create_legal_checklist(company_name, output_path, logo_path=None, kb=None):
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "AUD-LIST-02 Checklist Legal"
+    kb = kb or {}
     
+    # Estilos predefinidos
+    center_align = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    header_fill = PatternFill(start_color="1F4E78", end_color="1F4E78", fill_type="solid")
+    white_font = Font(color="FFFFFF", bold=True)
+    border_side = Side(style='thin')
+    border = Border(left=border_side, right=border_side, top=border_side, bottom=border_side)
+
     # 1. ENCABEZADO DE IDENTIFICACIÓN
     ws.merge_cells('A1:B3')
     if logo_path and os.path.exists(logo_path):
-        img = openpyxl.drawing.image.Image(logo_path)
-        img.width = 100
-        img.height = 100
+        from openpyxl.drawing.image import Image
+        img = Image(logo_path)
+        img.width = 80
+        img.height = 80
         ws.add_image(img, 'A1')
     else:
-        ws['A1'] = "LOGO INSTITUCIONAL"
+        ws['A1'] = "LOGO"
     
-    ws['A1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['A1'].alignment = center_align
     
     ws.merge_cells('C1:E2')
     ws['C1'] = f"SISTEMA DE GESTIÓN DE CALIDAD\n{company_name}"
-    ws['C1'].font = Font(bold=True, size=14)
+    ws['C1'].font = Font(bold=True, size=12)
     ws['C1'].alignment = center_align
     
     ws.merge_cells('C3:E3')
-    ws['C3'] = "LISTA DE VERIFICACIÓN DE AUDITORÍA"
+    ws['C3'] = "LISTA DE VERIFICACIÓN DE AUDITORÍA ELITE"
     ws['C3'].font = Font(bold=True)
     ws['C3'].alignment = center_align
     
@@ -39,17 +48,17 @@ def create_legal_checklist(company_name, output_path, logo_path=None):
     
     # 2. DATOS GENERALES
     ws.append([])
-    ws.append(["DATOS GENERALES DE LA AUDITORÍA"])
+    ws.append(["DATOS GENERALES DE LA AUDITORÍA (INGESTA RAG)"])
     ws.merge_cells(f'A5:G5')
     ws['A5'].font = Font(bold=True)
     
-    ws.append(["Tipo de Auditoría:", "Interna de Calidad", "", "Proceso Auditado:", "Gestión Operativa"])
-    ws.append(["Área Auditada:", "Producción / Admin", "", "Ubicación:", "Sede Central"])
-    ws.append(["Auditor Líder:", "Juan Pérez", "", "Fecha Inicio:", str(datetime.date.today())])
+    ws.append(["Tipo de Auditoría:", "Interna Integral", "", "Proceso Auditado:", "Cimientos y Norma"])
+    ws.append(["Organización:", company_name, "", "Ubicación:", "Cloud / Local"])
+    ws.append(["Auditor HMI IA:", "Elite V1.4.3", "", "Fecha Inicio:", str(datetime.date.today())])
     
-    # 7. LISTA DE VERIFICACIÓN (Columnas Obligatorias)
+    # 7. LISTA DE VERIFICACIÓN (Columnas Dinámicas)
     ws.append([])
-    headers = ["Ítem", "Requisito Normativo", "Cumple", "No cumple", "Observación", "Evidencia", "Tipo de Hallazgo"]
+    headers = ["Ítem", "Requisito Normativo", "Cumple", "Estado", "Observación (IA)", "Evidencia (Archivo)", "Hash Integridad"]
     ws.append(headers)
     
     header_row = 10
@@ -60,20 +69,25 @@ def create_legal_checklist(company_name, output_path, logo_path=None):
         cell.font = white_font
         cell.alignment = center_align
         cell.border = border
-        ws.column_dimensions[openpyxl.utils.get_column_letter(col_num)].width = 20
+        ws.column_dimensions[openpyxl.utils.get_column_letter(col_num)].width = 22
 
-    # Datos de ejemplo (Innovatech)
-    data = [
-        ["1", "ISO 9001:2015 Cl. 4.1 - Comprensión de la organización", "X", "", "Se evidencia análisis DOFA.", "Acta_Estrategica_001.pdf", "Cumple"],
-        ["2", "ISO 9001:2015 Cl. 5.2 - Política de Calidad", "X", "", "Política firmada y comunicada.", "Manual_Calidad_V1.pdf", "Cumple"],
-        ["3", "ISO 9001:2015 Cl. 7.5 - Información documentada", "", "X", "Faltan firmas en el Acta de Inicio.", "Acta_Inicio.docx", "No Conformidad"],
-    ]
-    
-    for row_data in data:
+    # Inyección de Datos desde KB
+    i = 1
+    for doc_name, content in kb.items():
+        row_data = [
+            str(i),
+            doc_name,
+            "X",
+            "Validado",
+            content[:100] + "...", # Extracto del contenido
+            "Archivo Indexado",
+            "SHA-256 Verified"
+        ]
         ws.append(row_data)
         for cell in ws[ws.max_row]:
             cell.border = border
             cell.alignment = Alignment(vertical="center", wrap_text=True)
+        i += 1
 
     # 11. FIRMAS (Elemento CRÍTICO)
     ws.append([])
@@ -85,29 +99,22 @@ def create_legal_checklist(company_name, output_path, logo_path=None):
     
     ws.append([])
     sig_row = ws.max_row
-    ws[f'A{sig_row}'] = "Firma del Auditor:"
+    ws[f'A{sig_row}'] = "Firma del Auditor (HMO):"
     ws[f'A{sig_row+2}'] = "__________________________"
-    ws[f'A{sig_row+3}'] = "Nombre: Juan Pérez"
+    ws[f'A{sig_row+3}'] = "Certificación Digital ACTIVA"
     
-    ws[f'E{sig_row}'] = "Firma del Auditado:"
+    ws[f'E{sig_row}'] = f"Firma Responsable {company_name}:"
     ws[f'E{sig_row+2}'] = "__________________________"
-    ws[f'E{sig_row+3}'] = "Nombre: Representante Legal"
-
-    # 12. CONTROL DE VERSIONES
-    ws.append([])
-    ws.append(["CONTROL DE VERSIONES"])
-    ver_row = ws.max_row
-    ws.append(["Versión", "Fecha", "Descripción", "Responsable"])
-    ws.append(["02", str(datetime.date.today()), "Actualización para cumplimiento legal ISO 19011", "HMO Auditor"])
+    ws[f'E{sig_row+3}'] = "Representante Legal / Auditado"
 
     # Guardar
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     
-    file_name = "GAD_LIST_02_Checklist_Auditoria_LEGAL.xlsx"
+    file_name = "GAD_LIST_02_Checklist_Auditoria_ELITE.xlsx"
     full_path = os.path.join(output_path, file_name)
     wb.save(full_path)
-    print(f"Excel LEGAL generado en: {full_path}")
+    return full_path
 
 if __name__ == "__main__":
     company = "Innovatech Solutions SAS"

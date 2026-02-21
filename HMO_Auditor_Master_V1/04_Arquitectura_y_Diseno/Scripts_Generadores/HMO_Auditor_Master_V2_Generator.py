@@ -5,8 +5,9 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 import os
 import datetime
 
-def create_audit_program_v2(company_name, output_path, logo_path=None):
+def create_audit_program_v2(company_name, output_path, logo_path=None, kb=None):
     doc = Document()
+    kb = kb or {}
     
     # 1. ENCABEZADO (Validez Jurídica)
     section = doc.sections[0]
@@ -65,21 +66,32 @@ def create_audit_program_v2(company_name, output_path, logo_path=None):
         table_gen.cell(i, 1).text = value
         table_gen.cell(i, 0).paragraphs[0].runs[0].bold = True
 
-    # 4. OBJETIVO Y ALCANCE
-    doc.add_heading('2. OBJETIVO Y ALCANCE', level=1)
-    doc.add_paragraph("Objetivo: Verificar el cumplimiento de los procesos operativos bajo la norma ISO 9001:2015.")
-    doc.add_paragraph("Alcance: Incluye la revisión de la documentación estratégica, procesos misionales y apoyo administrativo.")
+    # 3. FILOSOFÍA CORPORATIVA (Inyectada desde Ingesta)
+    doc.add_heading('2. FILOSOFÍA CORPORATIVA', level=1)
+    mision = kb.get("Misión y Visión Corporativa", "Misión no definida en ingesta.")
+    doc.add_paragraph(f"Misión/Visión Detectada: {mision}")
+    
+    valores = kb.get("Valores y Código de Ética", "Valores no definidos en ingesta.")
+    doc.add_paragraph(f"Principios Rectores: {valores}")
+
+    # 4. OBJETIVO Y ALCANCE (Personalizado)
+    doc.add_heading('3. OBJETIVO Y ALCANCE', level=1)
+    objetivo = kb.get("PEI (Proyecto Educativo)", "Verificar el cumplimiento de los procesos operativos bajo la norma ISO.")
+    doc.add_paragraph(f"Objetivo: {objetivo}")
+    
+    alcance = kb.get("Contexto Organizacional", "Revisión de la documentación estratégica y procesos misionales.")
+    doc.add_paragraph(f"Alcance: {alcance}")
 
     # 6. CRITERIOS DE AUDITORÍA
-    doc.add_heading('3. CRITERIOS DE AUDITORÍA (BASE LEGAL)', level=1)
+    doc.add_heading('4. CRITERIOS DE AUDITORÍA (BASE LEGAL)', level=1)
     doc.add_paragraph("- Norma ISO 19011:2018 (Directrices para Auditoría)")
-    doc.add_paragraph("- Norma ISO 9001:2015 (Requisitos de Calidad)")
+    doc.add_paragraph("- Marco Normativo Seleccionado en HMO Auditor")
     doc.add_paragraph("- Ley 594 de 2000 (Ley General de Archivos - Colombia)")
     doc.add_paragraph("- Manuales de Procedimientos Internos")
 
     # 11. FIRMAS (Elemento CRÍTICO para Validez Legal)
     doc.add_page_break()
-    doc.add_heading('4. RESPONSABILIDAD LEGAL Y FIRMAS', level=1)
+    doc.add_heading('5. RESPONSABILIDAD LEGAL Y FIRMAS', level=1)
     doc.add_paragraph("De acuerdo con la ISO 19011, este documento formaliza el compromiso de las partes.")
     
     table_sig = doc.add_table(rows=2, cols=2)
@@ -91,10 +103,10 @@ def create_audit_program_v2(company_name, output_path, logo_path=None):
     
     # Auditado Row
     cell_auditado = table_sig.cell(0, 1)
-    cell_auditado.text = "FIRMA DEL AUDITADO\n\n\n__________________________\nNombre: DIRECTOR ÁREA\nCargo: Responsable de Proceso"
+    cell_auditado.text = f"FIRMA DEL AUDITADO\n\n\n__________________________\nNombre: Representante {company_name}\nCargo: Responsable de Proceso"
     
     # 12. CONTROL DE VERSIONES
-    doc.add_heading('5. CONTROL DE VERSIONES', level=1)
+    doc.add_heading('6. CONTROL DE VERSIONES', level=1)
     table_ver = doc.add_table(rows=2, cols=4)
     table_ver.style = 'Table Grid'
     cols_ver = ["Versión", "Fecha", "Descripción", "Responsable"]
@@ -112,10 +124,10 @@ def create_audit_program_v2(company_name, output_path, logo_path=None):
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     
-    file_name = "GAD_PRO_01_Programa_Auditoria_LEGAL.docx"
+    file_name = "GAD_PRO_01_Programa_Auditoria_ELITE.docx"
     full_path = os.path.join(output_path, file_name)
     doc.save(full_path)
-    print(f"Documento LEGAL generado en: {full_path}")
+    return full_path
 
 if __name__ == "__main__":
     company = "Innovatech Solutions SAS"

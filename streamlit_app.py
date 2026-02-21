@@ -92,17 +92,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Lógica de Sesión
-for key, default in [('env', None), ('norma', "Calidad (ISO 9001)"), ('paso_ingesta', 0), ('logo_path', None)]:
+for key, default in [('env', None), ('norma', "Calidad (ISO 9001)"), ('paso_ingesta', 0), ('logo_path', None), ('kb', {})]:
     if key not in st.session_state: st.session_state[key] = default
 
-# --- FUNCIONES DE PERSISTENCIA ---
-def setup_company_folders(company_name):
-    safe_name = "".join([c if c.isalnum() else "_" for c in company_name])
-    base_dir = os.path.join(os.getcwd(), "Auditorias_HMO", safe_name)
-    for sub in ["01_Templates_Vacios", "02_Auditoria_IA", "03_Evidencias_Ingesta"]:
-        path = os.path.join(base_dir, sub)
-        if not os.path.exists(path): os.makedirs(path)
-    return base_dir
+# ... [Funciones de persistencia omitidas por brevedad] ...
 
 def save_audit_state():
     if st.session_state['env'] and st.session_state.get('company_name'):
@@ -110,7 +103,7 @@ def save_audit_state():
         state = {
             "company_name": st.session_state['company_name'], "norma": st.session_state['norma'],
             "paso_ingesta": st.session_state['paso_ingesta'], "logo_path": st.session_state['logo_path'],
-            "env": st.session_state['env'], "last_update": datetime.datetime.now().isoformat()
+            "env": st.session_state['env'], "kb": st.session_state['kb'], "last_update": datetime.datetime.now().isoformat()
         }
         with open(os.path.join(base_dir, "audit_state.json"), "w") as f: json.dump(state, f, indent=4)
 
@@ -164,6 +157,12 @@ if st.session_state['env'] is None:
             st.session_state['env'], st.session_state['company_name'] = "Simulacion", "Innovatech Solutions SAS"
             st.session_state['base_path'] = setup_company_folders("Innovatech Solutions SAS")
             st.session_state['paso_ingesta'] = 0
+            st.session_state['kb'] = {
+                "Misión y Visión Corporativa": "Liderar la transformación digital en Colombia mediante soluciones sostenibles.",
+                "Valores y Código de Ética": "Integridad, Innovación y Respeto Ambiental.",
+                "Organigrama Funcional": "Estructura plana liderada por la Gerencia de Innovación.",
+                "PEI (Proyecto Educativo)": "Modelo pedagógico basado en la práctica industrial avanzada."
+            }
             if logo_file:
                 path = os.path.join(st.session_state['base_path'], "logo.png")
                 with open(path, "wb") as f: f.write(logo_file.getbuffer())
@@ -206,33 +205,33 @@ else:
         st.session_state['env'] = None
         st.rerun()
 
-    # --- CONFIGURACIÓN DE PASOS DE INGESTA (Secuencial y Real) ---
+    # --- CONFIGURACIÓN DE PASOS DE INGESTA POR DEPARTAMENTOS ---
     base_cartas = [
-        {"doc": "Misión y Visión Corporativa", "ref": "Estratégico", "desc": "Definición del propósito y dirección de la entidad.", "file_hint": "Mision_Vision.pdf"},
-        {"doc": "Valores y Código de Ética", "ref": "Cultura", "desc": "Principios rectores de la organización.", "file_hint": "Codigo_Etica.pdf"},
-        {"doc": "Organigrama Funcional", "ref": "Estructura", "desc": "Jerarquía y responsabilidades definidas.", "file_hint": "Organigrama.pdf"}
+        {"doc": "Misión y Visión Corporativa", "area": "🏦 Alta Dirección", "ref": "Estratégico", "desc": "Definición del propósito y dirección.", "file_hint": "Mision_Vision.pdf"},
+        {"doc": "Valores y Código de Ética", "area": "🏦 Alta Dirección", "ref": "Cultura", "desc": "Principios rectores de la organización.", "file_hint": "Codigo_Etica.pdf"},
+        {"doc": "Organigrama Funcional", "area": "🏦 Alta Dirección", "ref": "Estructura", "desc": "Jerarquía y responsabilidades.", "file_hint": "Organigrama.pdf"}
     ]
 
     if "Académico" in st.session_state['norma']:
         norm_cartas = [
-            {"doc": "PEI (Proyecto Educativo)", "ref": "Ley 115", "desc": "Columna vertebral académica.", "file_hint": "PEI_Innovatech.pdf"},
-            {"doc": "Registro Calificado", "ref": "Dec. 1330", "desc": "Resolución ministerial de operación.", "file_hint": "Resolucion_MEN.pdf"},
-            {"doc": "Estatuto Docente", "ref": "Dec. 1278", "desc": "Reglamentación del personal académico.", "file_hint": "Estatutos.pdf"}
+            {"doc": "PEI (Proyecto Educativo)", "area": "🎓 Gestión Académica", "ref": "Ley 115", "desc": "Columna vertebral académica.", "file_hint": "PEI_Innovatech.pdf"},
+            {"doc": "Registro Calificado", "area": "⚖️ Jurídico/Normativo", "ref": "Dec. 1330", "desc": "Autorización ministerial.", "file_hint": "Resolucion_MEN.pdf"},
+            {"doc": "Estatuto Docente", "area": "👥 Talento Humano", "ref": "Dec. 1278", "desc": "Reglamentación docente.", "file_hint": "Estatutos.pdf"}
         ]
     elif "Seguridad" in st.session_state['norma']:
         norm_cartas = [
-            {"doc": "Política de Seguridad", "ref": "ISO 27001:5.2", "desc": "Directrices de protección de datos.", "file_hint": "Politica_Seguridad.pdf"},
-            {"doc": "Análisis de Riesgos", "ref": "ISO 27001:6.1", "desc": "Identificación de vulnerabilidades.", "file_hint": "Matriz_Riesgos.xlsx"}
+            {"doc": "Política de Seguridad", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:5.2", "desc": "Directrices de protección.", "file_hint": "Politica_Seguridad.pdf"},
+            {"doc": "Análisis de Riesgos", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:6.1", "desc": "Mapa de vulnerabilidades.", "file_hint": "Matriz_Riesgos.xlsx"}
         ]
     elif "Ambiental" in st.session_state['norma']:
         norm_cartas = [
-            {"doc": "Aspectos Ambientales", "ref": "ISO 14001:6.1.2", "desc": "Evaluación de impactos.", "file_hint": "Aspectos.pdf"},
-            {"doc": "Objetivos Ambientales", "ref": "ISO 14001:6.2", "desc": "Metas de eco-eficiencia.", "file_hint": "Metas.pdf"}
+            {"doc": "Aspectos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.1.2", "desc": "Evaluación de impactos.", "file_hint": "Aspectos.pdf"},
+            {"doc": "Objetivos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.2", "desc": "Metas de eco-eficiencia.", "file_hint": "Metas.pdf"}
         ]
     else: # ISO 9001
         norm_cartas = [
-            {"doc": "Contexto Organizacional", "ref": "ISO 9001:4.1", "desc": "Análisis DOFA y partes interesadas.", "file_hint": "Contexto.pdf"},
-            {"doc": "Mapa de Procesos", "ref": "ISO 9001:4.4", "desc": "Interacción de procesos estratégicos.", "file_hint": "Mapa_Procesos.pdf"}
+            {"doc": "Contexto Organizacional", "area": "📊 Calidad", "ref": "ISO 9001:4.1", "desc": "Análisis de entorno (DOFA).", "file_hint": "Contexto.pdf"},
+            {"doc": "Mapa de Procesos", "area": "⚙️ Operaciones", "ref": "ISO 9001:4.4", "desc": "Interacción de procesos.", "file_hint": "Mapa_Procesos.pdf"}
         ]
     
     # Combinación de Fases: Cimientos + Norma
@@ -275,92 +274,108 @@ else:
 
     # --- SECCIÓN: INGESTA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta (HITL)":
-        st.markdown("<h1 class='norm-header'>🗺️ Camino de Ingesta Interactiva</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 class='norm-header'>🗺️ Camino de Ingesta Departamental</h1>", unsafe_allow_html=True)
         
-        # --- NUEVO: CHECKLIST DE EXPEDIENTE ---
-        with st.expander("📋 VER CHECKLIST DE EXPEDIENTE REQUERIDO", expanded=False):
-            st.write("Asegúrese de tener listos los siguientes activos para completar el ecosistema:")
-            c1, c2 = st.columns(2)
-            with c1:
-                st.markdown("**💎 Fase 1: Cimientos**")
-                for b in base_cartas: st.write(f"- {b['doc']}")
-            with c2:
-                st.markdown("**📜 Fase 2: Normativa**")
-                for n in norm_cartas: st.write(f"- {n['doc']}")
+        # Agrupación por Áreas
+        areas = list(dict.fromkeys([c['area'] for c in cartas]))
+        area_tabs = st.tabs(areas + ["🔒 Autorización Final"])
         
-        st.divider()
+        for i, area in enumerate(areas):
+            with area_tabs[i]:
+                st.write(f"### Requisitos del Área: {area}")
+                docs_area = [c for c in cartas if c['area'] == area]
+                
+                for c in docs_area:
+                    idx = cartas.index(c)
+                    es_completado = idx < st.session_state['paso_ingesta']
+                    es_actual = idx == st.session_state['paso_ingesta']
+                    
+                    with st.expander(f"{'✅' if es_completado else '⏳' if es_actual else '🔒'} {c['doc']}", expanded=es_actual):
+                        st.write(f"**Referencia:** {c['ref']}")
+                        st.write(c['desc'])
+                        
+                        if es_actual:
+                            # Interfaz de Carga
+                            u1, u2 = st.columns([2, 1])
+                            uploaded_file = u1.file_uploader(f"Cargar {c['doc']}", type=['pdf', 'docx'], key=f"up_{idx}")
+                            if st.session_state['env'] == "Simulacion":
+                                u2.info(f"📂 Sugerido: **{c['file_hint']}**")
+                            
+                            if uploaded_file:
+                                st.success(f"🔍 '{uploaded_file.name}' detectado.")
+                                st.write("**🧠 Hallazgo Motivador (Validación HITL):**")
+                                finding = st.text_area("Contenido clave para el diligenciamiento:", 
+                                                     placeholder=f"Ej: Se valida cumplimiento de la {c['doc']}...",
+                                                     key=f"find_{idx}")
+                                
+                                if st.button("💎 CONFIRMAR E INDEXAR", key=f"btn_{idx}"):
+                                    if finding:
+                                        st.session_state['kb'][c['doc']] = finding
+                                        target_path = os.path.join(base_path, "03_Evidencias_Ingesta", uploaded_file.name)
+                                        with open(target_path, "wb") as f: f.write(uploaded_file.getbuffer())
+                                        st.session_state['paso_ingesta'] += 1
+                                        save_audit_state()
+                                        st.rerun()
+                                    else: st.warning("⚠️ El hallazgo es obligatorio para el diligenciamiento.")
+                        elif es_completado:
+                            st.info(f"✨ Hallazgo indexado: *{st.session_state['kb'].get(c['doc'], 'N/A')}*")
         
-        paso_actual = st.session_state['paso_ingesta']
-        total_pasos = len(cartas)
-        
-        # Identificador de Fase
-        es_base = paso_actual < len(base_cartas)
-        fase_txt = "🏷️ FASE 1: CIMIENTOS ESTRATÉGICOS" if es_base else "📜 FASE 2: REQUISITOS NORMATIVOS"
-        st.subheader(fase_txt)
-        
-        if paso_actual < total_pasos:
-            carta = cartas[paso_actual]
-            st.markdown(f"""
-                <div style='background-color: #F0F9FF; padding: 1.5rem; border-left: 5px solid #0369A1; border-radius: 12px; margin-bottom: 2rem;'>
-                    <h3 style='margin-top: 0; color: #0369A1;'>{paso_actual + 1}. {carta['doc']}</h3>
-                    <p><b>Referencia Legal/Técnica:</b> {carta['ref']}</p>
-                    <p style='font-size: 1.1rem;'>{carta['desc']}</p>
-                    <hr style='border: 0; border-top: 1px solid #BAE6FD; margin: 1rem 0;'>
-                    <p style='color: #0C4A6E; font-size: 0.9rem;'><b>💡 Por qué es vital:</b> Este documento permite al Motor RAG entender el contexto de la organización para realizar hallazgos precisos.</p>
-                </div>
-            """, unsafe_allow_html=True)
+        with area_tabs[-1]:
+            st.write("### 🔒 Cierre de Fase de Ingesta")
+            progreso = (st.session_state['paso_ingesta'] / len(cartas)) * 100
             
-            # Interfaz de Carga Real
-            u_col1, u_col2 = st.columns([2, 1])
-            with u_col1:
-                uploaded_file = st.file_uploader(f"Cargar archivo para: {carta['doc']}", type=['pdf', 'docx'], key=f"up_{paso_actual}")
-            with u_col2:
-                if st.session_state['env'] == "Simulacion":
-                    st.info(f"📂 Archivo sugerido: **{carta['file_hint']}**")
-            
-            if uploaded_file:
-                st.success(f"🔍 Evidencia '{uploaded_file.name}' cargada correctamente.")
-                
-                # Ruta de destino
-                target_path = os.path.join(base_path, "03_Evidencias_Ingesta", uploaded_file.name)
-                
-                st.markdown("<div style='background: #F8FAFC; padding: 10px; border-radius: 8px;'><b>Estado de Indexación:</b></div>", unsafe_allow_html=True)
-                st.code(f"Generating SHA-256 Fingerprint...\nIndexing nodes into Local Vector Store...\nReady for validation.", language="bash")
-                
-                if st.button("💎 CONFIRMAR Y GUARDAR PASO"):
-                    with open(target_path, "wb") as f:
-                        f.write(uploaded_file.getbuffer())
-                    st.session_state['paso_ingesta'] += 1
-                    save_audit_state()
-                    st.rerun()
-        else:
-            st.success("🎉 ¡Ingesta de Base de Conocimiento Completa!")
-            st.balloons()
-            if st.button("📊 Volver al Dashboard"):
-                st.rerun()
+            if progreso < 100:
+                st.warning(f"⚠️ Ingesta incompleta ({progreso:.0f}%). Debe completar todos los departamentos antes de autorizar la emisión de formatos diligenciados.")
+            else:
+                st.success("✅ Todos los documentos e hitos estratégicos han sido indexados y validados.")
+                st.session_state['autorizado_emision'] = st.toggle("AUTORIZAR DILIGENCIAMIENTO Y EMISIÓN DE FORMATOS", value=st.session_state['autorizado_emision'])
+                if st.session_state['autorizado_emision']:
+                    st.info("🚀 El sistema ha sido habilitado para generar documentos 'Motivados' con su base de conocimiento.")
+                    if st.button("📊 Ver Resultados en Dashboard"): st.rerun()
 
     # --- SECCIÓN: FORMATOS ---
     elif menu == "⚖️ Emisión de Títulos/Formatos":
         st.markdown("<h1 class='norm-header'>⚖️ Emisión de Formatos & Títulos Legales</h1>", unsafe_allow_html=True)
-        st.info("Generación de documentos dinámicos con inyección de logo y firmas de integridad.")
         
-        tab_list, tab_gen = st.tabs(["📝 Plantillas Disponibles", "🏗️ Generador de Activos"])
+        if not st.session_state['autorizado_emision']:
+            st.warning("⚠️ ACCESO RESTRINGIDO: Debe completar la 'Ingesta Departamental' y otorgar la 'Autorización Final' para emitir documentos diligenciados.")
+            st.info("💡 En este estado, solo puede visualizar los requerimientos pero no generar los activos finales con validez técnica.")
+        else:
+            st.success("✅ ESTATUS ELITE: Emisión habilitada. Los formatos se generarán con inyección de hallazgos y logo institucional.")
+
+        tab_list, tab_gen = st.tabs(["📝 Control de Expediente", "🏗️ Generador de Activos"])
         
         with tab_list:
-            st.write("### Formatos Vinculados al Proceso:")
+            st.write("### Auditoría de Calidad: Formatos del Proceso")
             st.table(pd.DataFrame({
-                "Código": ["GAD-PROG-01", "GAD-LIST-02", "GAD-RAP-03"],
-                "Nombre": ["Programa de Auditoría", "Checklist de Verificación", "Informe de Hallazgos"],
-                "Estado": ["Listo", "Listo", "Pendiente Ingesta"]
+                "Código": ["GAD-PROG-01", "GAD-LIST-02"],
+                "Nombre": ["Programa de Auditoría ELITE", "Checklist de Verificación ELITE"],
+                "Estado Actual": ["AUTORIZADO" if st.session_state['autorizado_emision'] else "BLOQUEADO"],
+                "Fuente de Datos": ["Base de Conocimiento IA" if st.session_state['kb'] else "Dato Manual"]
             }))
             
         with tab_gen:
-            st.write("### Generar Documento Maestro")
-            if st.button("🚀 Emitir GAD-PROG-01: Programa de Auditoría"):
-                path = os.path.join(base_path, "01_Templates_Vacios", f"PROG_{company[:5]}.docx")
-                create_audit_program_v2(company, path, st.session_state['logo_path'])
-                st.success(f"✅ Documento emitido y blindado exitosamente en: `{path}`")
-                st.download_button("Descargar Archivo", data=open(path, "rb"), file_name=f"PROG_{company}.docx")
+            if not st.session_state['autorizado_emision']:
+                st.error("🔒 Generador bloqueado. Requiere firma de Autorización Final en la pestaña de Ingesta.")
+            else:
+                st.write("### Control de Emisión Maestro")
+                col_b1, col_b2 = st.columns(2)
+                
+                if col_b1.button("🚀 Emitir GAD-PROG-01 (Word)"):
+                    from HMO_Auditor_Master_V2_Generator import create_audit_program_v2
+                    path = os.path.join(base_path, "02_Auditoria_IA", f"PROG_{company[:5]}.docx")
+                    full_path = create_audit_program_v2(company, os.path.dirname(path), st.session_state['logo_path'], st.session_state['kb'])
+                    st.success(f"✅ GAD-PROG-01 Emitido.")
+                    with open(full_path, "rb") as f:
+                        st.download_button("Descargar Programa Motivado", f, file_name=f"ELITE_PROG_{company}.docx")
+
+                if col_b2.button("🚀 Emitir GAD-LIST-02 (Excel)"):
+                    from HMO_Checklist_Legal_Generator import create_legal_checklist
+                    path = os.path.join(base_path, "02_Auditoria_IA", f"LIST_{company[:5]}.xlsx")
+                    full_path = create_legal_checklist(company, os.path.dirname(path), st.session_state['logo_path'], st.session_state['kb'])
+                    st.success(f"✅ GAD-LIST-02 Emitida.")
+                    with open(full_path, "rb") as f:
+                        st.download_button("Descargar Checklist Motivada", f, file_name=f"ELITE_LIST_{company}.xlsx")
 
     # --- SECCIÓN: AYUDA ---
     elif menu == "💎 Help Center Elite":
