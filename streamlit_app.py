@@ -277,6 +277,19 @@ else:
     elif menu == "🗺️ Camino de Ingesta (HITL)":
         st.markdown("<h1 class='norm-header'>🗺️ Camino de Ingesta Interactiva</h1>", unsafe_allow_html=True)
         
+        # --- NUEVO: CHECKLIST DE EXPEDIENTE ---
+        with st.expander("📋 VER CHECKLIST DE EXPEDIENTE REQUERIDO", expanded=False):
+            st.write("Asegúrese de tener listos los siguientes activos para completar el ecosistema:")
+            c1, c2 = st.columns(2)
+            with c1:
+                st.markdown("**💎 Fase 1: Cimientos**")
+                for b in base_cartas: st.write(f"- {b['doc']}")
+            with c2:
+                st.markdown("**📜 Fase 2: Normativa**")
+                for n in norm_cartas: st.write(f"- {n['doc']}")
+        
+        st.divider()
+        
         paso_actual = st.session_state['paso_ingesta']
         total_pasos = len(cartas)
         
