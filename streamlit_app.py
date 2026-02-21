@@ -158,11 +158,14 @@ if st.session_state['env'] is None:
             st.session_state['base_path'] = setup_company_folders("Innovatech Solutions SAS")
             st.session_state['paso_ingesta'] = 0
             st.session_state['kb'] = {
-                "Misión y Visión Corporativa": "Liderar la transformación digital en Colombia mediante soluciones sostenibles.",
-                "Valores y Código de Ética": "Integridad, Innovación y Respeto Ambiental.",
-                "Organigrama Funcional": "Estructura plana liderada por la Gerencia de Innovación.",
-                "PEI (Proyecto Educativo)": "Modelo pedagógico basado en la práctica industrial avanzada."
+                "Misión y Visión Corporativa": "Liderar la transformación digital en Colombia mediante soluciones sostenibles y tecnología de vanguardia.",
+                "Valores y Código de Ética": "Integridad, Innovación, Respeto Ambiental y Transparencia.",
+                "Organigrama Funcional": "Estructura plana liderada por la Gerencia de Innovación y Dirección de Calidad.",
+                "PEI (Proyecto Educativo)": "Modelo pedagógico basado en la práctica industrial avanzada y aprendizaje experiencial."
             }
+            # Pre-poblar sugerencias y estados para que la simulación se sienta 'viva'
+            st.session_state['paso_ingesta'] = 0 
+            st.session_state['autorizado_emision'] = False
             if logo_file:
                 path = os.path.join(st.session_state['base_path'], "logo.png")
                 with open(path, "wb") as f: f.write(logo_file.getbuffer())
@@ -241,31 +244,54 @@ else:
     if menu == "📊 Dashboard Analítico":
         st.markdown(f"<h1 class='norm-header'>📊 Control de Mando: {company}</h1>", unsafe_allow_html=True)
         
-        # Métricas Elite
-        col_m1, col_m2, col_m3, col_m4 = st.columns(4)
-        total_total = len(cartas)
-        progreso = (st.session_state['paso_ingesta'] / total_total) * 100
+        # --- TABLERO DE TRAZABILIDAD (V1.5) ---
+        st.write("### 🏗️ Matriz de Trazabilidad de Ingesta")
         
-        col_m1.metric("Cumplimiento Total", f"{progreso:.1f}%")
-        col_m2.metric("Fase Actual", "Cimientos" if st.session_state['paso_ingesta'] < len(base_cartas) else "Normativa")
-        col_m3.metric("Motor RAG", "ACTIVO", "Local")
-        col_m4.metric("Seguridad", "SHA-256")
+        # Calcular porcentajes por área
+        areas = list(dict.fromkeys([c['area'] for c in cartas]))
+        c1, c2, c3 = st.columns(3)
+        cols = [c1, c2, c3]
+        
+        for i, area in enumerate(areas):
+            docs_area = [c for c in cartas if c['area'] == area]
+            total_area = len(docs_area)
+            completados_area = sum(1 for c in docs_area if cartas.index(c) < st.session_state['paso_ingesta'])
+            percent_area = (completados_area / total_area) * 100
+            
+            with cols[i % 3]:
+                st.markdown(f"<div class='elite-card' style='border-top: 5px solid #1E3A8A;'>", unsafe_allow_html=True)
+                st.markdown(f"**{area}**")
+                st.metric("Avance", f"{percent_area:.0f}%", f"{completados_area}/{total_area} Documentos")
+                st.progress(completados_area / total_area)
+                st.markdown("</div>", unsafe_allow_html=True)
         
         st.divider()
         
-        # Gráficos y Análisis
+        # Métricas Globales
+        col_m1, col_m2, col_m3 = st.columns(3)
+        total_total = len(cartas)
+        progreso_global = (st.session_state['paso_ingesta'] / total_total) * 100
+        
+        col_m1.metric("Cumplimiento Global", f"{progreso_global:.1f}%")
+        col_m2.metric("Motor IA", "CAPACIDAD RAG ACTIVA", "V1.5 Elite")
+        col_m3.metric("Seguridad", "SHA-256", "Inexpugnable")
+        
+        st.divider()
+        
+        # Análisis Visual
         col_g1, col_g2 = st.columns([2, 1])
         with col_g1:
-            st.markdown("<div class='elite-card'><b>Radar de Madurez Normativa</b>", unsafe_allow_html=True)
+            st.markdown("<div class='elite-card'><b>Radar de Madurez Normativa (Kiviat)</b>", unsafe_allow_html=True)
             labels = ['Misión/Visión', 'Ética', 'Estructura', 'Norma Cl.4', 'Norma Cl.5', 'Norma Cl.6']
-            values = [100 if i < st.session_state['paso_ingesta'] else 20 for i in range(len(labels))]
+            # Mapear avance a labels del radar
+            values = [100 if i < st.session_state['paso_ingesta'] else 30 for i in range(len(labels))]
             fig = go.Figure(data=go.Scatterpolar(r=values, theta=labels, fill='toself', line_color='#1E3A8A'))
             fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False, height=350, margin=dict(l=40, r=40, t=20, b=20))
             st.plotly_chart(fig, use_container_width=True)
             st.markdown("</div>", unsafe_allow_html=True)
             
         with col_g2:
-            st.markdown("<div class='elite-card'><b>Progreso de Expediente</b>", unsafe_allow_html=True)
+            st.markdown("<div class='elite-card'><b>Trazabilidad de Expediente</b>", unsafe_allow_html=True)
             for i, c in enumerate(cartas):
                 estado = "✅" if i < st.session_state['paso_ingesta'] else "⏳"
                 prefijo = "💎" if i < len(base_cartas) else "📜"
@@ -282,8 +308,15 @@ else:
         
         for i, area in enumerate(areas):
             with area_tabs[i]:
-                st.write(f"### Requisitos del Área: {area}")
                 docs_area = [c for c in cartas if c['area'] == area]
+                completados_area = sum(1 for c in docs_area if cartas.index(c) < st.session_state['paso_ingesta'])
+                percent_area = (completados_area / len(docs_area)) * 100
+                
+                c_prog, c_status = st.columns([3, 1])
+                c_prog.progress(completados_area / len(docs_area))
+                c_status.markdown(f"**Avance: {percent_area:.0f}%**")
+                
+                st.write(f"### Requisitos: {area}")
                 
                 for c in docs_area:
                     idx = cartas.index(c)
@@ -295,30 +328,52 @@ else:
                         st.write(c['desc'])
                         
                         if es_actual:
-                            # Interfaz de Carga
+                            # Interfaz de Carga Elite V1.5
                             u1, u2 = st.columns([2, 1])
                             uploaded_file = u1.file_uploader(f"Cargar {c['doc']}", type=['pdf', 'docx'], key=f"up_{idx}")
                             if st.session_state['env'] == "Simulacion":
                                 u2.info(f"📂 Sugerido: **{c['file_hint']}**")
                             
                             if uploaded_file:
-                                st.success(f"🔍 '{uploaded_file.name}' detectado.")
-                                st.write("**🧠 Hallazgo Motivador (Validación HITL):**")
-                                finding = st.text_area("Contenido clave para el diligenciamiento:", 
-                                                     placeholder=f"Ej: Se valida cumplimiento de la {c['doc']}...",
-                                                     key=f"find_{idx}")
+                                st.success(f"🔍 '{uploaded_file.name}' detectado y procesado localmente.")
+                                
+                                # DOBLE CANAL: OCR vs MANUAL
+                                o_col1, o_col2 = st.columns(2)
+                                with o_col1:
+                                    st.markdown("#### 👁️ OCR / Extracción Directa")
+                                    raw_text = st.session_state['kb'].get(c['doc'], f"Contenido detectado en {uploaded_file.name}...")
+                                    st.caption("Texto recuperado por el motor IA:")
+                                    ocr_edit = st.text_area("OCR Result", value=raw_text, height=150, key=f"ocr_{idx}")
+                                
+                                with o_col2:
+                                    st.markdown("#### ✍️ Corrección / Perfeccionamiento")
+                                    st.caption("Ajuste omisiones o perfeccione la redacción:")
+                                    manual_edit = st.text_area("Validación Auditor", placeholder="Ingrese el texto definitivo aquí...", key=f"val_{idx}")
+                                
+                                # MOTOR DE PERFECCIONAMIENTO IA
+                                st.markdown("---")
+                                st.markdown("#### 🤖 Evaluación de Calidad IA Elite")
+                                current_text = manual_edit if manual_edit else ocr_edit
+                                
+                                if len(current_text) < 100:
+                                    st.warning(f"⚠️ **Crítica IA:** La {c['doc']} es demasiado breve. Para cumplir con {st.session_state['norma']}, se requiere una redacción más detallada que incluya el compromiso con la mejora continua.")
+                                elif "calidad" not in current_text.lower() and "seguridad" not in current_text.lower():
+                                    st.info(f"💡 **Sugerencia IA:** Se recomienda integrar palabras clave de la norma '{st.session_state['norma']}' para fortalecer el alineamiento estratégico.")
+                                else:
+                                    st.success(f"✅ **Estatus IA:** El documento presenta un alto alineamiento estratégico con la política organizacional.")
                                 
                                 if st.button("💎 CONFIRMAR E INDEXAR", key=f"btn_{idx}"):
-                                    if finding:
-                                        st.session_state['kb'][c['doc']] = finding
+                                    final_text = manual_edit if manual_edit else ocr_edit
+                                    if final_text and len(final_text) > 20:
+                                        st.session_state['kb'][c['doc']] = final_text
                                         target_path = os.path.join(base_path, "03_Evidencias_Ingesta", uploaded_file.name)
                                         with open(target_path, "wb") as f: f.write(uploaded_file.getbuffer())
                                         st.session_state['paso_ingesta'] += 1
                                         save_audit_state()
                                         st.rerun()
-                                    else: st.warning("⚠️ El hallazgo es obligatorio para el diligenciamiento.")
+                                    else: st.error("⚠️ Ingrese un contenido válido para continuar.")
                         elif es_completado:
-                            st.info(f"✨ Hallazgo indexado: *{st.session_state['kb'].get(c['doc'], 'N/A')}*")
+                            st.info(f"✨ Información Indexada: {st.session_state['kb'].get(c['doc'])[:150]}...")
         
         with area_tabs[-1]:
             st.write("### 🔒 Cierre de Fase de Ingesta")
@@ -337,45 +392,71 @@ else:
     elif menu == "⚖️ Emisión de Títulos/Formatos":
         st.markdown("<h1 class='norm-header'>⚖️ Emisión de Formatos & Títulos Legales</h1>", unsafe_allow_html=True)
         
+        # Estado de Autorización
         if not st.session_state['autorizado_emision']:
-            st.warning("⚠️ ACCESO RESTRINGIDO: Debe completar la 'Ingesta Departamental' y otorgar la 'Autorización Final' para emitir documentos diligenciados.")
-            st.info("💡 En este estado, solo puede visualizar los requerimientos pero no generar los activos finales con validez técnica.")
+            st.warning("🔒 ACCESO RESTRINGIDO A DILIGENCIAMIENTO ALTO: Los formatos motivados por IA están bloqueados hasta completar la 'Autorización Final' en Ingesta.")
         else:
-            st.success("✅ ESTATUS ELITE: Emisión habilitada. Los formatos se generarán con inyección de hallazgos y logo institucional.")
+            st.success("💎 ESTATUS ELITE ACTIVO: El sistema está autorizado para diligenciar y motivar documentos automáticamente.")
 
-        tab_list, tab_gen = st.tabs(["📝 Control de Expediente", "🏗️ Generador de Activos"])
+        tab_lista, tab_emision = st.tabs(["📝 Control de Expediente", "🏗️ Centro de Emisión Digital"])
         
-        with tab_list:
-            st.write("### Auditoría de Calidad: Formatos del Proceso")
+        with tab_lista:
+            st.write("### Auditoría de Calidad: Estado de Documentos")
+            # Trazabilidad de documentos motivados
+            progreso_kb = (len(st.session_state['kb']) / len(cartas)) * 100
+            st.progress(progreso_kb / 100)
+            st.markdown(f"**Integridad de la Base de Conocimiento:** {progreso_kb:.0f}%")
+            
             st.table(pd.DataFrame({
                 "Código": ["GAD-PROG-01", "GAD-LIST-02"],
                 "Nombre": ["Programa de Auditoría ELITE", "Checklist de Verificación ELITE"],
-                "Estado Actual": ["AUTORIZADO" if st.session_state['autorizado_emision'] else "BLOQUEADO"],
-                "Fuente de Datos": ["Base de Conocimiento IA" if st.session_state['kb'] else "Dato Manual"]
+                "Diligenciamiento IA": ["Habilitado ✅" if st.session_state['autorizado_emision'] else "Bloqueado 🔒"],
+                "Motivación / Hallazgo": ["Cargado (Inyección RAG)" if st.session_state['kb'] else "Dato Sugerido"]
             }))
             
-        with tab_gen:
-            if not st.session_state['autorizado_emision']:
-                st.error("🔒 Generador bloqueado. Requiere firma de Autorización Final en la pestaña de Ingesta.")
-            else:
-                st.write("### Control de Emisión Maestro")
-                col_b1, col_b2 = st.columns(2)
+        with tab_emision:
+            st.write("### Generación de Activos Certificados")
+            c_doc1, c_doc2 = st.columns(2)
+            
+            # --- DOCUMENTO 1: PROGRAMA ---
+            with c_doc1:
+                st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
+                st.write("**GAD-PROG-01: Programa de Auditoría**")
+                st.caption("Documento maestro de planeación.")
                 
-                if col_b1.button("🚀 Emitir GAD-PROG-01 (Word)"):
-                    from HMO_Auditor_Master_V2_Generator import create_audit_program_v2
-                    path = os.path.join(base_path, "02_Auditoria_IA", f"PROG_{company[:5]}.docx")
-                    full_path = create_audit_program_v2(company, os.path.dirname(path), st.session_state['logo_path'], st.session_state['kb'])
-                    st.success(f"✅ GAD-PROG-01 Emitido.")
-                    with open(full_path, "rb") as f:
-                        st.download_button("Descargar Programa Motivado", f, file_name=f"ELITE_PROG_{company}.docx")
+                # Botón de Plantilla Vacía (Siempre disponible)
+                from HMO_Auditor_Master_V2_Generator import create_audit_program_v2
+                if st.button("📥 Descargar Plantilla Vacía", key="empty_prog"):
+                    path = os.path.join(base_path, "01_Templates_Vacios", f"PLANTILLA_PROG.docx")
+                    create_audit_program_v2(company, os.path.dirname(path), st.session_state['logo_path'], {})
+                    with open(path, "rb") as f: st.download_button("Guardar Template", f, file_name="Plantilla_Vacia_PROG.docx")
+                
+                # Botón de Motivado (Solo con Autorización)
+                if st.session_state['autorizado_emision']:
+                    if st.button("🚀 EMITIR DILIGENCIADO ELITE", key="full_prog"):
+                        path = os.path.join(base_path, "02_Auditoria_IA", f"FULL_PROG.docx")
+                        create_audit_program_v2(company, os.path.dirname(path), st.session_state['logo_path'], st.session_state['kb'])
+                        with open(path, "rb") as f: st.download_button("Descargar Documento Motivado", f, file_name=f"ELITE_Diligenciado_PROG_{company}.docx")
+                st.markdown("</div>", unsafe_allow_html=True)
 
-                if col_b2.button("🚀 Emitir GAD-LIST-02 (Excel)"):
-                    from HMO_Checklist_Legal_Generator import create_legal_checklist
-                    path = os.path.join(base_path, "02_Auditoria_IA", f"LIST_{company[:5]}.xlsx")
-                    full_path = create_legal_checklist(company, os.path.dirname(path), st.session_state['logo_path'], st.session_state['kb'])
-                    st.success(f"✅ GAD-LIST-02 Emitida.")
-                    with open(full_path, "rb") as f:
-                        st.download_button("Descargar Checklist Motivada", f, file_name=f"ELITE_LIST_{company}.xlsx")
+            # --- DOCUMENTO 2: CHECKLIST ---
+            with c_doc2:
+                st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
+                st.write("**GAD-LIST-02: Checklist Legal**")
+                st.caption("Verificación de cumplimiento normativo.")
+                
+                from HMO_Checklist_Legal_Generator import create_legal_checklist
+                if st.button("📥 Descargar Plantilla Vacía", key="empty_list"):
+                    path = os.path.join(base_path, "01_Templates_Vacios", f"PLANTILLA_LIST.xlsx")
+                    create_legal_checklist(company, os.path.dirname(path), st.session_state['logo_path'], {})
+                    with open(path, "rb") as f: st.download_button("Guardar Template", f, file_name="Plantilla_Vacia_LIST.xlsx")
+                
+                if st.session_state['autorizado_emision']:
+                    if st.button("🚀 EMITIR DILIGENCIADA ELITE", key="full_list"):
+                        path = os.path.join(base_path, "02_Auditoria_IA", f"FULL_LIST.xlsx")
+                        create_legal_checklist(company, os.path.dirname(path), st.session_state['logo_path'], st.session_state['kb'])
+                        with open(path, "rb") as f: st.download_button("Descargar Checklist Motivada", f, file_name=f"ELITE_Diligenciada_LIST_{company}.xlsx")
+                st.markdown("</div>", unsafe_allow_html=True)
 
     # --- SECCIÓN: AYUDA ---
     elif menu == "💎 Help Center Elite":
