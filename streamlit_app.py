@@ -92,7 +92,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Lógica de Sesión
-for key, default in [('env', None), ('norma', "Calidad (ISO 9001)"), ('paso_ingesta', 0), ('logo_path', None), ('kb', {})]:
+for key, default in [('env', None), ('norma', "Calidad (ISO 9001)"), ('paso_ingesta', 0), ('logo_path', None), ('expediente', {}), ('autorizado_emision', False), 
+                    ('auditor_name', ""), ('rep_legal', ""), ('rep_id', ""), ('empresa_tamanio', "Pyme"), ('empresa_sector', "Servicios")]:
     if key not in st.session_state: st.session_state[key] = default
 
 # ... [Funciones de persistencia omitidas por brevedad] ...
@@ -103,7 +104,12 @@ def save_audit_state():
         state = {
             "company_name": st.session_state['company_name'], "norma": st.session_state['norma'],
             "paso_ingesta": st.session_state['paso_ingesta'], "logo_path": st.session_state['logo_path'],
-            "env": st.session_state['env'], "kb": st.session_state['kb'], "last_update": datetime.datetime.now().isoformat()
+            "env": st.session_state['env'], "expediente": st.session_state['expediente'], 
+            "autorizado_emision": st.session_state['autorizado_emision'],
+            "auditor_name": st.session_state['auditor_name'], "rep_legal": st.session_state['rep_legal'],
+            "rep_id": st.session_state['rep_id'], "empresa_tamanio": st.session_state['empresa_tamanio'],
+            "empresa_sector": st.session_state['empresa_sector'],
+            "last_update": datetime.datetime.now().isoformat()
         }
         with open(os.path.join(base_dir, "audit_state.json"), "w") as f: json.dump(state, f, indent=4)
 
@@ -153,20 +159,20 @@ if st.session_state['env'] is None:
         st.info("💡 El entorno de 'Simulación' utiliza los documentos pre-cargados de Innovatech Solutions SAS para demostración de capacidades RAG.")
         
         btn_col1, btn_col2 = st.columns(2)
-        if btn_col1.button("🧪 Lanzar Simulación Académica"):
+        if btn_col1.button("🎓 Lanzar Simulación Académica", use_container_width=True):
             st.session_state['env'], st.session_state['company_name'] = "Simulacion", "Innovatech Solutions SAS"
             st.session_state['base_path'] = setup_company_folders("Innovatech Solutions SAS")
             st.session_state['paso_ingesta'] = 0
-            st.session_state['kb'] = {
-                "Misión y Visión Corporativa": "Liderar la transformación digital en Colombia mediante soluciones sostenibles y tecnología de vanguardia.",
-                "Valores y Código de Ética": "Integridad, Innovación, Respeto Ambiental y Transparencia.",
-                "Organigrama Funcional": "Estructura plana liderada por la Gerencia de Innovación y Dirección de Calidad.",
-                "PEI (Proyecto Educativo)": "Modelo pedagógico basado en la práctica industrial avanzada y aprendizaje experiencial."
-            }
-            # Pre-poblar sugerencias y estados para que la simulación se sienta 'viva'
-            st.session_state['paso_ingesta'] = 0 
-            st.session_state['autorizado_emision'] = False
-            st.session_state['kb'] = {} # Empleamos KB vacía para que el usuario indexe en la demo
+            
+            # MATERIA PRIMA SIMULADA (Innovatech V1.5.2)
+            st.session_state['auditor_name'] = "Juan Gabriel"
+            st.session_state['rep_legal'] = "Ing. Roberto Innova"
+            st.session_state['rep_id'] = "CC. 80.123.456"
+            st.session_state['empresa_tamanio'] = "Pyme (1-50 emp)"
+            st.session_state['empresa_sector'] = "Tecnología"
+            
+            st.session_state['expediente'] = {} # Vacío para permitir demostración de ingesta
+            
             if logo_file:
                 path = os.path.join(st.session_state['base_path'], "logo.png")
                 with open(path, "wb") as f: f.write(logo_file.getbuffer())
@@ -245,36 +251,31 @@ else:
     if menu == "📊 Dashboard Analítico":
         st.markdown(f"<h1 class='norm-header'>📊 Control de Mando: {company}</h1>", unsafe_allow_html=True)
         
-        # --- TABLERO DE TRAZABILIDAD (V1.5) ---
-        st.write("### 🏗️ Matriz de Trazabilidad de Ingesta")
+        # --- TABLERO DE TRAZABILIDAD DE MATERIA PRIMA (V1.5.2) ---
+        st.write("### 🏗️ Estatus de Materia Prima")
         
-        # Calcular porcentajes por área
-        areas = list(dict.fromkeys([c['area'] for c in cartas]))
+        # Calcular estados
+        fase_a_ok = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
+        fase_b_ok = st.session_state['empresa_tamanio'] != ""
+        progreso_c = (st.session_state['paso_ingesta'] / len(cartas)) * 100
+        
         c1, c2, c3 = st.columns(3)
-        cols = [c1, c2, c3]
-        
-        for i, area in enumerate(areas):
-            docs_area = [c for c in cartas if c['area'] == area]
-            total_area = len(docs_area)
-            completados_area = sum(1 for c in docs_area if cartas.index(c) < st.session_state['paso_ingesta'])
-            percent_area = (completados_area / total_area) * 100
-            
-            with cols[i % 3]:
-                st.markdown(f"<div class='elite-card' style='border-top: 5px solid #1E3A8A;'>", unsafe_allow_html=True)
-                st.markdown(f"**{area}**")
-                st.metric("Avance", f"{percent_area:.0f}%", f"{completados_area}/{total_area} Documentos")
-                st.progress(completados_area / total_area)
-                st.markdown("</div>", unsafe_allow_html=True)
+        with c1:
+            st.metric("Fase A: Identidad", "COMPLETA ✅" if fase_a_ok else "PENDIENTE ⏳")
+        with c2:
+            st.metric("Fase B: Dimensión", "COMPLETA ✅" if fase_b_ok else "PENDIENTE ⏳")
+        with c3:
+            st.metric("Fase C: Normativa", f"{progreso_c:.0f}%")
         
         st.divider()
         
         # Métricas Globales
         col_m1, col_m2, col_m3 = st.columns(3)
         total_total = len(cartas)
-        progreso_global = (st.session_state['paso_ingesta'] / total_total) * 100
+        progreso_global = ((1 if fase_a_ok else 0) + (1 if fase_b_ok else 0) + (st.session_state['paso_ingesta'] / total_total)) / 3 * 100
         
         col_m1.metric("Cumplimiento Global", f"{progreso_global:.1f}%")
-        col_m2.metric("Motor IA", "CAPACIDAD RAG ACTIVA", "V1.5 Elite")
+        col_m2.metric("Motor Experto", "BÚSQUEDA TÉCNICA ACTIVA", "V1.5.2 Elite")
         col_m3.metric("Seguridad", "SHA-256", "Inexpugnable")
         
         st.divider()
@@ -299,111 +300,115 @@ else:
                 st.write(f"{estado} {prefijo} **{c['doc']}**")
             st.markdown("</div>", unsafe_allow_html=True)
 
-    # --- SECCIÓN: INGESTA (HITL) ---
+    # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta (HITL)":
-        st.markdown("<h1 class='norm-header'>🗺️ Camino de Ingesta Departamental</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 class='norm-header'>🏗️ Ingesta de Materia Prima por Fases</h1>", unsafe_allow_html=True)
         
-        # Agrupación por Áreas
-        areas = list(dict.fromkeys([c['area'] for c in cartas]))
-        area_tabs = st.tabs(areas + ["🔒 Autorización Final"])
+        # CÁLCULO DE PROGRESO GLOBAL DE INGESTA
+        fase_a_ready = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
+        fase_b_ready = st.session_state['empresa_tamanio'] != ""
+        progreso_c = (st.session_state['paso_ingesta'] / len(cartas)) if len(cartas) > 0 else 0
         
-        for i, area in enumerate(areas):
-            with area_tabs[i]:
-                docs_area = [c for c in cartas if c['area'] == area]
-                completados_area = sum(1 for c in docs_area if cartas.index(c) < st.session_state['paso_ingesta'])
-                percent_area = (completados_area / len(docs_area)) * 100
-                
-                c_prog, c_status = st.columns([3, 1])
-                c_prog.progress(completados_area / len(docs_area))
-                c_status.markdown(f"**Avance: {percent_area:.0f}%**")
-                
-                st.write(f"### Requisitos: {area}")
-                
-                for c in docs_area:
-                    idx = cartas.index(c)
-                    es_completado = idx < st.session_state['paso_ingesta']
-                    es_actual = idx == st.session_state['paso_ingesta']
-                    
-                    with st.expander(f"{'✅' if es_completado else '⏳' if es_actual else '🔒'} {c['doc']}", expanded=es_actual):
-                        st.write(f"**Referencia:** {c['ref']}")
-                        st.write(c['desc'])
-                        
-                        if es_actual:
-                            # Interfaz de Carga Elite V1.5
-                            u1, u2 = st.columns([2, 1])
-                            uploaded_file = u1.file_uploader(f"Cargar {c['doc']}", type=['pdf', 'docx'], key=f"up_{idx}")
-                            if st.session_state['env'] == "Simulacion":
-                                u2.info(f"📂 Sugerido: **{c['file_hint']}**")
-                            
-                            if uploaded_file:
-                                st.success(f"🔍 '{uploaded_file.name}' detectado y procesado localmente.")
-                                
-                                # DOBLE CANAL: OCR vs MANUAL
-                                o_col1, o_col2 = st.columns(2)
-                                with o_col1:
-                                    st.markdown("#### 👁️ OCR / Extracción Directa")
-                                    raw_text = st.session_state['kb'].get(c['doc'], f"Contenido detectado en {uploaded_file.name}...")
-                                    st.caption("Texto recuperado por el motor IA:")
-                                    ocr_edit = st.text_area("OCR Result", value=raw_text, height=150, key=f"ocr_{idx}")
-                                
-                                with o_col2:
-                                    st.markdown("#### ✍️ Corrección / Perfeccionamiento")
-                                    st.caption("Ajuste omisiones o perfeccione la redacción:")
-                                    manual_edit = st.text_area("Validación Auditor", placeholder="Ingrese el texto definitivo aquí...", key=f"val_{idx}")
-                                
-                                # MOTOR DE PERFECCIONAMIENTO IA CONTEXTUAL (V1.5.1)
-                                st.markdown("---")
-                                st.markdown("#### 🤖 Evaluación de Calidad IA Elite")
-                                current_text = manual_edit if manual_edit else ocr_edit
-                                
-                                # Lógica Contextual
-                                if "Misión" in c['doc']:
-                                    if len(current_text) < 80:
-                                        st.warning("⚠️ **Sugerencia IA:** La Misión es el 'Por Qué' de la empresa. Se recomienda incluir el impacto social y el valor diferencial para cumplir con los estándares de Alta Dirección.")
-                                    elif "propósito" not in current_text.lower() and "servicio" not in current_text.lower():
-                                        st.info("💡 **Tip de Madurez:** Intente enfocar la redacción hacia el servicio al cliente y el propósito trascedental.")
-                                    else: st.success("✅ **Estatus IA:** Misión robusta y alineada.")
-                                    
-                                elif "Visión" in c['doc']:
-                                    if "202" not in current_text: # Busca un año
-                                        st.warning("⚠️ **Sugerencia IA:** Una Visión 'Elite' debe tener un horizonte de tiempo claro (ej. 2026, 2030). Defina hacia dónde va la organización.")
-                                    else: st.success("✅ **Estatus IA:** Visión con horizonte estratégico detectado.")
-                                    
-                                elif "Riesgos" in c['doc'] or "Mapa" in c['doc']:
-                                    if "crítico" not in current_text.lower() and "mitigación" not in current_text.lower():
-                                        st.warning(f"⚠️ **Crítica IA:** El análisis de {c['doc']} carece de términos de mitigación de riesgo. Esto es mandatorio para {st.session_state['norma']}.")
-                                    else: st.success("✅ **Estatus IA:** Enfoque preventivo detectado.")
-                                    
-                                else: # Genérico
-                                    if len(current_text) < 100:
-                                        st.warning(f"⚠️ **Crítica IA:** Información escueta. Para {st.session_state['norma']} se requiere mayor profundidad técnica.")
-                                    else: st.success("✅ **Estatus IA:** Documentación validada.")
-                                
-                                if st.button("💎 CONFIRMAR E INDEXAR", key=f"btn_{idx}"):
-                                    final_text = manual_edit if manual_edit else ocr_edit
-                                    if final_text and len(final_text) > 20:
-                                        st.session_state['kb'][c['doc']] = final_text
-                                        target_path = os.path.join(base_path, "03_Evidencias_Ingesta", uploaded_file.name)
-                                        with open(target_path, "wb") as f: f.write(uploaded_file.getbuffer())
-                                        st.session_state['paso_ingesta'] += 1
-                                        save_audit_state()
-                                        st.rerun()
-                                    else: st.error("⚠️ Ingrese un contenido válido para continuar.")
-                        elif es_completado:
-                            st.info(f"✨ Información Indexada: {st.session_state['kb'].get(c['doc'])[:150]}...")
+        progreso_total = ((1 if fase_a_ready else 0) + (1 if fase_b_ready else 0) + progreso_c) / 3
         
-        with area_tabs[-1]:
-            st.write("### 🔒 Cierre de Fase de Ingesta")
-            progreso = (st.session_state['paso_ingesta'] / len(cartas)) * 100
+        st.markdown(f"### 📈 Avance Consolidado del Expediente: {progreso_total*100:.0f}%")
+        st.progress(progreso_total)
+        
+        col_st1, col_st2, col_st3 = st.columns(3)
+        col_st1.markdown(f"**Fase A:** {'✅' if fase_a_ready else '⏳'}")
+        col_st2.markdown(f"**Fase B:** {'✅' if fase_b_ready else '⏳'}")
+        col_st3.markdown(f"**Fase C:** {progreso_c*100:.0f}%")
+        st.divider()
+
+        tab_a, tab_b, tab_c, tab_final = st.tabs(["🔒 Fase A: Identidad", "📊 Fase B: Dimensión", "📜 Fase C: Cuerpo Normativo", "🏁 Validación & Cierre"])
+        
+        # --- FASE A: IDENTIDAD ---
+        with tab_a:
+            st.write("### 🏦 Datos Maestros de Identidad")
+            st.info("Información obligatoria para la validez legal de las firmas y encabezados.")
             
-            if progreso < 100:
-                st.warning(f"⚠️ Ingesta incompleta ({progreso:.0f}%). Debe completar todos los departamentos antes de autorizar la emisión de formatos diligenciados.")
+            c1, c2 = st.columns(2)
+            st.session_state['auditor_name'] = c1.text_input("👨‍💼 Nombre Completo del Auditor:", value=st.session_state['auditor_name'], placeholder="Ingrese su nombre (Ej: Juan Gabriel)")
+            st.session_state['rep_legal'] = c2.text_input("⚖️ Representante Legal de la Entidad:", value=st.session_state['rep_legal'], placeholder="Nombre del Representante")
+            st.session_state['rep_id'] = c1.text_input("🆔 Documento de Identidad (Representante):", value=st.session_state['rep_id'], placeholder="Cédula o ID Legal")
+            
+            if st.button("💾 REGISTRAR IDENTIDAD"):
+                save_audit_state()
+                st.success("✅ Identidad Registrada.")
+                st.rerun()
+
+        # --- FASE B: DIMENSIONAMIENTO ---
+        with tab_b:
+            st.write("### 📊 Perfilamiento Organizacional")
+            st.info("El tamaño y sector de la empresa determinan de forma crítica el rigor de los controles a aplicar.")
+            
+            st.session_state['empresa_tamanio'] = st.selectbox("📏 Tamaño de la Empresa:", ["Pyme (1-50 emp)", "Mediana (51-200 emp)", "Gran Empresa (>200 emp)"], index=["Pyme (1-50 emp)", "Mediana (51-200 emp)", "Gran Empresa (>200 emp)"].index(st.session_state['empresa_tamanio']) if st.session_state['empresa_tamanio'] in ["Pyme (1-50 emp)", "Mediana (51-200 emp)", "Gran Empresa (>200 emp)"] else 0)
+            st.session_state['empresa_sector'] = st.selectbox("🏭 Sector Económico:", ["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"], index=["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"].index(st.session_state['empresa_sector']) if st.session_state['empresa_sector'] in ["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"] else 0)
+            
+            if st.button("💾 GUARDAR PERFILADO Y CONTINUAR"):
+                save_audit_state()
+                st.success("✅ Perfilamiento guardado. Proceda al Cuerpo Normativo.")
+
+        # --- FASE C: CUERPO NORMATIVO ---
+        with tab_c:
+            if not fase_a_ready:
+                st.error("🔒 El Cuerpo Normativo está bloqueado. Complete primero la Fase A: Identidad.")
             else:
-                st.success("✅ Todos los documentos e hitos estratégicos han sido indexados y validados.")
-                st.session_state['autorizado_emision'] = st.toggle("AUTORIZAR DILIGENCIAMIENTO Y EMISIÓN DE FORMATOS", value=st.session_state['autorizado_emision'])
-                if st.session_state['autorizado_emision']:
-                    st.info("🚀 El sistema ha sido habilitado para generar documentos 'Motivados' con su base de conocimiento.")
-                    if st.button("📊 Ver Resultados en Dashboard"): st.rerun()
+                st.write("### ⚙️ Carga de Anexos Técnicos")
+                # Agrupación por Áreas (Excluyendo lo que ya se pidió en A si fuera el caso, pero aquí mantenemos el loop departamental)
+                areas = list(dict.fromkeys([c['area'] for c in cartas]))
+                for i, area in enumerate(areas):
+                    docs_area = [c for c in cartas if c['area'] == area]
+                    completados_area = sum(1 for c in docs_area if cartas.index(c) < st.session_state['paso_ingesta'])
+                    
+                    with st.expander(f"{area} - Avance: {(completados_area/len(docs_area))*100:.0f}%"):
+                        for c in docs_area:
+                            idx = cartas.index(c)
+                            es_completado = idx < st.session_state['paso_ingesta']
+                            es_actual = idx == st.session_state['paso_ingesta']
+                            
+                            st.write(f"**{'✅' if es_completado else '⏳' if es_actual else '🔒'} {c['doc']}**")
+                            
+                            if es_actual:
+                                uploaded_file = st.file_uploader(f"Cargar Evidencia: {c['doc']}", type=['pdf', 'docx'], key=f"up_{idx}")
+                                if uploaded_file:
+                                    st.info("🧿 Motor de Reconocimiento Procesando...")
+                                    col1, col2 = st.columns(2)
+                                    with col1:
+                                        raw_txt = st.text_area("📄 Texto Detectado por Reconocimiento", value=f"Contenido de {c['doc']}...", height=150, key=f"ocr_{idx}")
+                                    with col2:
+                                        manual_txt = st.text_area("✍️ Información Omitida / Ajuste Auditor", placeholder="Ingrese aquí lo que el motor no detectó...", key=f"val_{idx}")
+                                    
+                                    # Evaluador Experto de Alineamiento (Influenciado por Fase B)
+                                    st.markdown("---")
+                                    st.markdown(f"#### 🕵️ Evaluación del Experto (Rigor: {st.session_state['empresa_tamanio']})")
+                                    check_txt = manual_txt if manual_txt else raw_txt
+                                    
+                                    # Lógica de Rigor por Tamaño
+                                    es_grande = "Gran" in st.session_state['empresa_tamanio']
+                                    min_len = 150 if es_grande else 80
+                                    
+                                    if len(check_txt) < min_len:
+                                        msg = f"⚠️ **Alerta:** Para una {st.session_state['empresa_tamanio']}, se exige mayor profundidad técnica." if es_grande else "⚠️ **Alerta:** Información escueta para los estándares mínimos."
+                                        st.warning(msg)
+                                    else:
+                                        st.success(f"✅ **Validación:** Contenido sólido para {st.session_state['empresa_tamanio']}.")
+                                    
+                # RESUMEN DE MATERIA PRIMA FALTANTE (FASE C)
+                st.markdown("---")
+                total_req = len(cartas)
+                doc_list_missing = [c['doc'] for c in cartas if cartas.index(c) >= st.session_state['paso_ingesta']]
+                
+                c_inf1, c_inf2 = st.columns(2)
+                c_inf1.metric("Materia Prima Fase C", f"{progreso_c*100:.0f}%", f"{st.session_state['paso_ingesta']}/{total_req} Cargados")
+                
+                if doc_list_missing:
+                    with c_inf2:
+                        st.warning(f"⚠️ **Pendientes de Carga ({len(doc_list_missing)}):**")
+                        for d in doc_list_missing[:5]: st.write(f"- {d}")
+                        if len(doc_list_missing) > 5: st.write(f"... y {len(doc_list_missing)-5} más.")
+                else:
+                    c_inf2.success("✅ ¡Cuerpo Normativo Completo!")
 
     # --- SECCIÓN: FORMATOS ---
     elif menu == "⚖️ Emisión de Títulos/Formatos":
@@ -451,9 +456,21 @@ else:
                 # Botón de Motivado (Solo con Autorización)
                 if st.session_state['autorizado_emision']:
                     if st.button("🚀 EMITIR DILIGENCIADO ELITE", key="full_prog"):
-                        path = os.path.join(base_path, "02_Auditoria_IA", f"FULL_PROG.docx")
-                        create_audit_program_v2(company, os.path.dirname(path), st.session_state['logo_path'], st.session_state['kb'])
-                        with open(path, "rb") as f: st.download_button("Descargar Documento Motivado", f, file_name=f"ELITE_Diligenciado_PROG_{company}.docx")
+                        with st.spinner("Generando Matriz Legal y Programa Motivado..."):
+                            ident_data = {
+                                "auditor": st.session_state['auditor_name'],
+                                "rep_legal": st.session_state['rep_legal'],
+                                "rep_id": st.session_state['rep_id'],
+                                "tamanio": st.session_state['empresa_tamanio'],
+                                "sector": st.session_state['empresa_sector']
+                            }
+                            
+                            f1 = create_audit_program_v2(company, st.session_state['base_path'], st.session_state['logo_path'], st.session_state['expediente'], ident_data)
+                            f2 = create_legal_checklist(company, st.session_state['base_path'], st.session_state['logo_path'], st.session_state['expediente'], ident_data)
+                            
+                            st.success("✅ Documentos Diligenciados con Materia Prima Real.")
+                            with open(f1, "rb") as f: st.download_button("📂 Descargar Programa de Auditoría", f, file_name=os.path.basename(f1))
+                            with open(f2, "rb") as f: st.download_button("📊 Descargar Checklist Legal", f, file_name=os.path.basename(f2))
                 st.markdown("</div>", unsafe_allow_html=True)
 
             # --- DOCUMENTO 2: CHECKLIST ---
