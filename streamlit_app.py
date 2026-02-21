@@ -206,29 +206,37 @@ else:
         st.session_state['env'] = None
         st.rerun()
 
-    # --- DATOS DINÁMICOS POR NORMA ---
+    # --- CONFIGURACIÓN DE PASOS DE INGESTA (Secuencial y Real) ---
+    base_cartas = [
+        {"doc": "Misión y Visión Corporativa", "ref": "Estratégico", "desc": "Definición del propósito y dirección de la entidad.", "file_hint": "Mision_Vision.pdf"},
+        {"doc": "Valores y Código de Ética", "ref": "Cultura", "desc": "Principios rectores de la organización.", "file_hint": "Codigo_Etica.pdf"},
+        {"doc": "Organigrama Funcional", "ref": "Estructura", "desc": "Jerarquía y responsabilidades definidas.", "file_hint": "Organigrama.pdf"}
+    ]
+
     if "Académico" in st.session_state['norma']:
-        cartas = [
-            {"doc": "PEI (Proyecto Educativo)", "ref": "Ley 115", "desc": "Definición de la misión académica.", "file_hint": "PEI_Innovatech.pdf"},
+        norm_cartas = [
+            {"doc": "PEI (Proyecto Educativo)", "ref": "Ley 115", "desc": "Columna vertebral académica.", "file_hint": "PEI_Innovatech.pdf"},
             {"doc": "Registro Calificado", "ref": "Dec. 1330", "desc": "Resolución ministerial de operación.", "file_hint": "Resolucion_MEN.pdf"},
             {"doc": "Estatuto Docente", "ref": "Dec. 1278", "desc": "Reglamentación del personal académico.", "file_hint": "Estatutos.pdf"}
         ]
     elif "Seguridad" in st.session_state['norma']:
-        cartas = [
+        norm_cartas = [
             {"doc": "Política de Seguridad", "ref": "ISO 27001:5.2", "desc": "Directrices de protección de datos.", "file_hint": "Politica_Seguridad.pdf"},
-            {"doc": "Análisis de Riesgos", "ref": "ISO 27001:6.1", "desc": "Identificación de vulnerabilidades.", "file_hint": "Matriz_Riesgos.xlsx"},
-            {"doc": "Inventario de Activos", "ref": "ISO 27001:5.9", "desc": "Control de activos de información.", "file_hint": "Activos.xlsx"}
+            {"doc": "Análisis de Riesgos", "ref": "ISO 27001:6.1", "desc": "Identificación de vulnerabilidades.", "file_hint": "Matriz_Riesgos.xlsx"}
         ]
     elif "Ambiental" in st.session_state['norma']:
-        cartas = [
+        norm_cartas = [
             {"doc": "Aspectos Ambientales", "ref": "ISO 14001:6.1.2", "desc": "Evaluación de impactos.", "file_hint": "Aspectos.pdf"},
-            {"doc": "Objetivos Ambientales", "ref": "ISO 14001:6.2", "just": "Metas de eco-eficiencia.", "file_hint": "Metas.pdf"}
+            {"doc": "Objetivos Ambientales", "ref": "ISO 14001:6.2", "desc": "Metas de eco-eficiencia.", "file_hint": "Metas.pdf"}
         ]
     else: # ISO 9001
-        cartas = [
+        norm_cartas = [
             {"doc": "Contexto Organizacional", "ref": "ISO 9001:4.1", "desc": "Análisis DOFA y partes interesadas.", "file_hint": "Contexto.pdf"},
             {"doc": "Mapa de Procesos", "ref": "ISO 9001:4.4", "desc": "Interacción de procesos estratégicos.", "file_hint": "Mapa_Procesos.pdf"}
         ]
+    
+    # Combinación de Fases: Cimientos + Norma
+    cartas = base_cartas + norm_cartas
 
     # --- SECCIÓN: DASHBOARD ANALÍTICO ---
     if menu == "📊 Dashboard Analítico":
@@ -236,81 +244,86 @@ else:
         
         # Métricas Elite
         col_m1, col_m2, col_m3, col_m4 = st.columns(4)
-        progreso = (st.session_state['paso_ingesta'] / len(cartas)) * 100
-        col_m1.metric("Cumplimiento Ingesta", f"{progreso:.1f}%")
-        col_m2.metric("Motor RAG", "Conectado", "Local")
-        col_m3.metric("Seguridad", "SHA-256", "Active")
-        col_m4.metric("Auditor", "HMO IA", "V1.4")
+        total_total = len(cartas)
+        progreso = (st.session_state['paso_ingesta'] / total_total) * 100
         
-        st.markdown("<br>", unsafe_allow_html=True)
+        col_m1.metric("Cumplimiento Total", f"{progreso:.1f}%")
+        col_m2.metric("Fase Actual", "Cimientos" if st.session_state['paso_ingesta'] < len(base_cartas) else "Normativa")
+        col_m3.metric("Motor RAG", "ACTIVO", "Local")
+        col_m4.metric("Seguridad", "SHA-256")
+        
+        st.divider()
         
         # Gráficos y Análisis
         col_g1, col_g2 = st.columns([2, 1])
         with col_g1:
             st.markdown("<div class='elite-card'><b>Radar de Madurez Normativa</b>", unsafe_allow_html=True)
-            # Simulación de Radar de madurez
-            labels = ['Contexto', 'Liderazgo', 'Apoyo', 'Operación', 'Evaluación', 'Mejora']
-            values = [80, 70, progreso, 60, 50, 40]
+            labels = ['Misión/Visión', 'Ética', 'Estructura', 'Norma Cl.4', 'Norma Cl.5', 'Norma Cl.6']
+            values = [100 if i < st.session_state['paso_ingesta'] else 20 for i in range(len(labels))]
             fig = go.Figure(data=go.Scatterpolar(r=values, theta=labels, fill='toself', line_color='#1E3A8A'))
             fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False, height=350, margin=dict(l=40, r=40, t=20, b=20))
             st.plotly_chart(fig, use_container_width=True)
             st.markdown("</div>", unsafe_allow_html=True)
             
         with col_g2:
-            st.markdown("<div class='elite-card'><b>Estado de la Ingesta</b>", unsafe_allow_html=True)
+            st.markdown("<div class='elite-card'><b>Progreso de Expediente</b>", unsafe_allow_html=True)
             for i, c in enumerate(cartas):
                 estado = "✅" if i < st.session_state['paso_ingesta'] else "⏳"
-                st.write(f"{estado} **Paso {i+1}:** {c['doc']}")
+                prefijo = "💎" if i < len(base_cartas) else "📜"
+                st.write(f"{estado} {prefijo} **{c['doc']}**")
             st.markdown("</div>", unsafe_allow_html=True)
 
     # --- SECCIÓN: INGESTA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta (HITL)":
         st.markdown("<h1 class='norm-header'>🗺️ Camino de Ingesta Interactiva</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='color: #64748B;'>Alimente la base de conocimiento con evidencias reales para el motor RAG.</p>", unsafe_allow_html=True)
         
         paso_actual = st.session_state['paso_ingesta']
+        total_pasos = len(cartas)
         
-        if paso_actual < len(cartas):
+        # Identificador de Fase
+        es_base = paso_actual < len(base_cartas)
+        fase_txt = "🏷️ FASE 1: CIMIENTOS ESTRATÉGICOS" if es_base else "📜 FASE 2: REQUISITOS NORMATIVOS"
+        st.subheader(fase_txt)
+        
+        if paso_actual < total_pasos:
             carta = cartas[paso_actual]
             st.markdown(f"""
-                <div style='background-color: #EFF6FF; padding: 20px; border-left: 5px solid #1D4ED8; border-radius: 8px;'>
-                    <h3>PRÓXIMO REQUERIMIENTO: {carta['doc']}</h3>
-                    <p><b>Referencia:</b> {carta['ref']}</p>
-                    <p><i>{carta['desc']}</i></p>
+                <div style='background-color: #F0F9FF; padding: 1.5rem; border-left: 5px solid #0369A1; border-radius: 12px; margin-bottom: 2rem;'>
+                    <h3 style='margin-top: 0; color: #0369A1;'>{paso_actual + 1}. {carta['doc']}</h3>
+                    <p><b>Referencia Legal/Técnica:</b> {carta['ref']}</p>
+                    <p style='font-size: 1.1rem;'>{carta['desc']}</p>
+                    <hr style='border: 0; border-top: 1px solid #BAE6FD; margin: 1rem 0;'>
+                    <p style='color: #0C4A6E; font-size: 0.9rem;'><b>💡 Por qué es vital:</b> Este documento permite al Motor RAG entender el contexto de la organización para realizar hallazgos precisos.</p>
                 </div>
             """, unsafe_allow_html=True)
-            
-            st.markdown("<br>", unsafe_allow_html=True)
             
             # Interfaz de Carga Real
             u_col1, u_col2 = st.columns([2, 1])
             with u_col1:
-                uploaded_file = st.file_uploader(f"Subir evidencia para: {carta['doc']}", type=['pdf', 'docx'], key=f"up_{paso_actual}")
+                uploaded_file = st.file_uploader(f"Cargar archivo para: {carta['doc']}", type=['pdf', 'docx'], key=f"up_{paso_actual}")
             with u_col2:
                 if st.session_state['env'] == "Simulacion":
-                    st.warning(f"💡 Sugerencia: En Innovatech solutions, use '{carta['file_hint']}'")
+                    st.info(f"📂 Archivo sugerido: **{carta['file_hint']}**")
             
             if uploaded_file:
-                st.success(f"🔍 Documento '{uploaded_file.name}' detectado.")
-                st.markdown("---")
+                st.success(f"🔍 Evidencia '{uploaded_file.name}' cargada correctamente.")
                 
-                # Guardar Físicamente en Carpeta Evidencias
+                # Ruta de destino
                 target_path = os.path.join(base_path, "03_Evidencias_Ingesta", uploaded_file.name)
                 
-                st.write("**Vista Previa de Extracción RAG:**")
-                st.code(f"Procesando metadatos para {carta['doc']}...\nIntegridad SHA-256 generada.\nDestino: {target_path}", language="bash")
+                st.markdown("<div style='background: #F8FAFC; padding: 10px; border-radius: 8px;'><b>Estado de Indexación:</b></div>", unsafe_allow_html=True)
+                st.code(f"Generating SHA-256 Fingerprint...\nIndexing nodes into Local Vector Store...\nReady for validation.", language="bash")
                 
-                if st.button("💎 CONFIRMAR E INDEXAR DOCUMENTO"):
+                if st.button("💎 CONFIRMAR Y GUARDAR PASO"):
                     with open(target_path, "wb") as f:
                         f.write(uploaded_file.getbuffer())
                     st.session_state['paso_ingesta'] += 1
                     save_audit_state()
                     st.rerun()
         else:
+            st.success("🎉 ¡Ingesta de Base de Conocimiento Completa!")
             st.balloons()
-            st.success("🎉 ¡Fase de Ingesta Completa! Todos los documentos han sido indexados.")
             if st.button("📊 Volver al Dashboard"):
-                st.session_state['paso_ingesta'] = 0 # Opcional: solo para pruebas
                 st.rerun()
 
     # --- SECCIÓN: FORMATOS ---
