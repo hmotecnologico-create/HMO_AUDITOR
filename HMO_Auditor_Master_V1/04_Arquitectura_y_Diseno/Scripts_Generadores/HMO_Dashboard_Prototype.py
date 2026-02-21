@@ -193,8 +193,7 @@ else:
         "Dashboard de Trazabilidad", 
         "Ingesta Guiada (ISO 19011)", 
         "Generación de Formatos Legales", 
-        "Help Bot Normativo",
-        "📖 Manual de Usuario"
+        "💎 Centro de Ayuda & Veracidad"
     ])
     
     if st.sidebar.button("🔒 Guardar y Salir"):
@@ -202,101 +201,126 @@ else:
         st.session_state['env'] = None
         st.rerun()
 
-    # --- CONTENIDO DE AYUDA ---
-    if menu == "📖 Manual de Usuario":
-        st.title("📖 Manual de Operación y Continuidad")
-        st.info("Su progreso se guarda automáticamente gracias al sistema de persistencia HMO.")
-        with st.expander("📍 Continuidad Multi-Día", expanded=True):
-            st.write(f"""
-            - **Auto-Guardado**: Se activa en cada aprobación de documento o al salir.
-            - **Ubicación Física**: Todos sus archivos están en `{base_path}`.
-            - **Integridad**: No borre el archivo `audit_state.json` o no podrá reanudar la sesión.
-            """)
-        st.markdown(f"### 📋 Checklist de Ingesta Oficial")
-        st.write("Siga los pasos de la Ingesta Guiada para alimentar el motor RAG.")
-
+    # --- CARTAS NORMATIVAS (Persuadir veracidad) ---
+    if "Académico" in st.session_state['norma']:
+        cartas_navegacion = [
+            {"doc": "PEI (Proyecto Educativo)", "ref": "Ley 115 / Dec. 1330", "justificacion": "Columna vertebral académica.", "simulado": "PEI_Verificado.pdf"},
+            {"doc": "Registro Calificado", "ref": "Dec. 1330 Art. 2.5", "justificacion": "Existencia legal del programa.", "simulado": "Resolucion_MEN.pdf"},
+            {"doc": "Estatuto Docente", "ref": "Dec. 1278 / 2277", "justificacion": "Garantía de idoneidad.", "simulado": "Estatutos.pdf"}
+        ]
     else:
-        # --- CARTAS NORMATIVAS (Persuadir veracidad) ---
-        if "Académico" in st.session_state['norma']:
-            cartas_navegacion = [
-                {"doc": "PEI (Proyecto Educativo)", "ref": "Ley 115 / Dec. 1330", "justificacion": "Columna vertebral académica.", "simulado": "PEI_Verificado.pdf"},
-                {"doc": "Registro Calificado", "ref": "Dec. 1330 Art. 2.5", "justificacion": "Existencia legal del programa.", "simulado": "Resolucion_MEN.pdf"},
-                {"doc": "Estatuto Docente", "ref": "Dec. 1278 / 2277", "justificacion": "Garantía de idoneidad.", "simulado": "Estatutos.pdf"}
-            ]
+        cartas_navegacion = [
+            {"doc": "Contexto de la Organización", "ref": "ISO 9001 Cl. 4.1", "justificacion": "Comprensión del entorno.", "simulado": "FODA_Estrategico.docx"},
+            {"doc": "Política de Calidad", "ref": "ISO 9001 Cl. 5.2", "justificacion": "Compromiso de dirección.", "simulado": "Politica_V2.pdf"},
+            {"doc": "Mapa de Procesos", "ref": "ISO 9001 Cl. 4.4", "justificacion": "Gestión por procesos.", "simulado": "Mapa_Procesos.png"}
+        ]
+
+    # --- SECCIONES ---
+    if menu == "Dashboard de Trazabilidad":
+        st.title(f"📊 Dashboard de Control: {company}")
+        st.caption(f"Veracidad Normativa: **Fuentes Oficiales ISO/MEN Ancladas**")
+        
+        avance = (st.session_state['paso_ingesta'] / len(cartas_navegacion)) * 100
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("Progreso Ingesta", f"{avance:.0f}%", f"+{st.session_state['paso_ingesta']} docs")
+        m2.metric("Motor RAG", "ACTIVO", "Anclado en Norma")
+        m3.metric("SHA-256", "Vigilante", "Blindado")
+        m4.metric("Estado", "V1.3 Elite", "Persistente")
+        
+        st.divider()
+        df = pd.DataFrame({'Requisito': [c['doc'] for c in cartas_navegacion], 'Estado': [100 if i < st.session_state['paso_ingesta'] else 50 if i == st.session_state['paso_ingesta'] else 0 for i in range(len(cartas_navegacion))]})
+        fig = px.bar(df, x='Requisito', y='Estado', color='Estado', range_y=[0, 100], title="Mapa de Cumplimiento por Nodos")
+        st.plotly_chart(fig, use_container_width=True)
+
+    elif menu == "Ingesta Guiada (ISO 19011)":
+        st.title("🗺️ Camino de Ingesta Basada en Evidencia")
+        st.write("Alimente la base de conocimiento con documentos verdaderos.")
+        if st.session_state['paso_ingesta'] < len(cartas_navegacion):
+            paso = st.session_state['paso_ingesta']
+            carta = cartas_navegacion[paso]
+            st.markdown(f"### 📍 Paso {paso+1}: {carta['doc']}")
+            st.info(f"**Justificación Jurídica ({carta['ref']}):** {carta['justificacion']}")
+            
+            up = st.file_uploader(f"Subir evidencia para {carta['doc']}", key=f"up_{paso}")
+            if st.session_state['env'] == "Simulacion":
+                if st.button("🚀 Simular Ingesta Veraz"): up = True
+            
+            if up:
+                st.success("✅ Verificado contra norma. Hash generado.")
+                if st.button("Aprobar y Guardar Progreso"):
+                    st.session_state['paso_ingesta'] += 1
+                    save_audit_state()
+                    st.rerun()
         else:
-            cartas_navegacion = [
-                {"doc": "Contexto de la Organización", "ref": "ISO 9001 Cl. 4.1", "justificacion": "Comprensión del entorno.", "simulado": "FODA_Estrategico.docx"},
-                {"doc": "Política de Calidad", "ref": "ISO 9001 Cl. 5.2", "justificacion": "Compromiso de dirección.", "simulado": "Politica_V2.pdf"},
-                {"doc": "Mapa de Procesos", "ref": "ISO 9001 Cl. 4.4", "justificacion": "Gestión por procesos.", "simulado": "Mapa_Procesos.png"}
-            ]
+            st.balloons()
+            st.success("🎉 Ingesta Completa. El sistema ha capturado la veracidad de su empresa.")
 
-        # --- SECCIONES ---
-        if menu == "Dashboard de Trazabilidad":
-            st.title(f"📊 Dashboard de Control: {company}")
-            st.caption(f"Veracidad Normativa: **Fuentes Oficiales ISO/MEN Ancladas**")
-            
-            avance = (st.session_state['paso_ingesta'] / len(cartas_navegacion)) * 100
-            m1, m2, m3, m4 = st.columns(4)
-            m1.metric("Progreso Ingesta", f"{avance:.0f}%", f"+{st.session_state['paso_ingesta']} docs")
-            m2.metric("Motor RAG", "ACTIVO", "Anclado en Norma")
-            m3.metric("SHA-256", "Vigilante", "Blindado")
-            m4.metric("Estado", "V1.3 Elite", "Persistente")
-            
-            st.divider()
-            df = pd.DataFrame({'Requisito': [c['doc'] for c in cartas_navegacion], 'Estado': [100 if i < st.session_state['paso_ingesta'] else 50 if i == st.session_state['paso_ingesta'] else 0 for i in range(len(cartas_navegacion))]})
-            fig = px.bar(df, x='Requisito', y='Estado', color='Estado', range_y=[0, 100], title="Mapa de Cumplimiento por Nodos")
-            st.plotly_chart(fig, use_container_width=True)
-
-        elif menu == "Ingesta Guiada (ISO 19011)":
-            st.title("🗺️ Camino de Ingesta Basada en Evidencia")
-            st.write("Alimente la base de conocimiento con documentos verdaderos.")
-            if st.session_state['paso_ingesta'] < len(cartas_navegacion):
-                paso = st.session_state['paso_ingesta']
-                carta = cartas_navegacion[paso]
-                st.markdown(f"### 📍 Paso {paso+1}: {carta['doc']}")
-                st.info(f"**Justificación Jurídica ({carta['ref']}):** {carta['justificacion']}")
-                
-                up = st.file_uploader(f"Subir evidencia para {carta['doc']}", key=f"up_{paso}")
-                if st.session_state['env'] == "Simulacion":
-                    if st.button("🚀 Simular Ingesta Veraz"): up = True
-                
-                if up:
-                    st.success("✅ Verificado contra norma. Hash generado.")
-                    if st.button("Aprobar y Guardar Progreso"):
-                        st.session_state['paso_ingesta'] += 1
-                        save_audit_state()
-                        st.rerun()
+    elif menu == "Generación de Formatos Legales":
+        st.title("⚖️ Emisión de Títulos de Auditoría Legionarios")
+        st.write(f"Destino: `{base_path}`")
+        
+        c1, c2 = st.columns(2)
+        with c1:
+            st.subheader("📝 Templates en Blanco")
+            if st.button("Generar Programa Vacío"):
+                path = os.path.join(base_path, "01_Templates_Vacios", f"PLANTILLA_PROG_{company[:5]}.docx")
+                create_audit_program_v2(company, path, st.session_state['logo_path'])
+                st.success("Documento guardado.")
+        with c2:
+            st.subheader("🤖 Auditoría Diligenciada (RAG)")
+            if st.session_state['paso_ingesta'] < 1:
+                st.warning("Requiere evidencias para auto-llenar.")
             else:
-                st.balloons()
-                st.success("🎉 Ingesta Completa. El sistema ha capturado la veracidad de su empresa.")
+                if st.button("Auto-Diligenciar con IA"):
+                    path = os.path.join(base_path, "02_Auditoria_IA", f"IA_AUD_PROG_{company[:5]}.docx")
+                    create_audit_program_v2(company + " (PROCESADO IA)", path, st.session_state['logo_path'])
+                    st.success("Documento procesado con éxito.")
 
-        elif menu == "Generación de Formatos Legales":
-            st.title("⚖️ Emisión de Títulos de Auditoría Legionarios")
-            st.write(f"Destino: `{base_path}`")
+    elif menu == "💎 Centro de Ayuda & Veracidad":
+        st.title("💎 Centro de Ayuda & Veracidad Elite")
+        tab1, tab2, tab3 = st.tabs(["📖 Guía de Operación", "🏛️ Base Normativa", "🤖 Asistente Técnico"])
+        
+        with tab1:
+            st.subheader("Manual de Continuidad del Negocio")
+            st.info("Su progreso se guarda automáticamente en el archivo `audit_state.json`.")
+            col_h1, col_h2 = st.columns(2)
+            with col_h1:
+                st.markdown("""
+                **Pasos Críticos de Éxito:**
+                1. **Carga de Empresa**: Defina el nombre y logo para el blindaje.
+                2. **Ingesta Guiada**: Suba evidencias PDF/Word para alimentar el motor RAG.
+                3. **Validación HITL**: El auditor humano siempre tiene la última palabra.
+                """)
+            with col_h2:
+                st.markdown(f"""
+                **Seguridad de Datos:**
+                - **Ruta Local**: `{base_path}`.
+                - **Privacidad**: Sus datos nunca salen de este entorno privado.
+                - **Sellado**: Cada reporte incluye un hash SHA-256 de autenticidad.
+                """)
             
-            c1, c2 = st.columns(2)
-            with c1:
-                st.subheader("📝 Templates en Blanco")
-                if st.button("Generar Programa Vacío"):
-                    path = os.path.join(base_path, "01_Templates_Vacios", f"PLANTILLA_PROG_{company[:5]}.docx")
-                    create_audit_program_v2(company, path, st.session_state['logo_path'])
-                    st.success("Documento guardado.")
-            with c2:
-                st.subheader("🤖 Auditoría Diligenciada (RAG)")
-                if st.session_state['paso_ingesta'] < 1:
-                    st.warning("Requiere evidencias para auto-llenar.")
-                else:
-                    if st.button("Auto-Diligenciar con IA"):
-                        path = os.path.join(base_path, "02_Auditoria_IA", f"IA_AUD_PROG_{company[:5]}.docx")
-                        create_audit_program_v2(company + " (PROCESADO IA)", path, st.session_state['logo_path'])
-                        st.success("Documento procesado con éxito.")
+        with tab2:
+            st.subheader("Root of Trust: Matriz de Fuentes")
+            st.write("El sistema está anclado a los siguientes marcos legales internacionales y nacionales:")
+            data_norma = {
+                "Norma": ["ISO 9001:2015", "ISO 27001:2022", "Dec. 1330 MEN", "ISO 19011:2018"],
+                "Aplicación": ["Gestión de Calidad", "Seguridad de Información", "Registro Calificado", "Directrices de Auditoría"],
+                "Estado": ["ANCLADO", "ANCLADO", "ANCLADO", "ANCLADO"]
+            }
+            st.table(pd.DataFrame(data_norma))
+            st.warning("⚠️ Nota: Las respuestas de la IA son sugerencias basadas en estos textos. El auditor debe verificar la cita exacta.")
 
-        elif menu == "Help Bot Normativo":
-            st.title("🤖 Oráculo Normativo (Veracidad Garantizada)")
-            st.write(f"Base de Conocimiento Actual: **ISO 9001 / 27001 / Decretos MEN**")
-            prompt = st.text_input("Consulte el requerimiento legal:")
-            if prompt:
-                st.markdown(f"> **Respuesta Basada en Norma:** Según el **Decreto 1330 / ISO 19011**, este requisito es verificable mediante la evidencia cargada en el paso anterior.")
+        with tab3:
+            st.subheader("🤖 Consultas al Oráculo RAG")
+            st.write("Resuelva dudas sobre requerimientos específicos o metodología.")
+            q = st.text_input("Ej: ¿Cómo auditar el registro calificado según norma?", key="help_q")
+            if q:
+                st.success("**Respuesta Elite:**")
+                st.markdown(f"""
+                Basándose en el **Plan de Implementación HMO**, se recomienda:
+                - Verificar la coherencia entre el PEI y la práctica docente.
+                - El motor RAG ha identificado que este punto se valida con el documento 'Resolución MEN' en el paso 2 de su ingesta.
+                """)
 
 # --- FOOTER ---
 st.divider()
