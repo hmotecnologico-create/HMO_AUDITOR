@@ -1,9 +1,9 @@
-# HMO Auditor - Ecosistema de Auditoría Local Profesional
+# HMO Auditor - Ecosistema de Auditoría Local Profesional (V1.3 Elite)
 
 Este es un producto de ingeniería diseñado para el SENA, enfocado en la automatización de auditorías internas bajo estándares internacionales (ISO) y académicos. El sistema utiliza una arquitectura RAG (Retrieval-Augmented Generation) operando 100% en local para garantizar la privacidad y veracidad normativa.
 
 ## 🚀 Funcionalidades Elite
-- **Motor Multi-Norma**: Soporte nativo para ISO 9001, 27001, 14001 y Sector Académico.
+- **Motor Multi-Norma**: Soporte nativo para ISO 9001, 27001, 14001 y Sector Académico (Dec. 1330).
 - **Continuidad Multi-Día**: Sistema de persistencia automática por empresa.
 - **Identidad Institucional**: Inyección dinámica de logos en cabeceras de Word y Excel.
 - **Blindaje Legal**: Formatos con trazabilidad SHA-256 y firmas de integridad.
@@ -24,25 +24,25 @@ streamlit run HMO_Auditor_Master_V1/04_Arquitectura_y_Diseno/Scripts_Generadores
 ## 📁 Estructura del Repositorio
 - `01_Estrategia_y_Planeacion`: Documentos de visión y arquitectura.
 - `02_Normatividad_y_Formatos`: Biblioteca de plantillas y fuentes legales.
-- `03_Casos_de_Prueba_Innovatech`: Datos simulados para entrenamiento.
+- `03_Casos_de_Prueba_Innovatech`: Datos corporativos para entrenamiento RAG.
 - `04_Arquitectura_y_Diseno`: Scripts generadores y Dashboard principal.
 - `05_Manuales_y_Documentacion`: Guías completas para usuarios y desarrolladores.
 
-### 📑 Documentación para Auditoría (Root of Trust)
-Para fines de verificación y auditoría externa del propio aplicativo, se ha consolidado un expediente técnico en la carpeta:
-`06_Documentacion_de_Auditoria/`
+### 📑 Expediente de Auditoría Elite (Documentación Industrial)
+Para fines de verificación y auditoría externa del propio aplicativo, se ha consolidado un expediente técnico ejecutivo en la carpeta:
+`06_Documentacion_Elite/`
 
-Este expediente incluye:
-*   **[Matriz de Veracidad Normativa](06_Documentacion_de_Auditoria/normative_sources.md)**: Justificación legal y técnica de las normas ISO y Decretos MEN.
-*   **[Plan de Implementación](06_Documentacion_de_Auditoria/implementation_plan.md)**: El "Cerebro" técnico del motor RAG.
-*   **[Walkthrough Final](06_Documentacion_de_Auditoria/walkthrough.md)**: Recorrido por los hitos del proyecto.
-*   **[Manual de Procedimientos](06_Documentacion_de_Auditoria/audit_manual_procedures.md)**: Protocolos de validación humana (HITL).
-*   **[Compendio FAQ Experto](06_Documentacion_de_Auditoria/technical_faq_expert.md)**: Respuestas a consultas técnicas estratégicas (BD Vectorial, Controles, Persistencia).
-*   **[Guía de Acceso a DB](06_Documentacion_de_Auditoria/guia_acceso_db.md)**: Cómo inspeccionar el motor vectorial ChromaDB.
-*   **[Checklist de Tareas](06_Documentacion_de_Auditoria/task.md)**: Evidencia del proceso de desarrollo.
+Este expediente incluye los siguientes activos en formatos profesionales:
+*   📘 **[Manual de Desarrollo Maestro (.ipynb)](06_Documentacion_Elite/HMO_Manual_Desarrollo_Maestro.ipynb)**: Registro interactivo de la ingeniería y justificaciones del código.
+*   📄 **[Propuesta de Negocio Elite (.docx)](06_Documentacion_Elite/Propuesta_de_Negocio_HMO_Elite.docx)**: Modelo de negocio, marketing y monetización.
+*   📋 **[Plan de Implementación Técnica (.docx)](06_Documentacion_Elite/Plan_de_Implementacion_HMO_Elite.docx)**: Arquitectura RAG y blindaje legal.
+*   📊 **[Matriz de Veracidad y FAQ (.xlsx)](06_Documentacion_Elite/Matriz_Veracidad_y_FAQ_Elite.xlsx)**: Control de cumplimiento y respuestas estratégicas.
+*   ⚖️ **[Matriz de Fuentes Normativas (.docx)](06_Documentacion_Elite/Matriz_Fuentes_Normativas_Elite.docx)**: Justificación legal ante entes certificadores.
+*   🗺️ **[Guía de Certificación (.docx)](06_Documentacion_Elite/Guia_de_Certificacion_HMO.docx)**: Ruta paso a paso para el usuario final.
+*   🚀 **[Walkthrough de Hitos Finales (.docx)](06_Documentacion_Elite/Walkthrough_Final_Elite.docx)**: Resumen ejecutivo de logros del proyecto.
 
 ---
-**Resultado Legal**: El aplicativo está documentado al 100% bajo estándares **ISO 19011:2018**, garantizando que el motor RAG es una fuente veraz y auditable.
+**Resultado Profesional**: El aplicativo está documentado al 100% bajo estándares corporativos, eliminando la dependencia de archivos de texto plano para el usuario final.
 
 ---
 
