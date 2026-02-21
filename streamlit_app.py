@@ -407,8 +407,51 @@ else:
                         st.warning(f"⚠️ **Pendientes de Carga ({len(doc_list_missing)}):**")
                         for d in doc_list_missing[:5]: st.write(f"- {d}")
                         if len(doc_list_missing) > 5: st.write(f"... y {len(doc_list_missing)-5} más.")
-                else:
+                if not doc_list_missing:
                     c_inf2.success("✅ ¡Cuerpo Normativo Completo!")
+
+        # --- VALIDACIÓN & CIERRE ---
+        with tab_final:
+            st.write("### 🏁 Cierre de Ingesta y Validación de Estructura")
+            progreso_c = (st.session_state['paso_ingesta'] / len(cartas)) if len(cartas) > 0 else 0
+            
+            if 'revisado_plantillas' not in st.session_state: st.session_state['revisado_plantillas'] = False
+            
+            if progreso_total < 1.0: # Requisito: Fase A, B y C al 100%
+                st.warning("⚠️ Ingesta Incompleta (Menor al 100%). No se puede proceder a la revisión de formatos.")
+            else:
+                st.success("🏆 Materia Prima completa y validada por el Experto.")
+                st.markdown("---")
+                st.write("#### 🛡️ Paso 1: Generación y Conocimiento de Plantillas Base")
+                st.info("Antes de autorizar el diligenciamiento automático, es mandatorio que el auditor conozca y valide la estructura de las plantillas base.")
+                
+                if st.button("🏗️ GENERAR PLANTILLAS BASE PARA REVISIÓN"):
+                    with st.spinner("Preparando formatos sin diligenciar..."):
+                        # Importar generadores si no están ya en el scope
+                        from HMO_Auditor_Master_V2_Generator import create_audit_program_v2
+                        from HMO_Checklist_Legal_Generator import create_legal_checklist
+                        
+                        # Generar vacíos oficialmente
+                        f1 = create_audit_program_v2(company, st.session_state['base_path'], st.session_state['logo_path'], {}, {})
+                        f2 = create_legal_checklist(company, st.session_state['base_path'], st.session_state['logo_path'], {}, {})
+                        st.session_state['revisado_plantillas'] = True
+                        st.success("✅ Plantillas Base generadas. Por favor, descárguelas y revíselas.")
+                        
+                if st.session_state['revisado_plantillas']:
+                    c_rev1, c_rev2 = st.columns(2)
+                    with open(os.path.join(st.session_state['base_path'], "GAD_PRO_01_Programa_Auditoria_ELITE.docx"), "rb") as f:
+                        c_rev1.download_button("📂 Revisar Programa (Vacío)", f, file_name="PLANTILLA_BASE_PROGRAMA.docx")
+                    with open(os.path.join(st.session_state['base_path'], "GAD_LIST_02_Checklist_Auditoria_ELITE.xlsx"), "rb") as f:
+                        c_rev2.download_button("📊 Revisar Checklist (Vacío)", f, file_name="PLANTILLA_BASE_CHECKLIST.xlsx")
+                    
+                    st.markdown("---")
+                    st.write("#### ✍️ Paso 2: Autorización de Diligenciamiento")
+                    st.warning("¿La estructura de las plantillas es adecuada? Si desea que el sistema proceda a inyectar la materia prima, autorice a continuación:")
+                    st.session_state['autorizado_emision'] = st.toggle("AUTORIZAR DILIGENCIAMIENTO DE FORMATOS", value=st.session_state['autorizado_emision'])
+                    
+                    if st.session_state['autorizado_emision']:
+                        st.balloons()
+                        st.success("🚀 El sistema ha sido habilitado para emitir documentos con inyección de datos del expediente.")
 
     # --- SECCIÓN: FORMATOS ---
     elif menu == "⚖️ Emisión de Títulos/Formatos":
