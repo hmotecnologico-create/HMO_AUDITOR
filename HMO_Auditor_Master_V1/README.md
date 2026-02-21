@@ -13,12 +13,12 @@ Este es un producto de ingeniería diseñado para el SENA, enfocado en la automa
 
 ### 1. Dependencias
 ```powershell
-pip install -r HMO_Auditor_Master_V1/requirements.txt
+pip install -r requirements.txt
 ```
 
 ### 2. Lanzar Dashboard
 ```powershell
-streamlit run HMO_Auditor_Master_V1/04_Arquitectura_y_Diseno/Scripts_Generadores/HMO_Dashboard_Prototype.py
+streamlit run streamlit_app.py
 ```
 
 ## 📁 Estructura del Repositorio
