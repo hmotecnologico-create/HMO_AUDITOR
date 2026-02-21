@@ -15,26 +15,15 @@ from HMO_Checklist_Legal_Generator import create_legal_checklist
 # Configuración de página
 st.set_page_config(page_title="HMO Auditor Pro - V1.3 Elite", layout="wide", page_icon="🛡️")
 
-# Estilo personalizado Elite
+# Estilo personalizado Elite (Optimizado para Estabilidad)
 st.markdown("""
 <style>
     /* Estética Global */
-    .main { 
+    .stApp { 
         background-color: #F8F9FA; 
         color: #212529;
     }
     
-    /* Efecto Cristal para Contenedores */
-    div.stBlock {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(31, 78, 120, 0.1);
-        border_radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    }
-
     /* Botones Profesionales */
     .stButton>button { 
         width: 100%; 
@@ -44,17 +33,17 @@ st.markdown("""
         color: white; 
         font-weight: 600;
         border: none;
-        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .stButton>button:hover { 
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(31, 78, 120, 0.3);
-    }
-
+    
     /* Métricas Sofisticadas */
     [data-testid="stMetricValue"] {
-        color: #1F4E78;
-        font-family: 'Inter', sans-serif;
+        color: #1F4E78 !important;
+    }
+    
+    /* Contenedores con borde suave (Uso de st.container nativo en el código) */
+    .stAlert {
+        border-radius: 10px;
     }
 </style>
 """, unsafe_allow_html=True)
