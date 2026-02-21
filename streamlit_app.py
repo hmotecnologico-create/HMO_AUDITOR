@@ -166,6 +166,7 @@ if st.session_state['env'] is None:
             # Pre-poblar sugerencias y estados para que la simulación se sienta 'viva'
             st.session_state['paso_ingesta'] = 0 
             st.session_state['autorizado_emision'] = False
+            st.session_state['kb'] = {} # Empleamos KB vacía para que el usuario indexe en la demo
             if logo_file:
                 path = os.path.join(st.session_state['base_path'], "logo.png")
                 with open(path, "wb") as f: f.write(logo_file.getbuffer())
@@ -350,17 +351,33 @@ else:
                                     st.caption("Ajuste omisiones o perfeccione la redacción:")
                                     manual_edit = st.text_area("Validación Auditor", placeholder="Ingrese el texto definitivo aquí...", key=f"val_{idx}")
                                 
-                                # MOTOR DE PERFECCIONAMIENTO IA
+                                # MOTOR DE PERFECCIONAMIENTO IA CONTEXTUAL (V1.5.1)
                                 st.markdown("---")
                                 st.markdown("#### 🤖 Evaluación de Calidad IA Elite")
                                 current_text = manual_edit if manual_edit else ocr_edit
                                 
-                                if len(current_text) < 100:
-                                    st.warning(f"⚠️ **Crítica IA:** La {c['doc']} es demasiado breve. Para cumplir con {st.session_state['norma']}, se requiere una redacción más detallada que incluya el compromiso con la mejora continua.")
-                                elif "calidad" not in current_text.lower() and "seguridad" not in current_text.lower():
-                                    st.info(f"💡 **Sugerencia IA:** Se recomienda integrar palabras clave de la norma '{st.session_state['norma']}' para fortalecer el alineamiento estratégico.")
-                                else:
-                                    st.success(f"✅ **Estatus IA:** El documento presenta un alto alineamiento estratégico con la política organizacional.")
+                                # Lógica Contextual
+                                if "Misión" in c['doc']:
+                                    if len(current_text) < 80:
+                                        st.warning("⚠️ **Sugerencia IA:** La Misión es el 'Por Qué' de la empresa. Se recomienda incluir el impacto social y el valor diferencial para cumplir con los estándares de Alta Dirección.")
+                                    elif "propósito" not in current_text.lower() and "servicio" not in current_text.lower():
+                                        st.info("💡 **Tip de Madurez:** Intente enfocar la redacción hacia el servicio al cliente y el propósito trascedental.")
+                                    else: st.success("✅ **Estatus IA:** Misión robusta y alineada.")
+                                    
+                                elif "Visión" in c['doc']:
+                                    if "202" not in current_text: # Busca un año
+                                        st.warning("⚠️ **Sugerencia IA:** Una Visión 'Elite' debe tener un horizonte de tiempo claro (ej. 2026, 2030). Defina hacia dónde va la organización.")
+                                    else: st.success("✅ **Estatus IA:** Visión con horizonte estratégico detectado.")
+                                    
+                                elif "Riesgos" in c['doc'] or "Mapa" in c['doc']:
+                                    if "crítico" not in current_text.lower() and "mitigación" not in current_text.lower():
+                                        st.warning(f"⚠️ **Crítica IA:** El análisis de {c['doc']} carece de términos de mitigación de riesgo. Esto es mandatorio para {st.session_state['norma']}.")
+                                    else: st.success("✅ **Estatus IA:** Enfoque preventivo detectado.")
+                                    
+                                else: # Genérico
+                                    if len(current_text) < 100:
+                                        st.warning(f"⚠️ **Crítica IA:** Información escueta. Para {st.session_state['norma']} se requiere mayor profundidad técnica.")
+                                    else: st.success("✅ **Estatus IA:** Documentación validada.")
                                 
                                 if st.button("💎 CONFIRMAR E INDEXAR", key=f"btn_{idx}"):
                                     final_text = manual_edit if manual_edit else ocr_edit
