@@ -15,38 +15,8 @@ from HMO_Checklist_Legal_Generator import create_legal_checklist
 # Configuración de página
 st.set_page_config(page_title="HMO Auditor Pro - V1.3 Elite", layout="wide", page_icon="🛡️")
 
-# Estilo personalizado Elite (Optimizado para Estabilidad)
-st.markdown("""
-<style>
-    /* Estética Global */
-    .stApp { 
-        background-color: #F8F9FA; 
-        color: #212529;
-    }
-    
-    /* Botones Profesionales */
-    .stButton>button { 
-        width: 100%; 
-        border-radius: 8px; 
-        height: 3.5em; 
-        background: linear-gradient(135deg, #1F4E78 0%, #2E6B9E 100%); 
-        color: white; 
-        font-weight: 600;
-        border: none;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
-    /* Métricas Sofisticadas */
-    [data-testid="stMetricValue"] {
-        color: #1F4E78 !important;
-    }
-    
-    /* Contenedores con borde suave (Uso de st.container nativo en el código) */
-    .stAlert {
-        border-radius: 10px;
-    }
-</style>
-""", unsafe_allow_html=True)
+# --- CONFIGURACIÓN DE ESTILO TEMPORALMENTE DESACTIVADA PARA DIAGNÓSTICO ---
+# st.markdown("<style>...</style>", unsafe_allow_html=True)
 
 # Lógica de Sesión
 if 'env' not in st.session_state:
