@@ -1,0 +1,79 @@
+# Tareas para el Diseño del Aplicativo de Auditoría Local (HMO Auditor)
+
+- [x] Definición de la Arquitectura Técnica y Estrategia RAG
+- [x] Diseño de la Metodología de Auditoría Normativa
+- [x] Diseño de los Formatos del Sistema (Contenido y Estructura)
+- [x] Estrategia de Protección de Documentos (PDF, Word, Excel)
+- [x] Plan de Implementación del MVP
+- [x] Diseño del Módulo de Ingesta de Datos Corporativos
+- [x] Lógica de Auto-Diligenciamiento Basada en Contexto
+- [x] Actualización de Formatos (Campos de Auto-Llenado vs Manuales)
+- [x] Flujo de Revisión y Aprobación Humana
+- [x] Manual de Auditoría y Procedimientos Técnicos
+- [x] Creación de Walkthrough Final Actualizado
+- [x] Definición de Checklist de Ingesta de Documentos Críticos
+- [x] Creación de Estructura de Carpetas "Innovatech Solutions"
+- [x] Generación de Documentos de Ingesta (Misión, Visión, Políticas, Actas)
+- [x] Diseño de la Guía de Certificación para No Expertos (Ruta Crítica)
+- [x] Diseño Conceptual de la Interfaz Gráfica Profesional
+- [x] Ingesta de Información Corporativa (Contexto y OCR)
+- [x] Validación Humana (HITL) en Ingesta
+- [x] Mockup de Interfaz OCR
+- [x] Manual de Procedimientos Actualizado
+- [x] Refinamiento Profesional de Documentos Innovatech
+- [x] Generación de Plantilla GAD-PROG-01 (Word Protegido)
+- [x] Generación de Plantilla GAD-LIST-02 (Excel Protegido)
+- [x] Conversión de Manuales a PDF Profesional
+- [x] Integración de Imágenes y Mockups Finales
+- [x] Conversión Profesional de Documentos Innovatech (.docx/.pdf)
+- [x] Diseño de UI para "Entrada Manual de Datos Omitidos"
+- [x] Actualización de Plan de Implementación (Manual Override)
+- [x] Generación de Guía de Certificación en PDF Profesional
+- [x] Diseño de Estrategia de Validación Robusta (Integridad y Trazabilidad)
+- [x] Implementación de Capa de Verificación Cruzada (Audit-on-Audit)
+- [x] Generación de Reporte de Cumplimiento Normativo (Certificate of Origin)
+- [x] Actualización de Manuales con Protocolos de Validación
+- [x] Consolidación Final de Ecosistema de Diseño
+- [x] Diseño de Visualización por Nodos (Mapa de Progreso)
+- [x] Integración de Lógica de Nodos en la Ruta de Certificación
+- [x] Diseño de UI: Dashboard de Trazabilidad Gráfica
+- [x] Organización de Estructura de Carpetas Profesional
+- [x] Documentación: Alineación con ISO 19011:2018
+- [x] Creación de Matriz de Justificación Normativa (Formatos y Procesos)
+- [x] Refinamiento de Checklist de Ingesta con Referencias ISO
+- [x] Diseño de Flujo: Empresa Nueva vs Innovatech (Simulación)
+- [x] Consolidación de Activos de Innovatech en Formatos Finales
+- [x] Limpieza de Espacio de Trabajo
+- [x] Definición de Roles y Responsabilidades del Proceso
+- [x] Documentación de Ingeniería: Casos de Uso y Historias de Usuario
+- [x] Documentación de Ingeniería: Modelo de Datos y Arquitectura de Software
+- [x] Manual de Usuario (Guía de Operación)
+- [x] Manual de Desarrollo (Guía de Mantenimiento y Extensibilidad)
+- [x] Consolidación de Paquete de Auditoría Maestro (V1.0)
+- [x] Refinamiento de Formatos: Cumplimiento de los 17 Puntos de Validez Legal
+- [x] Actualización de Scripts Generadores (Word/Excel) con Firmas y Hash
+- [x] Implementación de Prototipo de Dashboard Profesional (Streamlit)
+- [x] Simulación de Ejecución: Empresa Ficticia vs Nueva Empresa
+- [x] Refinamiento de Dashboard: Flujo de Ingesta Secuencial
+- [x] Generación de "Cartas de Navegación" Normativas por Documento
+- [x] Implementación de Avance en Tiempo Real Basado en Ingesta
+- [x] Actualización de Manuales con el Flujo de Ingesta Guiada
+- [x] Configuración de Biblioteca Multi-Norma (ISO 9001, 27001, 14001, Académico)
+- [x] Definición de Arquitectura Multi-Norma en Plan de Imp.
+- [x] Implementación de Selector de Sistema en Dashboard
+- [x] Ingesta de "Cartas de Navegación" para Sector Académico
+- [x] Integración de Identidad Corporativa (Logos Dinámicos)
+- [x] Implementación de Módulo de Carga de Logo en Dashboard
+- [x] Actualización de scripts Word/Excel para inserción dinámica de Logo
+- [x] Fase de Despliegue y Organización Avanzada
+- [x] Implementación de Lógica de Carpetas por Empresa (Vacíos vs Diligenciados)
+- [x] Habilitación de Generación de Formatos en Blanco (Templates)
+- [x] Configuración de Repositorio GitHub para Despliegue
+- [x] Lanzamiento en Streamlit Community Cloud (Guía Entregada)
+- [x] Implementación de Persistencia (Guardar/Cargar Auditoría)
+- [x] Interfaz de Reanudación de Auditorías Existentes
+- [x] Documentación de Veracidad Normativa y Fuentes Oficiales
+- [x] Lanzamiento del Prototipo Interactivo (Streamlit)
+- [x] Validación de Ingesta Guiada con Empresa Ficticia
+- [x] Generación de Reportes Finales desde la Interfaz
+- [x] Consolidación de Documentación para Auditoría de Aplicativo
