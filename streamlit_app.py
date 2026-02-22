@@ -624,7 +624,7 @@ else:
         col_st3.markdown(f"**Fase C:** {pct_fase_c}%")
         st.divider()
 
-        tab_a, tab_b, tab_c, tab_final = st.tabs(["🔒 Fase A: Identidad", "📊 Fase B: Dimensión", "📜 Fase C: Cuerpo Normativo", "🏁 Validación & Cierre"])
+        tab_a, tab_b, tab_c, tab_final = st.tabs(["🔒 Fase A: Identidad", "📊 Fase B: Dimensión", "⚖️ 6.3.1 Revisión Documental", "🏁 Preparación Actividades"])
         
         # --- FASE A: IDENTIDAD ---
         with tab_a:
@@ -665,7 +665,7 @@ else:
                 
                 c_head1, c_head2 = st.columns([1.5, 1])
                 with c_head1:
-                    st.write("### ⚙️ Carga de Anexos Técnicos")
+                    st.write("### ⚖️ 6.3.1 Revisión de Información Documentada")
                 with c_head2:
                     st.metric("📦 Materia Prima Inyectada", f"{pct_fase_c}%", f"{count_ready}/{total_total} Listos")
                 # Agrupación por Áreas (V4.5 Limpieza de Emojis)
