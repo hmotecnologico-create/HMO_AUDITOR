@@ -19,6 +19,11 @@ from HMO_PDF_Generator import generate_audit_program_pdf, generate_preparation_g
 from HMO_AI_Engine import HMO_AI_Engine
 from HMO_Auditor_Master_V2_Generator import create_audit_program_v2
 from HMO_Checklist_Legal_Generator import create_legal_checklist
+try:
+    from HMO_OCR_Extractor import procesar_documento, resultado_a_session_state
+    OCR_DISPONIBLE = True
+except Exception:
+    OCR_DISPONIBLE = False
 
 # Configuración de página
 st.set_page_config(page_title="HMO Auditor Pro - V1.4 Elite", layout="wide", page_icon="🛡️")
@@ -878,19 +883,97 @@ else:
             fase_a_reqs = [st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']]
             fase_a_completados = sum(1 for r in fase_a_reqs if r)
             pct_a = int((fase_a_completados / 3) * 100)
-            
+
             c_m1, c_m2 = st.columns([1, 4])
             c_m1.metric("Fase A", f"{pct_a}%")
             with c_m2: st.progress(pct_a / 100)
-            
+
             if pct_a < 100:
                 st.caption(f"⚠️ **Falta:** {', '.join([r for r, v in zip(['Auditor', 'Rep. Legal', 'ID'], fase_a_reqs) if not v])}")
+
+            # ── OCR INTELIGENTE V14.0 ───────────────────────────────────────────
+            st.markdown("---")
+            st.markdown("#### 🤖 Carga Inteligente de Documentos")
+            st.caption("Sube la **Cámara de Comercio** o el **RUT** y el sistema extrae los datos automáticamente.")
+
+            uploaded = st.file_uploader(
+                "📂 Arrastra aquí el PDF (Cámara de Comercio ó RUT)",
+                type=["pdf", "jpg", "jpeg", "png"],
+                key="ocr_uploader_fase_a"
+            )
+
+            if uploaded is not None:
+                with st.spinner("🔍 Analizando documento..."):
+                    file_bytes = uploaded.read()
+                    if OCR_DISPONIBLE:
+                        resultado = procesar_documento(file_bytes, uploaded.name)
+                    else:
+                        resultado = {"tipo_doc": "unknown", "confianza": 0,
+                                     "error": "OCR no disponible. Instala pdfplumber y pytesseract."}
+
+                tipo_detectado = resultado.get("tipo_doc", "unknown")
+                confianza = resultado.get("confianza", 0)
+
+                if tipo_detectado == "camara_comercio":
+                    st.success(f"✅ **Cámara de Comercio detectada** — Confianza: {confianza}%")
+                    with st.expander("📋 Datos extraídos", expanded=True):
+                        col_o1, col_o2 = st.columns(2)
+                        col_o1.write(f"🏢 **Empresa:** {resultado.get('company_name', '—')}")
+                        col_o1.write(f"🔢 **NIT:** {resultado.get('empresa_nit', '—')}")
+                        col_o1.write(f"👤 **Rep. Legal:** {resultado.get('rep_legal', '—')}")
+                        col_o1.write(f"🪪 **C.C. Rep:** {resultado.get('rep_id', '—')}")
+                        col_o2.write(f"📍 **Dirección:** {resultado.get('empresa_direccion', '—')}")
+                        col_o2.write(f"🏙️ **Domicilio:** {resultado.get('domicilio', '—')}")
+                        col_o2.write(f"🏛️ **Capital Pagado:** {resultado.get('capital_pagado', '—')}")
+                        if resultado.get('empresa_objeto'):
+                            st.write(f"📌 **Objeto Social:** {resultado['empresa_objeto'][:300]}...")
+
+                    if st.button("⚡ Aplicar datos al expediente", key="ocr_apply_cc", use_container_width=True):
+                        updates = resultado_a_session_state(resultado)
+                        for k, v in updates.items():
+                            st.session_state[k] = v
+                        # Registrar en expediente
+                        st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = f"OCR V14.0 | NIT: {resultado.get('empresa_nit', '')} | Rep: {resultado.get('rep_legal', '')}"
+                        save_audit_state()
+                        st.success("🎉 ¡Datos inyectados automáticamente en el expediente!")
+                        st.rerun()
+
+                elif tipo_detectado == "rut":
+                    st.success(f"✅ **RUT (DIAN) detectado** — Confianza: {confianza}%")
+                    with st.expander("📋 Datos extraídos", expanded=True):
+                        col_r1, col_r2 = st.columns(2)
+                        col_r1.write(f"🏢 **Razón Social:** {resultado.get('company_name', '—')}")
+                        col_r1.write(f"🔢 **NIT:** {resultado.get('empresa_nit', '—')}")
+                        col_r1.write(f"📍 **Dirección:** {resultado.get('empresa_direccion', '—')}")
+                        col_r2.write(f"📧 **Email:** {resultado.get('email', '—')}")
+                        col_r2.write(f"📞 **Teléfono:** {resultado.get('telefono', '—')}")
+                        col_r2.write(f"🏭 **CIIU:** {resultado.get('actividad_ciiu', '—')}")
+                        if resultado.get('responsabilidades'):
+                            st.write("⚖️ **Responsabilidades:** " + " · ".join(resultado['responsabilidades']))
+
+                    if st.button("⚡ Aplicar datos al expediente", key="ocr_apply_rut", use_container_width=True):
+                        updates = resultado_a_session_state(resultado)
+                        for k, v in updates.items():
+                            st.session_state[k] = v
+                        st.session_state['expediente']["RUT (Registro Unico Tributario)"] = f"OCR V14.0 | NIT: {resultado.get('empresa_nit', '')} | CIIU: {resultado.get('actividad_ciiu', '')}"
+                        save_audit_state()
+                        st.success("🎉 ¡Datos del RUT inyectados en el expediente!")
+                        st.rerun()
+
+                else:
+                    st.warning(f"⚠️ Documento no reconocido. {resultado.get('error', '')}")
+                    if resultado.get('texto_completo'):
+                        with st.expander("Ver texto extraído"):
+                            st.text(resultado['texto_completo'][:800])
+
+            st.markdown("---")
+            st.markdown("#### ✏️ Ingreso Manual")
 
             c1, c2, c3 = st.columns(3)
             st.session_state['auditor_name'] = c1.text_input("* Auditor:", value=st.session_state['auditor_name'])
             st.session_state['rep_legal'] = c2.text_input("* Representante:", value=st.session_state['rep_legal'])
             st.session_state['rep_id'] = c3.text_input("* ID Rep:", value=st.session_state['rep_id'])
-            
+
             if st.button("💾 REGISTRAR"):
                 save_audit_state()
                 st.success("✅ Guardado.")

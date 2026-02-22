@@ -7,3 +7,6 @@ Pillow
 fpdf2
 requests
 tabulate
+pdfplumber
+pytesseract
+pdf2image
