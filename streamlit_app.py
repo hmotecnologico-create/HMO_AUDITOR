@@ -1075,45 +1075,89 @@ else:
                         draw_donut(_pct_ar, f"{_ok_ar}/{len(_docs_ar)}", "#10B981" if _pct_ar == 100 else "#00C2FF")
                 st.divider()
         
-        # Grid de Métricas Glass
+        # --- COMMAND CENTER KIPs (V20.0) ---
         c1, c2, c3, c4 = st.columns(4)
-        m_style = "background:rgba(255,255,255,0.03); backdrop-filter:blur(5px); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:0.8rem; text-align:center;"
         
-        c1.markdown(f"<div style='{m_style}'><b>PERFIL</b><br><span style='font-size:1.5rem; color:#10B981;'>{int(chs['breakdown']['perfil'])}</span>/10</div>", unsafe_allow_html=True)
-        c2.markdown(f"<div style='{m_style}'><b>VITALES</b><br><span style='font-size:1.5rem; color:#00C2FF;'>{int(chs['breakdown']['vitales'])}</span>/60</div>", unsafe_allow_html=True)
-        c3.markdown(f"<div style='{m_style}'><b>CALIDAD IA</b><br><span style='font-size:1.5rem; color:#A855F7;'>{int(chs['breakdown']['ia'])}</span>/30</div>", unsafe_allow_html=True)
+        # Calcular Días para Cierre
+        dias_restantes = 0
+        if st.session_state.get('fecha_compromiso'):
+            try:
+                target_date = datetime.datetime.strptime(st.session_state['fecha_compromiso'], "%Y-%m-%d").date()
+                dias_restantes = (target_date - datetime.date.today()).days
+            except: pass
+            
+        # Calcular Deltas de Progreso (Comparativa con último Snapshot si existe)
+        prev_score = st.session_state['history_chs'][-1]['score'] if st.session_state.get('history_chs') else chs['score']
+        delta_score = chs['score'] - prev_score
         
+        def kpi_card(label, value, delta=None, color="#00C2FF", unit=""):
+            delta_html = ""
+            if delta is not None:
+                d_color = "#10B981" if delta >= 0 else "#F87171"
+                d_icon = "▴" if delta >= 0 else "▾"
+                delta_html = f"<span style='color:{d_color}; font-size:0.75rem; margin-left:5px;'>{d_icon} {abs(delta)}{unit}</span>"
+            
+            st.markdown(f"""
+            <div class='elite-card' style='text-align:center; padding:0.6rem !important;'>
+                <p style='font-size:0.65rem; color:#94A3B8; margin-bottom:0px; font-weight:700;'>{label.upper()}</p>
+                <div style='display:flex; justify-content:center; align-items:baseline;'>
+                    <span style='font-size:1.6rem; font-weight:700; color:{color}; font-family:Orbitron;'>{value}</span>{delta_html}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with c1: kpi_card("Corporate Health", f"{chs['score']}%", delta=delta_score, color=chs['color'], unit="%")
+        with c2: kpi_card("Docs Validados", len(st.session_state['expediente']), delta=len(st.session_state['expediente']), color="#10B981")
+        with c3: kpi_card("Días p/ Cierre", max(0, dias_restantes), delta=-1 if dias_restantes > 0 else 0, color="#F59E0B")
         with c4:
-            if st.button("📄 REPORTE", use_container_width=True):
-                _path = generate_maturity_report_pdf(company, st.session_state['base_path'], chs, "Analisis V15")
-                st.toast(f"PDF: {os.path.basename(_path)}")
+            if st.button("📊 REPORTE ELITE", use_container_width=True):
+                _path = generate_maturity_report_pdf(company, st.session_state['base_path'], chs, "Elite V20")
+                st.toast(f"Reporte Generado: {os.path.basename(_path)}")
+            if st.button("💾 SNAPSHOT", use_container_width=True, type="primary"):
+                snapshot = {"fecha": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), "score": chs['score'], "level": chs['level']}
+                st.session_state['history_chs'].append(snapshot)
+                save_audit_state(); st.rerun()
 
         st.divider()
         
-        # --- TABLERO DE TRAZABILIDAD COMPACTO (V9.3) ---
-        c_mtr1, c_mtr2, c_mtr3, c_mtr4, c_mtr5, c_mtr6 = st.columns(6)
+        # --- ANALÍTICA AVANZADA (SIDE-BY-SIDE) ---
+        col_g1, col_g2 = st.columns([1.5, 1])
         
-        # Mezcla de Donas y Métricas en una sola fila (Cockpit)
-        with c_mtr1: draw_donut(progreso_total*100, "GLOBAL", "#00C2FF")
-        with c_mtr2: draw_donut(30 if not fase_a_ready else 12, "RIESGO", "#F87171")
-        with c_mtr3: draw_donut(pct_fase_c, "CALIDAD", "#34D399")
-        
-        c_mtr4.metric("Avance SIG", f"{progreso_global:.1f}%")
-        c_mtr5.metric("Motor Experto", "BÚSQUEDA ACTIVA")
-        c_mtr6.metric("Seguridad", "SHA-256")
-
-        # --- HISTORIAL DE MADUREZ & SNAPSHOTS (V19.1) ---
-        st.markdown("---")
-        col_h1, col_h2 = st.columns([2, 1])
-        with col_h1:
-            st.write("### 📈 Tendencia de Madurez Corporativa")
+        with col_g1:
+            st.markdown("<div class='elite-card' style='padding: 0.8rem;'><b>📈 Tendencia de Madurez Corporativa</b>", unsafe_allow_html=True)
             if st.session_state.get('history_chs'):
                 df_hist = pd.DataFrame(st.session_state['history_chs'])
-                fig_hist = px.line(df_hist, x="fecha", y="score", title="Evolución del CHS", markers=True)
-                fig_hist.update_layout(height=250, margin=dict(t=30, b=0, l=0, r=0), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+                fig_hist = px.area(df_hist, x="fecha", y="score", markers=True, color_discrete_sequence=['#00C2FF'])
+                fig_hist.update_layout(
+                    height=200, margin=dict(t=10, b=0, l=0, r=0), 
+                    paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                    xaxis=dict(showgrid=False, color="#94A3B8", tickfont=dict(size=9)), 
+                    yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', color="#94A3B8", tickfont=dict(size=9), range=[0, 105])
+                )
                 st.plotly_chart(fig_hist, use_container_width=True)
             else:
-                st.info("No hay registros históricos. Guarde un Snapshot para iniciar el seguimiento.")
+                st.info("No hay registros históricos para graficar tendencia.")
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        with col_g2:
+            st.markdown("<div class='elite-card' style='padding: 0.8rem;'><b>🛡️ Radar de Madurez SGC</b>", unsafe_allow_html=True)
+            labels_rad = ['Identidad', 'Estrategia', 'Operación', 'Jurídico', 'Financiero', 'Calidad']
+            # Valores reales basados en el expediente
+            val_id = 100 if fase_a_ready else 0
+            val_est = 100 if "Mision y Vision Corporativa" in st.session_state['expediente'] else 0
+            val_ops = 100 if "Mapa de Procesos" in st.session_state['expediente'] else 0
+            val_jur = 100 if "Camara de Comercio (Existencia Legal)" in st.session_state['expediente'] else 0
+            val_fin = 100 if "RUT (Registro Unico Tributario)" in st.session_state['expediente'] else 0
+            val_cal = pct_fase_c
+            
+            values_rad = [val_id, val_est, val_ops, val_jur, val_fin, val_cal]
+            fig_rad = go.Figure(data=go.Scatterpolar(r=values_rad, theta=labels_rad, fill='toself', line_color='#A855F7', fillcolor='rgba(168, 85, 247, 0.2)'))
+            fig_rad.update_layout(
+                polar=dict(radialaxis=dict(visible=True, range=[0, 100], gridcolor="rgba(255,255,255,0.1)", tickfont=dict(size=8)), angularaxis=dict(tickfont=dict(size=8))), 
+                showlegend=False, height=200, margin=dict(l=30, r=30, t=20, b=10), paper_bgcolor='rgba(0,0,0,0)'
+            )
+            st.plotly_chart(fig_rad, use_container_width=True)
+            st.markdown("</div>", unsafe_allow_html=True)
         
         with col_h2:
             st.write("### 📸 Punto de Control")
@@ -1157,107 +1201,92 @@ else:
             else:
                 st.info("No hay documentos normalizados con firma digital en este ciclo.")
 
-        # --- FILA DE ANÁLISIS Y FICHA (SIDE-BY-SIDE) ---
-        col_g1, col_g2, col_g3 = st.columns([1.2, 1, 1])
+        # --- FICHA TÉCNICA Y ESTATUS (GRID COMPACTO) ---
+        cf1, cf2, cf3 = st.columns([1, 1, 1.2])
         
-        with col_g1:
-            st.markdown("<div class='elite-card' style='padding: 0.5rem;'><b>Radar de Madurez</b>", unsafe_allow_html=True)
-            labels = ['Misión/Visión', 'Ética', 'Estructura', 'Norma Cl.4', 'Norma Cl.5', 'Norma Cl.6']
-            values = [100 if label in st.session_state['expediente'] else (100 if i < 3 and st.session_state['env'] == "Simulacion" else 0) for i, label in enumerate(labels)]
-            fig = go.Figure(data=go.Scatterpolar(r=values, theta=labels, fill='toself', line_color='#00C2FF'))
-            fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False, height=250, margin=dict(l=20, r=20, t=20, b=20), paper_bgcolor='rgba(0,0,0,0)')
-            st.plotly_chart(fig, use_container_width=True)
+        with cf1:
+            st.markdown("<div class='elite-card' style='padding: 0.6rem;'><b>📊 Estatus por Áreas</b>", unsafe_allow_html=True)
+            _areas = ["Jurídico", "Financiera", "Talento Humano", "Operaciones"]
+            for _ar in _areas:
+                _docs_ar = [c for c in cartas_todas if c.get('area') == _ar]
+                _ok_ar = len([d for d in _docs_ar if d['doc'] in st.session_state['expediente']])
+                _pct_ar = int((_ok_ar / len(_docs_ar)) * 100) if _docs_ar else 100
+                st.markdown(f"""
+                <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:0.2rem;'>
+                    <span style='font-size:0.7rem;'>{_ar}</span>
+                    <span style='font-size:0.7rem; color:#00C2FF; font-weight:700;'>{_pct_ar}%</span>
+                </div>
+                <div style='width:100%; background:rgba(255,255,255,0.05); height:4px; border-radius:2px;'>
+                    <div style='width:{_pct_ar}%; background:#10B981; height:4px; border-radius:2px;'></div>
+                </div>
+                """, unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
 
-        with col_g2:
-            st.markdown("<div class='elite-card' style='padding: 0.5rem;'><b>Ficha de Identidad</b>", unsafe_allow_html=True)
-            st.markdown(f"<p style='font-size: 0.8rem; margin:0;'>**NIT:** `{st.session_state['empresa_nit']}`</p>", unsafe_allow_html=True)
-            st.markdown(f"<p style='font-size: 0.8rem; margin:0;'>**Sector:** {st.session_state['empresa_sector']}</p>", unsafe_allow_html=True)
-            st.markdown(f"<p style='font-size: 0.8rem; margin:0;'>**Personal:** {st.session_state['empresa_personal']}</p>", unsafe_allow_html=True)
-            st.markdown(f"<p style='font-size: 0.8rem; margin:0;'>**Dirección:** {st.session_state['empresa_direccion']}</p>", unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)
-            
+        with cf2:
+            st.markdown("<div class='elite-card' style='padding: 0.6rem;'><b>🏢 Ficha Corporativa</b>", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style='font-size:0.75rem; line-height:1.4;'>
+                <b>Nit:</b> {st.session_state['empresa_nit']}<br>
+                <b>Sector:</b> {st.session_state['empresa_sector']}<br>
+                <b>Personal:</b> {st.session_state['empresa_personal']}<br>
+                <b>Ubicación:</b> {st.session_state['empresa_direccion'][:30]}...
+            </div>
+            """, unsafe_allow_html=True)
             if "Organigrama Funcional" in st.session_state['expediente']:
-                st.markdown("<div class='elite-card' style='padding: 0.5rem; margin-top: 5px;'><b>Organigrama</b>", unsafe_allow_html=True)
-                data_org = dict(character=["G.G", "Jur", "Ops", "TH", "SIG", "Prod", "Vnt"], parent=["", "G.G", "G.G", "G.G", "Ops", "Ops", "Ops"], value=[10, 5, 8, 4, 3, 6, 6])
-                fig_org = px.treemap(data_org, names='character', parents='parent', values='value', color_discrete_sequence=['#00C2FF', '#1e3a8a'])
-                fig_org.update_layout(margin=dict(t=5, l=5, r=5, b=5), height=120, paper_bgcolor='rgba(0,0,0,0)')
+                data_org = dict(character=["G.G", "Ops", "SIG"], parent=["", "G.G", "Ops"], value=[10, 8, 3])
+                fig_org = px.treemap(data_org, names='character', parents='parent', values='value', color_discrete_sequence=['#A855F7', '#1e3a8a'])
+                fig_org.update_layout(margin=dict(t=5, l=5, r=5, b=5), height=65, paper_bgcolor='rgba(0,0,0,0)')
                 st.plotly_chart(fig_org, use_container_width=True)
-                st.markdown("</div>", unsafe_allow_html=True)
-            
-        with col_g3:
-            st.markdown("<div class='elite-card' style='padding: 0.5rem;'><b>Certificación</b>", unsafe_allow_html=True)
-            for i, c in enumerate(cartas[:8]): # Mostrar solo los 8 primeros para evitar scroll
-                doc_name = c['doc']
-                estado = "✅" if doc_name in st.session_state['expediente'] else ("⚖️" if doc_name in st.session_state.get('justificados', []) else "⏳")
-                st.markdown(f"<p style='font-size: 0.75rem; margin: 0;'>{estado} {doc_name[:25]}...</p>", unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
 
-            # --- NUEVA VISUALIZACIÓN: ORGANIGRAMA JERÁRQUICO (V5.0) ---
-            if "Organigrama Funcional" in st.session_state['expediente']:
-                st.markdown("<div class='elite-card'><b>Visualización Jerárquica: Organigrama Funcional</b>", unsafe_allow_html=True)
-                # Mock data representation of a typical hierarchy for the treemap
-                data_org = dict(
-                    character=["Gerencia General", "Dirección Jurídica", "Dirección Operativa", "Talento Humano", "Calidad/SIG", "Producción", "Ventas"],
-                    parent=["", "Gerencia General", "Gerencia General", "Gerencia General", "Dirección Operativa", "Dirección Operativa", "Dirección Operativa"],
-                    value=[10, 5, 8, 4, 3, 6, 6]
-                )
-                fig_org = px.treemap(data_org, names='character', parents='parent', values='value', color_discrete_sequence=['#00C2FF', '#1e3a8a', '#10B981'])
-                fig_org.update_layout(margin=dict(t=10, l=10, r=10, b=10), height=300, paper_bgcolor='rgba(0,0,0,0)')
-                st.plotly_chart(fig_org, use_container_width=True)
-                st.markdown("</div>", unsafe_allow_html=True)
-            
-        with col_g2:
-            st.markdown("<div class='elite-card'><b>Certificación de Expediente</b>", unsafe_allow_html=True)
-            for i, c in enumerate(cartas):
-                doc_name = c['doc']
-                cargado = doc_name in st.session_state['expediente']
-                justificado = doc_name in st.session_state['justificados']
-                
-                if cargado: estado = "✅"
-                elif justificado: estado = "⚖️"
-                else: estado = "⏳"
-                
-                prefijo = "💎" if c.get('prioridad') == "VITAL (Obligatorio)" else "📜"
-                st.write(f"{estado} {prefijo} **{doc_name}**")
+        with cf3:
+            st.markdown("<div class='elite-card' style='padding: 0.6rem;'><b>💎 Requerimientos Vitales</b>", unsafe_allow_html=True)
+            vitales = [c for c in cartas_todas if c.get('prioridad') == "VITAL (Obligatorio)"][:5]
+            for v in vitales:
+                cargado = v['doc'] in st.session_state['expediente']
+                icon = "✅" if cargado else "⏳"
+                st.markdown(f"<p style='font-size:0.7rem; margin:0;'>{icon} {v['doc'][:30]}</p>", unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
 
         # --- PANEL DE HALLAZGOS CONSOLIDADO V12.0 ---
         st.markdown("---")
-        st.markdown("### 🔍 Panel de Hallazgos y Resultados de Auditoría")
+        # --- PANEL DE HALLAZGOS ELITE (V20.0) ---
+        st.markdown("<div class='elite-card' style='padding:0.8rem;'><b>🔍 Centro de Hallazgos y Resultados de Auditoría</b>", unsafe_allow_html=True)
         if not todos_hallazgos:
-            st.info("No se han detectado hallazgos aún. Valide documentos con IA en el Camino de Ingesta.")
+            st.info("Sin anomalías detectadas. Continúe con la validación documental.")
         else:
-            col_hall1, col_hall2 = st.columns([2, 1])
-            with col_hall1:
-                st.markdown("<div class='elite-card'><b>Consolidado de Evidencias</b>", unsafe_allow_html=True)
-                for h_item in todos_hallazgos:
+            ch_col1, ch_col2 = st.columns([1.8, 1])
+            with ch_col1:
+                for h_item in todos_hallazgos[:5]: # Top 5 prioritarios
                     doc = h_item['doc']
                     h_txt = h_item['hallazgo']
                     h_key = f"{doc}_{h_txt}"[:50]
-                    
-                    c_h1, c_h2 = st.columns([3, 1])
-                    c_h1.write(f"**[{doc}]**: {h_txt}")
                     cat = st.session_state['hallazgos_manuales'].get(h_key, "Detectado")
+                    h_color = "#F87171" if cat == "No Conformidad" else ("#F59E0B" if cat == "Observación" else "#10B981")
                     
-                    # Selector de Categoría
-                    nueva_cat = c_h2.selectbox("-", ["Detectado", "No Conformidad", "Observación", "Fortaleza"], 
-                                             key=f"cat_{h_key}", label_visibility="collapsed", 
-                                             index=["Detectado", "No Conformidad", "Observación", "Fortaleza"].index(cat))
-                    if nueva_cat != cat:
-                        st.session_state['hallazgos_manuales'][h_key] = nueva_cat
-                st.markdown("</div>", unsafe_allow_html=True)
+                    st.markdown(f"""
+                    <div style='background:rgba(255,255,255,0.02); border-left:3px solid {h_color}; padding:0.4rem; border-radius:4px; margin-bottom:0.3rem;'>
+                        <p style='font-size:0.75rem; color:#FFFFFF; margin:0;'><b>[{doc[:15]}]</b>: {h_txt[:80]}...</p>
+                    </div>
+                    """, unsafe_allow_html=True)
             
-            with col_hall2:
-                st.markdown("<div class='elite-card'><b>Resumen Proporcional</b>", unsafe_allow_html=True)
+            with ch_col2:
                 ncs = sum(1 for v in st.session_state['hallazgos_manuales'].values() if v == "No Conformidad")
                 obs = sum(1 for v in st.session_state['hallazgos_manuales'].values() if v == "Observación")
                 fors = sum(1 for v in st.session_state['hallazgos_manuales'].values() if v == "Fortaleza")
                 
-                st.metric("🚫 No Conformidades", ncs)
-                st.metric("⚠️ Observaciones", obs)
-                st.metric("💎 Fortalezas", fors)
-                st.markdown("</div>", unsafe_allow_html=True)
+                st.markdown(f"""
+                <div style='display:flex; justify-content:space-around; text-align:center;'>
+                    <div><b style='color:#F87171;'>{ncs}</b><br><span style='font-size:0.6rem;'>NC</span></div>
+                    <div><b style='color:#F59E0B;'>{obs}</b><br><span style='font-size:0.6rem;'>OBS</span></div>
+                    <div><b style='color:#10B981;'>{fors}</b><br><span style='font-size:0.6rem;'>FOR</span></div>
+                </div>
+                """, unsafe_allow_html=True)
+                if st.button("🔧 GESTIONAR TODO", use_container_width=True):
+                    st.toast("Abriendo Panel Maestro de Hallazgos...")
+        st.markdown("</div>", unsafe_allow_html=True)
 
         # --- MÓDULO DE PLANES DE ACCIÓN (V17.0 - MEJORA CONTINUA) ---
         st.markdown("---")
