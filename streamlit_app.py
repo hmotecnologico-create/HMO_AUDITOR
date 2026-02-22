@@ -320,52 +320,70 @@ def migrate_legacy_audits():
 
 migrate_legacy_audits()
 
-# --- PANTALLA DE BIENVENIDA (ONBOARDING GATEWAY V3.4) ---
+# --- PANTALLA DE BIENVENIDA (ONBOARDING GATEWAY V3.5) ---
 if st.session_state['env'] is None:
-    st.markdown("<h2 style='text-align: center; color: #FFFFFF; font-family: Orbitron; margin-bottom: 1rem;'>🛡️ HMO HUB <span style='font-size: 0.6em; vertical-align: middle; color: #00C2FF;'>ELITE EDITION</span></h2>", unsafe_allow_html=True)
-    
-    col_g1, col_g2, col_g3 = st.columns(3)
+    st.markdown("""
+    <h2 style='text-align:center;color:#FFFFFF;font-family:Orbitron,sans-serif;
+               letter-spacing:3px;margin-bottom:0.3rem;'>
+        🛡️ HMO HUB <span style='font-size:0.55em;color:#00C2FF;'>ELITE EDITION</span>
+    </h2>
+    <p style='text-align:center;color:#475569;font-size:0.8rem;margin-bottom:1.5rem;'>
+        Sistema de Auditoría e Implementación de Sistemas de Gestión • v2.0
+    </p>
+    """, unsafe_allow_html=True)
 
-    # ---- COLUMNA 1: REANUDAR ----
+    # ══════════════════════════════════════════════════════════════════
+    # FILA 1 — REANUDAR  |  SIMULACIÓN
+    # ══════════════════════════════════════════════════════════════════
+    col_g1, col_g2 = st.columns(2, gap="large")
+
     with col_g1:
         st.markdown("""
-        <div class='elite-card'>
-            <h4 style='color: #00C2FF; margin-bottom: 0.2rem;'>📂 REANUDAR</h4>
-            <p style='font-size: 0.75rem; color: #94A3B8; margin-bottom: 0.5rem;'>Carga un expediente existente.</p>
+        <div style='background:rgba(0,194,255,0.06);border:1px solid rgba(0,194,255,0.25);
+                    border-radius:12px;padding:1rem 1.2rem 0.6rem;margin-bottom:0.8rem;'>
+            <span style='color:#00C2FF;font-family:Orbitron;font-size:0.95rem;font-weight:700;'>
+                📂 REANUDAR AUDITORÍA
+            </span><br>
+            <span style='color:#94A3B8;font-size:0.75rem;'>Continúa un expediente existente desde donde lo dejaste.</span>
         </div>
         """, unsafe_allow_html=True)
 
         base_audits_path = os.path.join(os.getcwd(), "Auditorias_HMO")
-        if os.path.exists(base_audits_path):
-            existing = [d for d in os.listdir(base_audits_path) if os.path.isdir(os.path.join(base_audits_path, d))]
-        else:
-            existing = []
+        existing = [d for d in os.listdir(base_audits_path)
+                    if os.path.isdir(os.path.join(base_audits_path, d))] \
+                   if os.path.exists(base_audits_path) else []
 
         if existing:
-            selected = st.selectbox("Proceso:", existing, key="resume_hub", label_visibility="collapsed")
+            selected = st.selectbox("Seleccionar expediente:", existing,
+                                    key="resume_hub", label_visibility="visible")
         else:
-            st.caption("No hay auditorías previas.")
+            st.caption("⚠️ No hay auditorías previas en este equipo.")
             selected = None
 
-        st.write("")  # espaciador uniforme
-        if st.button("🚀 RESTAURAR", use_container_width=True, disabled=not selected):
-            if selected and load_audit_state(selected): st.rerun()
+        if st.button("🚀 RESTAURAR EXPEDIENTE", use_container_width=True,
+                     disabled=not selected, type="primary"):
+            if selected and load_audit_state(selected):
+                st.rerun()
 
-    # ---- COLUMNA 2: SIMULACIÓN ----
     with col_g2:
         st.markdown("""
-        <div class='elite-card'>
-            <h4 style='color: #10B981; margin-bottom: 0.2rem;'>🎓 SIMULACIÓN</h4>
-            <p style='font-size: 0.75rem; color: #94A3B8; margin-bottom: 0.5rem;'>Expediente demo: <b>Innovatech Solutions SAS</b>.</p>
+        <div style='background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.25);
+                    border-radius:12px;padding:1rem 1.2rem 0.6rem;margin-bottom:0.8rem;'>
+            <span style='color:#10B981;font-family:Orbitron;font-size:0.95rem;font-weight:700;'>
+                🎓 MODO SIMULACIÓN
+            </span><br>
+            <span style='color:#94A3B8;font-size:0.75rem;'>Expediente demo pre-cargado: <b>Innovatech Solutions SAS</b>.</span>
         </div>
         """, unsafe_allow_html=True)
 
-        st.info("📋 El sistema define los tipos de documentos requeridos según las normas activas (SIG · Calidad · Seguridad · Ambiental). Cada documento se sube manualmente.", icon="💡")
-
-
-        st.write("")  # espaciador uniforme
-        if st.button("🚀 LANZAR V1.6 ELITE", use_container_width=True):
-            st.session_state['env'], st.session_state['company_name'] = "Simulacion", "Innovatech Solutions SAS"
+        st.info(
+            "El sistema guía al auditor paso a paso. "
+            "Cada documento del sistema de gestión se sube y valida individualmente.",
+            icon="💡"
+        )
+        if st.button("🚀 LANZAR SIMULACIÓN ELITE", use_container_width=True):
+            st.session_state['env'] = "Simulacion"
+            st.session_state['company_name'] = "Innovatech Solutions SAS"
             st.session_state['base_path'] = setup_company_folders("Innovatech Solutions SAS")
             st.session_state['paso_ingesta'] = 5
             st.session_state['auditor_name'] = "Juan Gabriel Ortiz"
@@ -384,77 +402,139 @@ if st.session_state['env'] is None:
             save_audit_state()
             st.rerun()
 
-    # ---- COLUMNA 3: NUEVO PROYECTO ----
-    with col_g3:
-        st.markdown("""
-        <div class='elite-card'>
-            <h4 style='color: #FFFFFF; margin-bottom: 0.2rem;'>🏗️ NUEVO PROYECTO</h4>
-            <p style='font-size: 0.75rem; color: #94A3B8; margin-bottom: 0.5rem;'>Auditoría real con rigor legal.</p>
-        </div>
-        """, unsafe_allow_html=True)
+    # ══════════════════════════════════════════════════════════════════
+    # DIVISOR VISUAL
+    # ══════════════════════════════════════════════════════════════════
+    st.markdown("""
+    <div style='margin:1.8rem 0 1.2rem;display:flex;align-items:center;gap:1rem;'>
+        <div style='flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(0,194,255,0.4),transparent);'></div>
+        <span style='color:#00C2FF;font-family:Orbitron;font-size:0.75rem;letter-spacing:3px;white-space:nowrap;'>
+            🏗️ NUEVO PROYECTO
+        </span>
+        <div style='flex:1;height:1px;background:linear-gradient(to left,transparent,rgba(0,194,255,0.4),transparent);'></div>
+    </div>
+    """, unsafe_allow_html=True)
 
-        # ── OCR de carga rápida ─────────────────────────────────────────
-        st.caption("⚡ Sube la CC o RUT para auto-rellenar todos los datos:")
-        _col_cc, _col_rut = st.columns(2)
-        with _col_cc:
-            _up_cc = st.file_uploader("📋 Cámara de Comercio", type=["pdf","jpg","jpeg","png"], key="new_proj_cc")
-        with _col_rut:
-            _up_rut = st.file_uploader("🧾 RUT (DIAN)", type=["pdf","jpg","jpeg","png"], key="new_proj_rut")
+    # ══════════════════════════════════════════════════════════════════
+    # SECCIÓN A — PRE-CARGA AUTOMÁTICA (CC + RUT)
+    # ══════════════════════════════════════════════════════════════════
+    st.markdown("""
+    <div style='background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+                border-radius:10px;padding:0.8rem 1rem 0.5rem;margin-bottom:0.5rem;'>
+        <span style='color:#CBD5E1;font-size:0.78rem;font-weight:600;letter-spacing:1px;'>
+            ① PRE-CARGA AUTOMÁTICA — Sube la Cámara de Comercio y el RUT para auto-rellenar los datos
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
 
-        # Auto-fill inmediato al subir CC
-        if _up_cc is not None and OCR_DISPONIBLE:
-            with st.spinner("Leyendo CC..."):
-                _r = procesar_documento(_up_cc.read(), _up_cc.name)
-            if _r.get("tipo_doc") == "camara_comercio":
-                _upd = resultado_a_session_state(_r)
-                for _k, _v in _upd.items():
-                    st.session_state[_k] = _v
-                st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {
-                    "nit": _r.get('empresa_nit',''), "razon_social": _r.get('company_name',''),
-                    "campos_extraidos": _r.get('campos_encontrados',[]), "validado_v15": True
-                }
-                st.success(f"✅ CC leída: {_r.get('company_name','—')} | NIT {_r.get('empresa_nit','—')}")
-            else:
-                st.warning("⚠️ El archivo no parece ser una Cámara de Comercio.")
+    _col_cc, _col_rut = st.columns(2, gap="medium")
+    with _col_cc:
+        st.markdown("<p style='color:#94A3B8;font-size:0.78rem;margin-bottom:0.3rem;'>📋 Cámara de Comercio</p>",
+                    unsafe_allow_html=True)
+        _up_cc = st.file_uploader("Certificado de Existencia y Representación Legal",
+                                   type=["pdf","jpg","jpeg","png"], key="new_proj_cc",
+                                   label_visibility="collapsed")
+    with _col_rut:
+        st.markdown("<p style='color:#94A3B8;font-size:0.78rem;margin-bottom:0.3rem;'>🧾 RUT — Registro Único Tributario</p>",
+                    unsafe_allow_html=True)
+        _up_rut = st.file_uploader("Archivo PDF del RUT de la DIAN",
+                                    type=["pdf","jpg","jpeg","png"], key="new_proj_rut",
+                                    label_visibility="collapsed")
 
-        # Auto-fill inmediato al subir RUT
-        if _up_rut is not None and OCR_DISPONIBLE:
-            with st.spinner("Leyendo RUT..."):
-                _r2 = procesar_documento(_up_rut.read(), _up_rut.name)
-            if _r2.get("tipo_doc") == "rut":
-                _upd2 = resultado_a_session_state(_r2)
-                for _k, _v in _upd2.items():
-                    st.session_state[_k] = _v
-                st.session_state['expediente']["RUT (Registro Unico Tributario)"] = {
-                    "nit": _r2.get('empresa_nit',''), "razon_social": _r2.get('company_name',''),
-                    "regimen_iva": _r2.get('regimen_iva',''),
-                    "responsabilidades": _r2.get('responsabilidades',[]),
-                    "campos_extraidos": _r2.get('campos_encontrados',[]), "validado_v15": True
-                }
-                st.success(f"✅ RUT leído: {_r2.get('empresa_municipio','—')} | CIIU {_r2.get('actividad_ciiu','—')}")
-            else:
-                st.warning("⚠️ El archivo no parece ser un RUT.")
+    # Auto-fill CC
+    if _up_cc is not None and OCR_DISPONIBLE:
+        with st.spinner("🔍 Leyendo Cámara de Comercio..."):
+            _r = procesar_documento(_up_cc.read(), _up_cc.name)
+        if _r.get("tipo_doc") == "camara_comercio":
+            for _k, _v in resultado_a_session_state(_r).items():
+                st.session_state[_k] = _v
+            st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {
+                "nit": _r.get('empresa_nit',''), "razon_social": _r.get('company_name',''),
+                "campos_extraidos": _r.get('campos_encontrados',[]), "validado_v15": True
+            }
+            st.success(f"✅ CC detectada — **{_r.get('company_name','—')}** | NIT: {_r.get('empresa_nit','—')}")
+        else:
+            st.warning("⚠️ El archivo no parece ser una Cámara de Comercio.")
 
-        st.divider()
-        # Nombre puede venir del OCR o ingresarse manual
-        _nombre_ocr = st.session_state.get('company_name', '')
-        new_name = st.text_input("Nombre Entidad:", value=_nombre_ocr,
-                                  placeholder="Ej: Universidad San José", key="nw_hub")
-        normas_disponibles = ["Calidad (ISO 9001:2015)", "Ambiental (ISO 14001:2015)", "Seguridad (ISO 27001:2022)", "Académico (Ley 115 / Dec. 1330)"]
-        new_norma = st.multiselect("Marcos normativos:", normas_disponibles,
-                                    default=["Calidad (ISO 9001:2015)"], key="nm_hub")
+    # Auto-fill RUT
+    if _up_rut is not None and OCR_DISPONIBLE:
+        with st.spinner("🔍 Leyendo RUT..."):
+            _r2 = procesar_documento(_up_rut.read(), _up_rut.name)
+        if _r2.get("tipo_doc") == "rut":
+            for _k, _v in resultado_a_session_state(_r2).items():
+                st.session_state[_k] = _v
+            st.session_state['expediente']["RUT (Registro Unico Tributario)"] = {
+                "nit": _r2.get('empresa_nit',''), "razon_social": _r2.get('company_name',''),
+                "regimen_iva": _r2.get('regimen_iva',''),
+                "responsabilidades": _r2.get('responsabilidades',[]),
+                "campos_extraidos": _r2.get('campos_encontrados',[]), "validado_v15": True
+            }
+            st.success(f"✅ RUT detectado — Municipio: {_r2.get('empresa_municipio','—')} | CIIU: {_r2.get('actividad_ciiu','—')}")
+        else:
+            st.warning("⚠️ El archivo no parece ser un RUT.")
 
-        if st.button("🏗️ CREAR PROYECTO", use_container_width=True):
+    st.divider()
+
+    # ══════════════════════════════════════════════════════════════════
+    # SECCIÓN B — DATOS DEL PROYECTO
+    # ══════════════════════════════════════════════════════════════════
+    st.markdown("""
+    <div style='background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+                border-radius:10px;padding:0.8rem 1rem 0.5rem;margin-bottom:0.8rem;'>
+        <span style='color:#CBD5E1;font-size:0.78rem;font-weight:600;letter-spacing:1px;'>
+            ② DATOS DEL PROYECTO — Confirma o ingresa el nombre de la entidad y los marcos normativos
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    _col_name, _col_norma = st.columns([1, 2], gap="medium")
+    with _col_name:
+        new_name = st.text_input(
+            "Nombre de la Entidad",
+            value=st.session_state.get('company_name', ''),
+            placeholder="Ej: Universidad San José S.A.S",
+            key="nw_hub"
+        )
+    with _col_norma:
+        normas_disponibles = [
+            "Calidad (ISO 9001:2015)", "Ambiental (ISO 14001:2015)",
+            "Seguridad (ISO 27001:2022)", "Académico (Ley 115 / Dec. 1330)"
+        ]
+        new_norma = st.multiselect(
+            "Marcos Normativos Aplicables",
+            normas_disponibles,
+            default=["Calidad (ISO 9001:2015)"],
+            key="nm_hub"
+        )
+
+    st.divider()
+
+    # ══════════════════════════════════════════════════════════════════
+    # SECCIÓN C — CREAR PROYECTO
+    # ══════════════════════════════════════════════════════════════════
+    _col_btn, _col_tip = st.columns([1, 2], gap="medium")
+    with _col_btn:
+        if st.button("🏗️ CREAR Y COMENZAR AUDITORÍA", use_container_width=True, type="primary"):
             if new_name:
-                st.session_state['env'], st.session_state['company_name'] = "Real", new_name
+                st.session_state['env'] = "Real"
+                st.session_state['company_name'] = new_name
                 st.session_state['norma'] = new_norma
                 st.session_state['base_path'] = setup_company_folders(new_name)
                 save_audit_state()
                 st.rerun()
             else:
-                st.warning("⚠️ Nombre requerido.")
+                st.warning("⚠️ El nombre de la entidad es obligatorio.")
+    with _col_tip:
+        st.caption(
+            "💡 Si subiste los documentos en el paso ①, el nombre se auto-completa. "
+            "Puedes editarlo antes de crear el proyecto."
+        )
 
-    st.markdown("<p style='text-align: center; font-size: 0.65rem; color: #475569; margin-top: 1rem;'>HMO v2.0 Elite | Operación Local Privada</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center;font-size:0.65rem;color:#334155;margin-top:2rem;'>"
+                "HMO Auditor v2.0 Elite · Operación Local Privada · ISO 9001 / 14001 / 27001</p>",
+                unsafe_allow_html=True)
+
+
 
 # --- DASHBOARD PRINCIPAL ---
 else:
