@@ -39,27 +39,70 @@ def save_users(data: dict) -> None:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
 def _create_default_users() -> None:
-    """Crea el archivo inicial con un admin temporal."""
+    """
+    Crea el archivo inicial con las tres cuentas base.
+    El nombre de usuario ES el rol: admin, auditor, visitante.
+    """
+    _now = datetime.datetime.now().isoformat()
     data = {
         "meta": {
-            "version": "1.0",
-            "creado": datetime.datetime.now().isoformat(),
-            "descripcion": "Archivo de usuarios HMO Auditor"
+            "version": "1.1",
+            "creado": _now,
+            "descripcion": "Archivo de usuarios HMO Auditor — usuario=rol"
         },
         "usuarios": [
             {
-                "user": DEFAULT_ADMIN_USER,
+                "user": "admin",
                 "hash": hash_password(DEFAULT_ADMIN_PASS),
                 "rol": "admin",
                 "nombre": "Administrador HMO",
                 "activo": True,
-                "primer_login": True,  # Obliga a cambiar clave al primer acceso
-                "creado": datetime.datetime.now().isoformat(),
+                "primer_login": True,
+                "creado": _now,
+                "ultimo_acceso": None
+            },
+            {
+                "user": "auditor",
+                "hash": hash_password("Auditor2024!"),
+                "rol": "auditor",
+                "nombre": "Auditor HMO",
+                "activo": True,
+                "primer_login": True,
+                "creado": _now,
+                "ultimo_acceso": None
+            },
+            {
+                "user": "visitante",
+                "hash": hash_password("Visita2024!"),
+                "rol": "visitante",
+                "nombre": "Visitante HMO",
+                "activo": True,
+                "primer_login": False,
+                "creado": _now,
                 "ultimo_acceso": None
             }
         ]
     }
     save_users(data)
+
+
+def rol_desde_usuario(username: str) -> str:
+    """
+    Infiere el rol a partir del nombre de usuario.
+    - Empieza con 'admin'     → rol admin
+    - Empieza con 'visitante' → rol visitante
+    - Cualquier otro          → rol auditor
+    Esta función se usa al crear usuarios nuevos para asignar el rol
+    automáticamente si no se especifica uno explícito.
+    """
+    u = username.strip().lower()
+    if u.startswith("admin"):
+        return "admin"
+    if u.startswith("visitante") or u.startswith("visita"):
+        return "visitante"
+    return "auditor"
+
+
 
 # ─── AUTENTICACIÓN ───────────────────────────────────────────────────────────
 
