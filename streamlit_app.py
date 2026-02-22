@@ -393,27 +393,19 @@ else:
         ]
     
     cartas_todas = base_cartas + norm_cartas
-    total_total = len(cartas_todas)
-    fase_a_ready = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
-
-    # --- SIDEBAR MASTER (V3.9) ---
-    st.sidebar.markdown(f"**🏢 {company}**")
-    st.sidebar.markdown(f"**💎 Marco:** {st.session_state['norma']}")
-    
     # --- MOTOR DE CÁLCULO DE AUDITORÍA (SYNC V4.0) ---
     count_exp = len(st.session_state['expediente'])
     fase_a_ready = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
     fase_b_ready = st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)" or st.session_state['env'] == "Simulacion"
     
     pct_fase_a = 100 if fase_a_ready else 0
-    pct_fase_b = 100 if fase_b_ready else 0
+    pct_fase_b = int(100 if st.session_state['empresa_tamanio'] != "Pyme" or st.session_state['env'] == "Simulacion" else 0)
     pct_fase_c = int((count_exp / total_total) * 100) if total_total > 0 else 0
-    
     pct_total = int((pct_fase_a + pct_fase_b + pct_fase_c) / 3)
 
-    # --- SIDEBAR MASTER (V4.0) ---
-    st.sidebar.markdown(f"**🏢 {company}**")
-    st.sidebar.markdown(f"**💎 Marco:** {st.session_state['norma']}")
+    # --- SIDEBAR MASTER (V4.3 Gold) ---
+    st.sidebar.markdown(f"## 🏢 {company}")
+    st.sidebar.markdown(f"**Marco:** {st.session_state['norma']}")
     
     # Selector de Rol (V4.0 - Hi-Contrast)
     roles_disponibles = ["Administrador (Global)", "⚖️ Jurídico", "🏦 Alta Dirección", "📊 Calidad / SIG", "🛡️ Ciberseguridad", "♻️ Gestión Ambiental", "🎓 Gestión Académica"]
@@ -424,8 +416,8 @@ else:
     # Navegación Prioritaria (Ingesta Primero + Avance)
     opciones = [
         f"🗺️ Camino de Ingesta [{pct_fase_c}%]",
-        f"📊 Dashboard Analytics [{pct_total}%]",
-        "📋 Req. Maestros",
+        f"📊 Dashboard Analítico [{pct_total}%]",
+        "📋 Requerimientos Maestros",
         "⚖️ Emisión de Formatos",
         "💎 Help Center Elite"
     ]
@@ -576,7 +568,7 @@ else:
             st.markdown("</div>", unsafe_allow_html=True)
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
-    elif menu == "🗺️ Camino de Ingesta (HITL)":
+    elif menu == "🗺️ Camino de Ingesta":
         st.markdown("<h1 class='norm-header'>🏗️ Ingesta de Materia Prima por Fases</h1>", unsafe_allow_html=True)
         
         # CÁLCULO DE PROGRESO GLOBAL DE INGESTA
@@ -750,7 +742,7 @@ else:
                         st.success("🚀 El sistema ha sido habilitado para emitir documentos con inyección de datos del expediente.")
 
     # --- SECCIÓN: FORMATOS ---
-    elif menu == "⚖️ Emisión de Títulos/Formatos":
+    elif menu == "⚖️ Emisión de Formatos":
         st.markdown("<h1 class='norm-header'>⚖️ Emisión de Formatos & Títulos Legales</h1>", unsafe_allow_html=True)
         
         # Estado de Autorización
