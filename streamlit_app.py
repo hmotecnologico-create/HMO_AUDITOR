@@ -482,30 +482,58 @@ if st.session_state['env'] is None:
     <div style='background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
                 border-radius:10px;padding:0.8rem 1rem 0.5rem;margin-bottom:0.8rem;'>
         <span style='color:#CBD5E1;font-size:0.78rem;font-weight:600;letter-spacing:1px;'>
-            ② DATOS DEL PROYECTO — Confirma o ingresa el nombre de la entidad y los marcos normativos
+            ② DATOS DEL PROYECTO — Selecciona los marcos normativos aplicables
         </span>
     </div>
     """, unsafe_allow_html=True)
 
-    _col_name, _col_norma = st.columns([1, 2], gap="medium")
-    with _col_name:
+    # Nombre: viene del OCR o hay que ingresarlo
+    _nombre_ocr = st.session_state.get('company_name', '').strip()
+    if _nombre_ocr:
+        # Nombre capturado por OCR — mostrar como confirmado
+        st.markdown(f"""
+        <div style='background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);
+                    border-radius:8px;padding:0.6rem 1rem;margin-bottom:0.6rem;
+                    display:flex;align-items:center;gap:0.8rem;'>
+            <span style='font-size:1.1rem;'>✅</span>
+            <div>
+                <span style='color:#94A3B8;font-size:0.7rem;letter-spacing:1px;'>ENTIDAD DETECTADA POR OCR</span><br>
+                <span style='color:#E2E8F0;font-size:1rem;font-weight:700;'>{_nombre_ocr}</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        # Opción de corrección sin ocupar espacio salvo que se necesite
+        with st.expander("✏️ El nombre está incorrecto — corregir"):
+            new_name = st.text_input(
+                "Nombre correcto de la entidad",
+                value=_nombre_ocr,
+                key="nw_hub"
+            )
+        # Si no abrió el expander, conservar el nombre del OCR
+        if "nw_hub" not in st.session_state or not st.session_state.get("nw_hub", "").strip():
+            new_name = _nombre_ocr
+    else:
+        # Sin OCR — campo obligatorio
+        st.caption("⚠️ Sube la CC o el RUT (paso ①) para auto-detectar el nombre, o ingrésalo manualmente:")
         new_name = st.text_input(
             "Nombre de la Entidad",
-            value=st.session_state.get('company_name', ''),
+            value="",
             placeholder="Ej: Universidad San José S.A.S",
             key="nw_hub"
         )
-    with _col_norma:
-        normas_disponibles = [
-            "Calidad (ISO 9001:2015)", "Ambiental (ISO 14001:2015)",
-            "Seguridad (ISO 27001:2022)", "Académico (Ley 115 / Dec. 1330)"
-        ]
-        new_norma = st.multiselect(
-            "Marcos Normativos Aplicables",
-            normas_disponibles,
-            default=["Calidad (ISO 9001:2015)"],
-            key="nm_hub"
-        )
+
+    # Normas aplicables
+    normas_disponibles = [
+        "Calidad (ISO 9001:2015)", "Ambiental (ISO 14001:2015)",
+        "Seguridad (ISO 27001:2022)", "Académico (Ley 115 / Dec. 1330)"
+    ]
+    new_norma = st.multiselect(
+        "Marcos Normativos Aplicables",
+        normas_disponibles,
+        default=["Calidad (ISO 9001:2015)"],
+        key="nm_hub"
+    )
+
 
     st.divider()
 
