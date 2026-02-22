@@ -10,7 +10,7 @@ class HMO_AI_Engine:
         try:
             response = requests.post(self.url, json={"model": self.model, "prompt": "test", "stream": False}, timeout=5)
             return response.status_code == 200
-        except:
+        except requests.exceptions.RequestException:
             return False
 
     def analyze_document(self, doc_name, text_content, target_norm="ISO 9001:2015"):

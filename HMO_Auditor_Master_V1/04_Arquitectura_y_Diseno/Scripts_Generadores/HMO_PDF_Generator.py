@@ -82,13 +82,6 @@ def generate_audit_program_pdf(company_name, output_path, kb=None, identity_data
     pdf.text(35, pdf.get_y() + 5, f"FIRMA AUDITOR: {identity_data.get('auditor')}")
     pdf.text(130, pdf.get_y() + 5, f"FIRMA REPRESENTANTE LEGAL")
 
-def generate_audit_program_pdf(company_name, output_path, kb=None, identity_data=None):
-    # ... (existing function content)
-    # ...
-    if not os.path.exists(output_path): os.makedirs(output_path)
-    full_path = os.path.join(output_path, f"GAD_PROG_01_CERT_{company_name[:5].upper()}.pdf")
-    pdf.output(full_path)
-    return full_path
 
 def generate_preparation_guide_pdf(company_name, output_path, doc_requirements, norma="ISO 9001:2015"):
     """

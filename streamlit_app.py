@@ -4,13 +4,12 @@ import plotly.express as px
 import plotly.graph_objects as go
 import datetime
 import os
-from HMO_PDF_Generator import generate_audit_program_pdf, generate_preparation_guide_pdf
-from HMO_AI_Engine import HMO_AI_Engine
 import sys
-import pandas as pd
 import io
 import shutil
 import json
+from HMO_PDF_Generator import generate_audit_program_pdf, generate_preparation_guide_pdf
+from HMO_AI_Engine import HMO_AI_Engine
 
 # --- CONFIGURACIÓN DE RUTAS ---
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
