@@ -5,7 +5,10 @@ import plotly.graph_objects as go
 import datetime
 import os
 from HMO_PDF_Generator import generate_audit_program_pdf
+from HMO_AI_Engine import HMO_AI_Engine
 import sys
+import pandas as pd
+import io
 import shutil
 import json
 
@@ -682,10 +685,20 @@ else:
                             
                             if not es_completado:
                                 st.caption(f"Ref: {c['ref']} | {c['desc']}")
-                                uploaded_file = st.file_uploader(f"📥 {doc_id}: Cargue aquí el documento oficial (.pdf, .docx)", type=['pdf', 'docx'], key=f"up_{idx}")
+                                uploaded_file = st.file_uploader(f"📥 {doc_id}: Cargue aquí el documento oficial (.pdf, .docx, .xlsx, .csv)", type=['pdf', 'docx', 'xlsx', 'csv'], key=f"up_{idx}")
                                 if uploaded_file:
-                                    st.info(f"🧿 Motor de Reconocimiento Cognitivo V7.0...")
+                                    st.info(f"🧿 Motor de Reconocimiento Cognitivo V8.0...")
                                     st.write("---")
+                                    # Lógica de Parsing Estructurado para Matrices (V8.0)
+                                    extracted_data = ""
+                                    if uploaded_file.name.endswith(('.xlsx', '.csv')):
+                                        try:
+                                            df = pd.read_excel(uploaded_file) if uploaded_file.name.endswith('.xlsx') else pd.read_csv(uploaded_file)
+                                            extracted_data = df.to_markdown() # Formato que Llama3 entiende muy bien
+                                            st.success("📊 Estructura de Tabla Detectada y Procesada.")
+                                        except:
+                                            extracted_data = "Error en parsing estructurado."
+                                    
                                     st.caption("🔍 Pasos de la IA:")
                                     st.write("1. Analizando coherencia sintáctica...")
                                     st.write("2. Validando semántica contra ISO 9001:2015...")
@@ -697,11 +710,32 @@ else:
                                     with col_ocr2:
                                         manual_txt = st.text_area("✍️ Ajuste Auditor", placeholder="Añada observaciones...", key=f"val_{idx}")
                                     
-                                    if st.button(f"✅ VALIDAR {doc_id.upper()}", key=f"btn_{idx}"):
-                                        # Guardar en el expediente meta-data real
-                                        st.session_state['expediente'][doc_id] = manual_txt if manual_txt else raw_txt
+                                    if st.button(f"✅ VALIDAR SEMÁNTICA {doc_id.upper()}", key=f"btn_{idx}"):
+                                        with st.spinner("🧠 Llama3 Analizando Coherencia Normativa..."):
+                                            ai_engine = HMO_AI_Engine()
+                                            if ai_engine.test_connection():
+                                                # Decidir si es análisis estructural o de documento
+                                                if extracted_data:
+                                                    analisis = ai_engine.analyze_risk_matrix(extracted_data)
+                                                else:
+                                                    analisis = ai_engine.analyze_document(doc_id, manual_txt if manual_txt else raw_txt)
+                                                
+                                                if "error" not in analisis:
+                                                    st.session_state['expediente'][doc_id] = {
+                                                        "contenido": manual_txt if manual_txt else (extracted_data if extracted_data else raw_txt),
+                                                        "coherencia": analisis.get("Coherencia", 0),
+                                                        "hallazgos": analisis.get("Hallazgos_Clave", []),
+                                                        "resumen": analisis.get("Resumen_Ejecutivo", "")
+                                                    }
+                                                    st.success(f"✅ {doc_id} validado por IA con {analisis.get('Coherencia')}% de coherencia.")
+                                                else:
+                                                    st.warning("⚠️ Error en respuesta de Llama3. Usando validación estándar.")
+                                                    st.session_state['expediente'][doc_id] = manual_txt if manual_txt else raw_txt
+                                            else:
+                                                st.error("🚨 Ollama (Llama3) No Detectado localmente.")
+                                                st.session_state['expediente'][doc_id] = manual_txt if manual_txt else raw_txt
+                                        
                                         save_audit_state()
-                                        st.success(f"✅ {doc_id} cargado con éxito.")
                                         st.rerun()
                                     
                                     # Evaluador de Rigor

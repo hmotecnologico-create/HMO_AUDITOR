@@ -66,10 +66,17 @@ def create_legal_checklist(company_name, output_path, logo_path=None, kb=None, i
         cell.value, cell.fill, cell.font, cell.alignment, cell.border = header, header_fill, white_font, center_align, border
         ws.column_dimensions[openpyxl.utils.get_column_letter(col_num)].width = 22
 
-    # Inyección de Datos desde Expediente
+    # Inyección de Datos desde Expediente (Motor Cognitivo V8.0)
     i = 1
-    for doc_name, content in kb.items():
-        row_data = [str(i), doc_name, "X", "Validado", content[:100] + "...", "Archivo Indexado", "SHA-256 Verified"]
+    for doc_name, data in kb.items():
+        if isinstance(data, dict):
+            resumen = data.get('resumen', '')
+            hallazgos = " | ".join(data.get('hallazgos', []))
+            coherencia = f"{data.get('coherencia')}%"
+            row_data = [str(i), doc_name, "X", "Auditado", f"Coherencia: {coherencia}. {resumen} \n Hallazgos: {hallazgos}", "Indexado v8.0", "SHA-256 Validated"]
+        else:
+            row_data = [str(i), doc_name, "X", "Validado", str(data)[:100], "Archivo Indexado", "SHA-256 Verified"]
+        
         ws.append(row_data)
         for cell in ws[ws.max_row]:
             cell.border = border

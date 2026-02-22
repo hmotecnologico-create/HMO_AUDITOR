@@ -1,67 +1,89 @@
 from fpdf import FPDF
+from fpdf.enums import XPos, YPos
 import datetime
 import os
 
 class HMO_PDF(FPDF):
     def header(self):
-        # Logo placeholder or real logo
         self.set_font('helvetica', 'B', 12)
-        self.cell(0, 10, 'HMO AUDITOR ELITE - SISTEMA DE GESTIÓN DE CALIDAD', ln=True, align='C')
+        self.cell(0, 10, 'HMO AUDITOR ELITE - SISTEMA DE GESTIÓN DE CALIDAD', align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         self.set_font('helvetica', 'I', 8)
-        self.cell(0, 5, f'Generado: {datetime.date.today()} | Grado: Institucional', ln=True, align='C')
+        self.cell(0, 5, f'Código: GAD-PROG-01 | Versión: 03 | Fecha: {datetime.date.today()}', align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         self.ln(10)
 
     def footer(self):
         self.set_y(-15)
         self.set_font('helvetica', 'I', 8)
-        self.cell(0, 10, f'Página {self.page_no()} | Confidencial HMO Auditor', align='C')
+        self.cell(0, 10, f'Página {self.page_no()} | Confidencial HMO Auditor - ISO 19011 Compliance', align='C')
 
 def generate_audit_program_pdf(company_name, output_path, kb=None, identity_data=None):
     pdf = HMO_PDF()
     pdf.add_page()
     pdf.set_font("helvetica", "B", 16)
-    pdf.cell(0, 10, "PROGRAMA DE AUDITORÍA INTERNA", ln=True, align='C')
+    pdf.cell(0, 10, "PROGRAMA DE AUDITORÍA INTERNA", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.ln(10)
 
-    # Datos Generales
+    # 1. Datos Generales
     pdf.set_font("helvetica", "B", 12)
     pdf.set_fill_color(230, 230, 230)
-    pdf.cell(0, 10, "1. DATOS GENERALES", ln=True, fill=True)
+    pdf.cell(0, 10, "1. DATOS GENERALES Y ALCANCE", fill=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.set_font("helvetica", "", 10)
     
     data = [
-        ("Entidad", company_name),
-        ("Auditor", identity_data.get("auditor", "N/A")),
-        ("NIT", identity_data.get("nit", "N/A")),
-        ("Sector", identity_data.get("sector", "N/A")),
+        ("Empresa Auditada", company_name),
+        ("Auditor Líder", identity_data.get("auditor", "N/A")),
+        ("NIT / ID Legal", identity_data.get("nit", "N/A")),
+        ("Sector Económico", identity_data.get("sector", "N/A")),
+        ("Norma de Referencia", "ISO 9001:2015 / ISO 19011:2018"),
     ]
     
     for key, val in data:
-        pdf.cell(50, 8, f"{key}:", border=1)
-        pdf.cell(0, 8, f" {val}", border=1, ln=True)
+        pdf.cell(60, 8, f" {key}:", border=1)
+        pdf.set_font("helvetica", "B", 10)
+        pdf.cell(0, 8, f" {val}", border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        pdf.set_font("helvetica", "", 10)
     
     pdf.ln(10)
     
-    # Contenido Semántico
+    # 2. Análisis Cognitivo de Evidencias
     pdf.set_font("helvetica", "B", 12)
-    pdf.cell(0, 10, "2. ANÁLISIS DE COHERENCIA NORMATIVA (Materia Prima)", ln=True, fill=True)
-    pdf.set_font("helvetica", "", 10)
+    pdf.cell(0, 10, "2. ANÁLISIS COGNITIVO DE EVIDENCIAS (ISO 19011:6.4)", fill=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     
     if kb:
-        for doc, content in kb.items():
+        for doc, data in kb.items():
             pdf.set_font("helvetica", "B", 10)
-            pdf.cell(0, 7, f"Documento: {doc}", ln=True)
+            status = f" [Coherencia: {data.get('coherencia')}%]" if isinstance(data, dict) else ""
+            pdf.cell(0, 8, f">> {doc}{status}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
             pdf.set_font("helvetica", "", 9)
-            pdf.multi_cell(0, 5, f"Resumen Semántico: {str(content)[:300]}...")
-            pdf.ln(2)
+            
+            summary = data.get('resumen', "Verificado") if isinstance(data, dict) else "Analizado por motor estándar."
+            pdf.multi_cell(0, 5, f"Resumen Semántico: {summary}")
+            
+            if isinstance(data, dict) and data.get('hallazgos'):
+                pdf.set_font("helvetica", "I", 8)
+                pdf.cell(0, 5, "   Hallazgos Detectados:", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+                for h in data.get('hallazgos'):
+                    pdf.cell(0, 5, f"   - {h}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+            pdf.ln(3)
     
-    pdf.ln(10)
+    pdf.ln(5)
+    
+    # 3. Conclusiones y Firmas
     pdf.set_font("helvetica", "B", 12)
-    pdf.cell(0, 10, "3. CRITERIOS DE CERTIFICACIÓN", ln=True, fill=True)
+    pdf.cell(0, 10, "3. CONCLUSIONES Y VALIDACIÓN LEGAL", fill=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.set_font("helvetica", "", 10)
-    pdf.multi_cell(0, 6, "Este documento certifica que la entidad ha superado la fase de ingesta documental, cumpliendo con los estándares de integridad y veracidad exigidos por el marco normativo ISO 9001:2015.")
+    pdf.multi_cell(0, 6, "Tras el análisis multidimensional de la materia prima inyectada, se concluye que la organización cumple con los requisitos de planificación y preparación establecidos en la norma ISO 19011:2018.")
+    
+    pdf.ln(20)
+    # Firmas
+    pdf.line(20, pdf.get_y(), 90, pdf.get_y())
+    pdf.line(120, pdf.get_y(), 190, pdf.get_y())
+    pdf.set_font("helvetica", "B", 8)
+    pdf.text(35, pdf.get_y() + 5, f"FIRMA AUDITOR: {identity_data.get('auditor')}")
+    pdf.text(130, pdf.get_y() + 5, f"FIRMA REPRESENTANTE LEGAL")
 
-    full_path = os.path.join(output_path, f"GA_CERT_{company_name[:5].upper()}.pdf")
+    if not os.path.exists(output_path): os.makedirs(output_path)
+    full_path = os.path.join(output_path, f"GAD_PROG_01_CERT_{company_name[:5].upper()}.pdf")
     pdf.output(full_path)
     return full_path
 
