@@ -320,42 +320,51 @@ if st.session_state['env'] is None:
     st.markdown("<h2 style='text-align: center; color: #FFFFFF; font-family: Orbitron; margin-bottom: 1rem;'>🛡️ HMO HUB <span style='font-size: 0.6em; vertical-align: middle; color: #00C2FF;'>ELITE EDITION</span></h2>", unsafe_allow_html=True)
     
     col_g1, col_g2, col_g3 = st.columns(3)
-    
+
+    # ---- COLUMNA 1: REANUDAR ----
     with col_g1:
         st.markdown("""
         <div class='elite-card'>
             <h4 style='color: #00C2FF; margin-bottom: 0.2rem;'>📂 REANUDAR</h4>
-            <p style='font-size: 0.75rem; color: #94A3B8; margin-bottom: 0;'>Acceso a expedientes previos.</p>
+            <p style='font-size: 0.75rem; color: #94A3B8; margin-bottom: 0.5rem;'>Carga un expediente existente.</p>
         </div>
         """, unsafe_allow_html=True)
-        
+
         base_audits_path = os.path.join(os.getcwd(), "Auditorias_HMO")
         if os.path.exists(base_audits_path):
             existing = [d for d in os.listdir(base_audits_path) if os.path.isdir(os.path.join(base_audits_path, d))]
-            if existing:
-                selected = st.selectbox("Proceso:", existing, key="resume_hub", label_visibility="collapsed")
-                if st.button("🚀 Restaurar", use_container_width=True):
-                    if load_audit_state(selected): st.rerun()
-            else: st.caption("No hay auditorías.")
+        else:
+            existing = []
 
+        if existing:
+            selected = st.selectbox("Proceso:", existing, key="resume_hub", label_visibility="collapsed")
+        else:
+            st.caption("No hay auditorías previas.")
+            selected = None
+
+        st.write("")  # espaciador uniforme
+        if st.button("🚀 RESTAURAR", use_container_width=True, disabled=not selected):
+            if selected and load_audit_state(selected): st.rerun()
+
+    # ---- COLUMNA 2: SIMULACIÓN ----
     with col_g2:
         st.markdown("""
         <div class='elite-card'>
             <h4 style='color: #10B981; margin-bottom: 0.2rem;'>🎓 SIMULACIÓN</h4>
-            <p style='font-size: 0.75rem; color: #94A3B8; margin-bottom: 0;'>Expediente: <b>Innovatech Solutions</b>.</p>
+            <p style='font-size: 0.75rem; color: #94A3B8; margin-bottom: 0.5rem;'>Expediente demo: <b>Innovatech Solutions SAS</b>.</p>
         </div>
         """, unsafe_allow_html=True)
-        st.markdown("<p style='font-size: 0.7rem; color: #10B981;'>💡 Cámara, RUT y Matriz listos.</p>", unsafe_allow_html=True)
-        if st.button("Lanzar V1.6 Elite", use_container_width=True):
+
+        st.info("✅ 12 documentos base pre-cargados (SIG · Calidad · Seguridad · Ambiental)", icon="💡")
+
+        st.write("")  # espaciador uniforme
+        if st.button("🚀 LANZAR V1.6 ELITE", use_container_width=True):
             st.session_state['env'], st.session_state['company_name'] = "Simulacion", "Innovatech Solutions SAS"
             st.session_state['base_path'] = setup_company_folders("Innovatech Solutions SAS")
             st.session_state['paso_ingesta'] = 5
             st.session_state['auditor_name'] = "Juan Gabriel Ortiz"
             st.session_state['empresa_nit'] = "901.455.789-2"
-            # Modo Integrado por Defecto para Simulación (SIG)
             st.session_state['norma'] = ["Calidad (ISO 9001:2015)", "Seguridad (ISO 27001:2022)"]
-            
-            # Pre-validar documentos para el Dashboard Integrado (Protocolo V8.8)
             st.session_state['expediente'] = {
                 "Camara de Comercio (Existencia Legal)": "Verificado V6.0",
                 "RUT (Registro Unico Tributario)": "Verificado V6.0",
@@ -364,29 +373,33 @@ if st.session_state['env'] is None:
                 "Mision y Vision Corporativa": "Verificado V6.0",
                 "Organigrama Funcional": "Estructura Jerarquica Verificada",
                 "Mapa de Procesos": "Interaccion de procesos analizada",
-                "Politica de Seguridad": "Verificado V8.8 (SIG Integration)" # Evidencia Cyber
+                "Politica de Seguridad": "Verificado V8.8 (SIG Integration)"
             }
             save_audit_state()
             st.rerun()
 
+    # ---- COLUMNA 3: NUEVO PROYECTO ----
     with col_g3:
         st.markdown("""
         <div class='elite-card'>
             <h4 style='color: #FFFFFF; margin-bottom: 0.2rem;'>🏗️ NUEVO PROYECTO</h4>
-            <p style='font-size: 0.75rem; color: #94A3B8; margin-bottom: 0;'>Auditoría real con rigor legal.</p>
+            <p style='font-size: 0.75rem; color: #94A3B8; margin-bottom: 0.5rem;'>Auditoría real con rigor legal.</p>
         </div>
         """, unsafe_allow_html=True)
+
         new_name = st.text_input("Nombre Entidad:", placeholder="Ej: Universidad San José", key="nw_hub", label_visibility="collapsed")
         normas_disponibles = ["Calidad (ISO 9001:2015)", "Ambiental (ISO 14001:2015)", "Seguridad (ISO 27001:2022)", "Académico (Ley 115 / Dec. 1330)"]
         new_norma = st.multiselect("Marcos:", normas_disponibles, default=["Calidad (ISO 9001:2015)"], key="nm_hub", label_visibility="collapsed")
-        if st.button("Crear Proyecto", use_container_width=True):
+
+        if st.button("🏗️ CREAR PROYECTO", use_container_width=True):
             if new_name:
                 st.session_state['env'], st.session_state['company_name'] = "Real", new_name
                 st.session_state['norma'] = new_norma
                 st.session_state['base_path'] = setup_company_folders(new_name)
                 save_audit_state()
                 st.rerun()
-            else: st.warning("Nombre requerido.")
+            else:
+                st.warning("⚠️ Nombre requerido.")
 
     st.markdown("<p style='text-align: center; font-size: 0.65rem; color: #475569; margin-top: 1rem;'>HMO v2.0 Elite | Operación Local Privada</p>", unsafe_allow_html=True)
 
