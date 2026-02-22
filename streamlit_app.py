@@ -91,12 +91,16 @@ st.markdown("""
         text-shadow: 0 1px 6px rgba(0, 194, 255, 0.2);
     }
 
-    /* TITULOS NEON */
+    /* TITULOS NEON — REFINADOS V16 */
+    h1 { font-size: 1.8rem !important; margin-bottom: 0.5rem !important; }
+    h2 { font-size: 1.4rem !important; }
+    h3 { font-size: 1.1rem !important; }
+    
     h1, h2, h3, .neon-title {
         color: #FFFFFF !important;
         font-family: 'Orbitron', sans-serif !important;
-        text-shadow: 0 0 20px rgba(0, 194, 255, 0.6);
-        letter-spacing: 3px !important;
+        text-shadow: 0 0 15px rgba(0, 194, 255, 0.4);
+        letter-spacing: 2px !important;
         font-weight: 700 !important;
         text-align: center;
     }
@@ -109,54 +113,41 @@ st.markdown("""
         justify-content: center;
         font-weight: 700;
         font-family: 'Orbitron';
-        border: 4px solid #00C2FF;
-        box-shadow: 0 0 15px rgba(0, 194, 255, 0.5);
+        border: 3px solid #00C2FF;
+        box-shadow: 0 0 10px rgba(0, 194, 255, 0.3);
     }
 
     /* INPUTS Y FORMULARIOS HI-FI */
     /* INPUTS Y FORMULARIOS HI-FI V4.6 (ACCESSIBILITY FIRST) */
     [data-baseweb="input"], [data-baseweb="select"], [data-baseweb="popover"] {
-        background: #E2E8F0 !important; /* Fondo claro para contraste real */
-        border: 1.5px solid #00C2FF !important;
-        border-radius: 12px !important;
+        background: #F8FAFC !important; /* Más claro aún */
+        border: 1px solid rgba(0, 194, 255, 0.4) !important;
+        border-radius: 8px !important;
     }
     input { 
-        color: #000000 !important; 
-        font-weight: 700 !important; 
-    }
-    input::placeholder {
-        color: rgba(0, 0, 0, 0.5) !important;
+        color: #0F172A !important; 
+        font-weight: 600 !important;
+        font-size: 0.85rem !important;
     }
     
-    /* SELECTOR DE ROL Y DROPDOWNS: NEGRO SOBRE CLARO */
-    div[data-baseweb="select"] span, div[data-baseweb="select"] div { 
-        color: #000000 !important; 
-        font-weight: 800 !important;
-        font-size: 0.9rem !important;
-    }
-    [data-testid="stSidebar"] label {
-        color: #00C2FF !important;
-        font-weight: 700 !important;
-        font-size: 0.7rem !important;
-    }
-
-    /* BOTONES ELITE 3.0 */
+    /* BOTONES ELITE 3.0 — SOBRIOS V16 */
     .stButton>button {
-        background: linear-gradient(135deg, #00C2FF 0%, #1e3a8a 100%) !important;
+        background: linear-gradient(135deg, #00C2FF 0%, #172554 100%) !important;
         color: #FFFFFF !important;
         font-family: 'Orbitron', sans-serif !important;
         border: none !important;
-        padding: 1rem !important;
-        border-radius: 16px !important;
-        font-weight: 700 !important;
-        box-shadow: 0 10px 30px rgba(0, 194, 255, 0.4) !important;
+        padding: 0.5rem 1rem !important; /* Más compacto */
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        font-size: 0.75rem !important; /* Fuente más pequeña */
+        box-shadow: 0 4px 15px rgba(0, 194, 255, 0.3) !important;
         text-transform: uppercase !important;
-        letter-spacing: 2px !important;
-        transition: all 0.3s ease !important;
+        letter-spacing: 1px !important;
+        transition: all 0.2s ease !important;
     }
     .stButton>button:hover { 
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 15px 45px rgba(0, 194, 255, 0.7) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 194, 255, 0.5) !important;
     }
 
     /* SIDEBAR GLASS */
@@ -246,7 +237,7 @@ for key, default in [('env', None), ('norma', "Calidad (ISO 9001)"), ('paso_inge
                     ('auditor_name', ""), ('rep_legal', ""), ('rep_id', ""), ('empresa_tamanio', "Pyme"), ('empresa_sector', "Servicios"),
                     ('empresa_nit', ""), ('empresa_direccion', ""), ('empresa_web', ""), ('empresa_objeto', ""), ('empresa_personal', 0),
                     ('user_role', "Administrador (Global)"), ('company_name', ""), ('base_path', ""), ('kb', {}),
-                    ('landing_mode', None), ('auth', None)]:  # auth=None → no logueado
+                    ('landing_mode', None), ('auth', None), ('plan_accion', {}), ('history_chs', [])]:  # auth=None → no logueado
     if key not in st.session_state: st.session_state[key] = default
 
 
@@ -378,6 +369,8 @@ def save_audit_state():
             "empresa_nit": st.session_state['empresa_nit'], "empresa_direccion": st.session_state['empresa_direccion'],
             "empresa_web": st.session_state['empresa_web'], "empresa_objeto": st.session_state['empresa_objeto'],
             "empresa_personal": st.session_state['empresa_personal'],
+            "plan_accion": st.session_state.get('plan_accion', {}),
+            "history_chs": st.session_state.get('history_chs', []),
             "last_update": datetime.datetime.now().isoformat()
         }
         with open(os.path.join(base_dir, "audit_state.json"), "w") as f: json.dump(state, f, indent=4)
@@ -433,231 +426,145 @@ if st.session_state['env'] is None:
     _lmode = st.session_state.get('landing_mode', None)
 
     # ══════════════════════════════════════════════════════════════════
-    #  NIVEL 0 — MENÚ PRINCIPAL (Tres tarjetas Elite)
+    #  NIVEL 0 — MENÚ PRINCIPAL (Tarjetas Clickables Elite V15)
     # ══════════════════════════════════════════════════════════════════
     if _lmode is None:
+        st.markdown("""
+        <style>
+        div.stButton > button {
+            height: 180px !important;
+            border-radius: 16px !important;
+            border: 1.5px solid rgba(255,255,255,0.1) !important;
+            background: rgba(255,255,255,0.03) !important;
+            transition: all 0.3s ease !important;
+        }
+        div.stButton > button:hover {
+            border-color: #00C2FF !important;
+            background: rgba(0,194,255,0.08) !important;
+            transform: translateY(-5px) !important;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
         _mc1, _mc2, _mc3 = st.columns(3, gap="medium")
 
         with _mc1:
-            st.markdown("""
-            <div style='background:rgba(0,194,255,0.06);border:1.5px solid rgba(0,194,255,0.3);
-                        border-radius:16px;padding:1.5rem 1rem;text-align:center;height:180px;'>
-                <div style='font-size:2rem;margin-bottom:0.3rem;'>📂</div>
-                <div style='color:#00C2FF;font-family:Orbitron;font-size:0.85rem;
-                            font-weight:700;letter-spacing:1px;margin-bottom:0.4rem;'>
-                    REANUDAR
-                </div>
-                <div style='color:#94A3B8;font-size:0.7rem;line-height:1.3;'>
-                    Continúa un expediente<br>guardado en este PC
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            st.write("")
-            base_audits_path = os.path.join(os.getcwd(), "Auditorias_HMO")
-            existing = [d for d in os.listdir(base_audits_path) if os.path.isdir(os.path.join(base_audits_path, d))] if os.path.exists(base_audits_path) else []
-            selected = st.selectbox("Expediente:", ["— Seleccionar —"] + existing, key="menu_resume_flat", label_visibility="collapsed")
-            if st.button("🚀 ABRIR", use_container_width=True, disabled=(selected == "— Seleccionar —"), type="primary"):
-                if load_audit_state(selected): st.rerun()
+            if st.button("📂\n\n**REANUDAR**\n\nContinúa auditoría\nguardada en local", 
+                         use_container_width=True, key="btn_home_resume"):
+                st.session_state['landing_mode'] = 'reanudar_v15'
+                st.rerun()
 
         with _mc2:
-            st.markdown("""
-            <div style='background:rgba(168,85,247,0.06);border:1.5px solid rgba(168,85,247,0.3);
-                        border-radius:16px;padding:1.5rem 1rem;text-align:center;height:180px;'>
-                <div style='font-size:2rem;margin-bottom:0.3rem;'>🎓</div>
-                <div style='color:#A855F7;font-family:Orbitron;font-size:0.85rem;
-                            font-weight:700;letter-spacing:1px;margin-bottom:0.4rem;'>
-                    SIMULACIÓN
-                </div>
-                <div style='color:#94A3B8;font-size:0.7rem;line-height:1.3;'>
-                    Probar el sistema con datos<br>demo de Innovatech SAS
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            st.write("")
-            if st.button("🎓 LANZAR DEMO", use_container_width=True):
-                st.session_state.update({
-                    'env': "Simulacion", 'company_name': "Innovatech Solutions SAS",
-                    'base_path': setup_company_folders("Innovatech Solutions SAS"),
-                    'paso_ingesta': 5, 'auditor_name': "Juan Gabriel Ortiz",
-                    'empresa_nit': "901.455.789-2", 'norma': ["ISO 9001:2015", "ISO 27001:2022"],
-                    'expediente': {"Camara de Comercio": "Verificado V6.0", "RUT": "Verificado V6.0"}
-                })
-                save_audit_state(); st.rerun()
+            if st.button("🎓\n\n**SIMULACIÓN**\n\nLanzar demo de\nInnovatech SAS", 
+                         use_container_width=True, key="btn_home_sim"):
+                with st.spinner("Inyectando Inteligencia de Negocio..."):
+                    _bp = setup_company_folders("Innovatech Solutions SAS")
+                    st.session_state.update({
+                        'env': "Simulacion", 'company_name': "Innovatech Solutions SAS",
+                        'base_path': _bp, 'paso_ingesta': 5, 'auditor_name': "Juan Gabriel Ortiz",
+                        'empresa_nit': "901.455.789-2", 'norma': ["Calidad (ISO 9001)", "Seguridad (ISO 27001)"],
+                        'expediente': {}, 'empresa_objeto': "Desarrollo de IA y Auditoria Digital"
+                    })
+                    from HMO_Simulation_Engine import HMOSimulationEngine
+                    sim = HMOSimulationEngine(_bp)
+                    # Inyectar Calidad y Seguridad para Innovatech
+                    sim.simulate_norm_ecosystem("CALIDAD", "Innovatech Solutions SAS", "Tecnologia")
+                    _, log_s = sim.simulate_norm_ecosystem("SEGURIDAD", "Innovatech Solutions SAS", "Tecnologia")
+                    for entry in log_s:
+                        st.session_state['expediente'][entry['doc']] = {"score": 95, "file_path": entry['path'], "validado": True}
+                    
+                    save_audit_state(); st.rerun()
 
         with _mc3:
-            st.markdown("""
-            <div style='background:rgba(16,185,129,0.06);border:1.5px solid rgba(16,185,129,0.3);
-                        border-radius:16px;padding:1.5rem 1rem;text-align:center;height:180px;'>
-                <div style='font-size:2rem;margin-bottom:0.3rem;'>🏗️</div>
-                <div style='color:#10B981;font-family:Orbitron;font-size:0.85rem;
-                            font-weight:700;letter-spacing:1px;margin-bottom:0.4rem;'>
-                    NUEVO PROYECTO
-                </div>
-                <div style='color:#94A3B8;font-size:0.7rem;line-height:1.3;'>
-                    Crear una auditoría real<br>con rigor legal e ISO
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            st.write("")
-            if st.button("🏗️ CREAR NUEVO", use_container_width=True):
+            if st.button("🏗️\n\n**NUEVO PROYECTO**\n\nCrear auditoría real\ncon rigor legal", 
+                         use_container_width=True, key="btn_home_new"):
                 st.session_state['landing_mode'] = 'nuevo'
                 st.rerun()
 
-        st.markdown("<p style='text-align:center;font-size:0.65rem;color:#1E293B;margin-top:2.5rem;'>"
-                    "HMO Auditor v2.0 Elite Edition · Operación Local Privada</p>",
+        st.markdown("<p style='text-align:center;font-size:0.65rem;color:#475569;margin-top:2rem;'>"
+                    "HMO Auditor V15 Elite · UI Ergonómica · Clickable Cards Enabled</p>",
                     unsafe_allow_html=True)
 
     # ══════════════════════════════════════════════════════════════════
-    #  NIVEL 1 — FLUJO DE NUEVO PROYECTO
+    #  MODO REANUDAR (Compacto)
+    # ══════════════════════════════════════════════════════════════════
+    elif _lmode == 'reanudar_v15':
+        if st.button("← Volver", key="back_resume_v15"):
+            st.session_state['landing_mode'] = None; st.rerun()
+        
+        st.markdown("### 📂 Seleccionar Expediente")
+        base_audits_path = os.path.join(os.getcwd(), "Auditorias_HMO")
+        existing = [d for d in os.listdir(base_audits_path) if os.path.isdir(os.path.join(base_audits_path, d))] if os.path.exists(base_audits_path) else []
+        
+        if existing:
+            selected = st.selectbox("Expedientes en este equipo:", existing, key="sel_resume_v15")
+            if st.button("🚀 ABRIR AUDITORÍA", type="primary", use_container_width=True):
+                if load_audit_state(selected): 
+                    st.session_state['landing_mode'] = None
+                    st.rerun()
+        else:
+            st.warning("No se encontraron auditorías guardadas.")
+
+    # ══════════════════════════════════════════════════════════════════
+    #  NIVEL 1 — NUEVO PROYECTO (ZERO-SCROLL COMPACT V15)
     # ══════════════════════════════════════════════════════════════════
     elif _lmode == 'nuevo':
-
-        if st.button("← Volver al menú", key="back_new"):
-            st.session_state['landing_mode'] = None
-            st.rerun()
-
         st.markdown("""
-        <div style='margin:1rem 0 1.5rem;display:flex;align-items:center;gap:1rem;'>
-            <div style='flex:1;height:1px;background:linear-gradient(to right,
-                transparent,rgba(16,185,129,0.4),transparent);'></div>
-            <span style='color:#10B981;font-family:Orbitron;font-size:0.75rem;
-                          letter-spacing:3px;white-space:nowrap;'>🏗️ NUEVO PROYECTO</span>
-            <div style='flex:1;height:1px;background:linear-gradient(to left,
-                transparent,rgba(16,185,129,0.4),transparent);'></div>
+        <div style='margin:-1rem 0 1rem;display:flex;align-items:center;gap:1rem;'>
+            <button onclick="window.location.reload();" style='background:none;border:none;color:#94A3B8;cursor:pointer;'>← Volver</button>
+            <div style='flex:1;height:1px;background:rgba(16,185,129,0.2);'></div>
+            <span style='color:#10B981;font-family:Orbitron;font-size:0.65rem;letter-spacing:2px;'>NUEVA CONFIGURACIÓN</span>
+            <div style='flex:1;height:1px;background:rgba(16,185,129,0.2);'></div>
         </div>
         """, unsafe_allow_html=True)
+        if st.button("← Volver al Hub Principal", key="back_new_v15"): st.session_state['landing_mode'] = None; st.rerun()
 
-        # ── PASO 1: Pre-carga OCR ────────────────────────────────────
-        st.markdown("""
-        <div style='background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
-                    border-radius:10px;padding:0.8rem 1rem 0.4rem;margin-bottom:0.5rem;'>
-            <span style='color:#CBD5E1;font-size:0.78rem;font-weight:600;letter-spacing:1px;'>
-                ① PRE-CARGA AUTOMÁTICA — Sube la CC y/o RUT para auto-detectar datos
-            </span>
-        </div>
-        """, unsafe_allow_html=True)
+        # Layout Triple Columna para Zero-Scroll
+        c_ocr, c_data, c_act = st.columns([1.2, 1, 0.8], gap="medium")
 
-        _col_cc, _col_rut = st.columns(2, gap="medium")
-        with _col_cc:
-            st.markdown("<p style='color:#94A3B8;font-size:0.78rem;margin-bottom:0.3rem;'>"
-                        "📋 Cámara de Comercio</p>", unsafe_allow_html=True)
-            _up_cc = st.file_uploader("CC", type=["pdf","jpg","jpeg","png"],
-                                       key="new_proj_cc", label_visibility="collapsed")
-        with _col_rut:
-            st.markdown("<p style='color:#94A3B8;font-size:0.78rem;margin-bottom:0.3rem;'>"
-                        "🧾 RUT — Registro Único Tributario</p>", unsafe_allow_html=True)
-            _up_rut = st.file_uploader("RUT", type=["pdf","jpg","jpeg","png"],
-                                        key="new_proj_rut", label_visibility="collapsed")
+        with c_ocr:
+            st.markdown("##### 🤖 ① Pre-Carga OCR")
+            _up_cc = st.file_uploader("CC (PDF/Img)", type=["pdf","jpg","png"], key="up_cc_v15")
+            _up_rut = st.file_uploader("RUT (PDF/Img)", type=["pdf","jpg","png"], key="up_rut_v15")
+            
+            if _up_cc and OCR_DISPONIBLE:
+                with st.spinner("Leyendo CC..."):
+                    _r = procesar_documento(_up_cc.read(), _up_cc.name)
+                    if _r.get("tipo_doc") == "camara_comercio":
+                        for _k, _v in resultado_a_session_state(_r).items(): st.session_state[_k] = _v
+                        st.success(f"CC: {_r.get('company_name','')}")
 
-        if _up_cc is not None and OCR_DISPONIBLE:
-            with st.spinner("🔍 Leyendo Cámara de Comercio..."):
-                _r = procesar_documento(_up_cc.read(), _up_cc.name)
-            if _r.get("tipo_doc") == "camara_comercio":
-                for _k, _v in resultado_a_session_state(_r).items():
-                    st.session_state[_k] = _v
-                st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {
-                    "nit": _r.get('empresa_nit',''), "razon_social": _r.get('company_name',''),
-                    "campos_extraidos": _r.get('campos_encontrados',[]), "validado_v15": True
-                }
-                st.success(f"✅ CC — **{_r.get('company_name','—')}** | NIT: {_r.get('empresa_nit','—')}")
-            else:
-                st.warning("⚠️ El archivo no parece ser una Cámara de Comercio.")
+        with c_data:
+            st.markdown("##### 📝 ② Datos Entidad")
+            _nombre_ocr = st.session_state.get('company_name', '').strip()
+            new_name = st.text_input("Nombre Entidad", value=_nombre_ocr, placeholder="Ej: Universidad San José")
+            
+            normas_disponibles = ["Calidad (ISO 9001)", "Ambiental (ISO 14001)", "Seguridad (ISO 27001)", "Académico"]
+            new_norma = st.multiselect("Normas", normas_disponibles, default=["Calidad (ISO 9001)"])
 
-        if _up_rut is not None and OCR_DISPONIBLE:
-            with st.spinner("🔍 Leyendo RUT..."):
-                _r2 = procesar_documento(_up_rut.read(), _up_rut.name)
-            if _r2.get("tipo_doc") == "rut":
-                for _k, _v in resultado_a_session_state(_r2).items():
-                    st.session_state[_k] = _v
-                st.session_state['expediente']["RUT (Registro Unico Tributario)"] = {
-                    "nit": _r2.get('empresa_nit',''), "razon_social": _r2.get('company_name',''),
-                    "regimen_iva": _r2.get('regimen_iva',''),
-                    "responsabilidades": _r2.get('responsabilidades',[]),
-                    "campos_extraidos": _r2.get('campos_encontrados',[]), "validado_v15": True
-                }
-                st.success(f"✅ RUT — Municipio: {_r2.get('empresa_municipio','—')} | CIIU: {_r2.get('actividad_ciiu','—')}")
-            else:
-                st.warning("⚠️ El archivo no parece ser un RUT.")
-
-        st.divider()
-
-        # ── PASO 2: Nombre y Normas ──────────────────────────────────
-        st.markdown("""
-        <div style='background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
-                    border-radius:10px;padding:0.8rem 1rem 0.4rem;margin-bottom:0.8rem;'>
-            <span style='color:#CBD5E1;font-size:0.78rem;font-weight:600;letter-spacing:1px;'>
-                ② DATOS DEL PROYECTO — Confirma la entidad y selecciona los marcos normativos
-            </span>
-        </div>
-        """, unsafe_allow_html=True)
-
-        _nombre_ocr = st.session_state.get('company_name', '').strip()
-        if _nombre_ocr:
-            st.markdown(f"""
-            <div style='background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);
-                        border-radius:8px;padding:0.6rem 1rem;margin-bottom:0.6rem;
-                        display:flex;align-items:center;gap:0.8rem;'>
-                <span style='font-size:1.1rem;'>✅</span>
-                <div>
-                    <span style='color:#94A3B8;font-size:0.7rem;letter-spacing:1px;'>
-                        ENTIDAD DETECTADA POR OCR</span><br>
-                    <span style='color:#E2E8F0;font-size:1rem;font-weight:700;'>{_nombre_ocr}</span>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            with st.expander("✏️ El nombre está incorrecto — corregir"):
-                new_name = st.text_input("Nombre correcto de la entidad",
-                                         value=_nombre_ocr, key="nw_hub")
-            if not st.session_state.get("nw_hub", "").strip():
-                new_name = _nombre_ocr
-        else:
-            st.caption("⚠️ Sube la CC o el RUT para auto-detectar el nombre, o ingrésalo manualmente:")
-            new_name = st.text_input("Nombre de la Entidad", value="",
-                                     placeholder="Ej: Universidad San José S.A.S", key="nw_hub")
-
-        normas_disponibles = [
-            "Calidad (ISO 9001:2015)", "Ambiental (ISO 14001:2015)",
-            "Seguridad (ISO 27001:2022)", "Académico (Ley 115 / Dec. 1330)"
-        ]
-        new_norma = st.multiselect("Marcos Normativos Aplicables", normas_disponibles,
-                                    default=["Calidad (ISO 9001:2015)"], key="nm_hub")
-
-        st.divider()
-
-        # ── PASO 3: Crear ────────────────────────────────────────────
-        _col_btn, _col_tip = st.columns([1, 2], gap="medium")
-        with _col_btn:
-            if st.button("🏗️ CREAR Y COMENZAR AUDITORÍA", use_container_width=True, type="primary"):
+        with c_act:
+            st.markdown("##### 🏗️ ③ Finalizar")
+            st.write("")
+            if st.button("🏗️ CREAR PROYECTO", type="primary", use_container_width=True):
                 if new_name:
                     _base_path = setup_company_folders(new_name)
-                    
-                    # --- GENERACIÓN AUTOMÁTICA DE CHECKLIST PDF (v14.5) ---
-                    # Extraer requerimientos iniciales para el PDF basados en base_cartas (simplificado para el inicio)
-                    _docs_req = [
-                        {"doc": "Camara de Comercio (Existencia Legal)", "justificacion": "ISO 19011:6.3.1 - Verificación legal.", "instrucciones": "Solicite certificado vigente (max 30 días)."},
-                        {"doc": "RUT (Registro Unico Tributario)", "justificacion": "Identificación fiscal de la entidad.", "instrucciones": "Descargue PDF actualizado de la DIAN."},
-                        {"doc": "Mision y Vision Corporativa", "justificacion": "ISO 9001:5.2 - Base estratégica.", "instrucciones": "Documento con propósito y visión organizacional."},
-                        {"doc": "Organigrama Funcional", "justificacion": "ISO 9001:5.3 - Roles y autoridades.", "instrucciones": "Estructura jerárquica de la entidad."},
-                        {"doc": "Mapa de Procesos", "justificacion": "ISO 9001:4.4 - Enfoque a procesos.", "instrucciones": "Diagrama de interacción de procesos."},
-                    ]
-                    
+                    # Checklist Automático
+                    _docs_req = [{"doc": "Camara de Comercio", "justificacion": "6.3.1 - Legal", "instrucciones": "Descargar CC"}]
                     try:
-                        _pdf_output = os.path.join(_base_path, "01_Direccion_y_Estrategia")
-                        generate_preparation_guide_pdf(new_name, _pdf_output, _docs_req, norma=", ".join(new_norma))
-                    except Exception as _epdf:
-                        st.error(f"⚠️ Error al generar guía PDF: {_epdf}")
+                        _pdf_out = os.path.join(_base_path, "01_Direccion_y_Estrategia")
+                        generate_preparation_guide_pdf(new_name, _pdf_out, _docs_req, norma=", ".join(new_norma))
+                    except: pass
 
                     st.session_state.update({
-                        'env': "Real",
-                        'company_name': new_name,
-                        'norma': new_norma,
-                        'base_path': _base_path,
-                        'landing_mode': None
+                        'env': "Real", 'company_name': new_name,
+                        'norma': new_norma, 'base_path': _base_path, 'landing_mode': None
                     })
-                    save_audit_state()
-                    st.rerun()
+                    save_audit_state(); st.rerun()
                 else:
-                    st.warning("⚠️ El nombre de la entidad es obligatorio.")
+                    st.warning("Nombre requerido")
+            
+            st.caption("Al crear, se habilita el Dashboard y se genera la Guía PDF.")
         with _col_tip:
             st.caption("💡 Si subiste documentos en el paso ①, el nombre se auto-completa. "
                        "Puedes editarlo antes de crear el proyecto.")
@@ -717,7 +624,14 @@ else:
         {"doc": "Manual de Procesos Institucional", "area": "Operaciones", "ref": "SGC", "norma": "CALIDAD", "desc": "Documentacion de la operacion.", "justificacion": "ISO 9001:4.4.2 - Informacion documentada para apoyar la operacion.",
          "instrucciones": "Suba el manual maestro de procesos o listado maestro de procedimientos.",
          "como_crear": "1. Levante los procesos existentes conversando con cada area.\n2. Documente el flujo (Inicio-Proceso-Fin) de cada proceso clave.\n3. Defina entradas, salidas, recursos y controles.\n4. El Gerente y el responsable de cada proceso firman.",
-         "ejemplo_base": "FICHA DE PROCESO - {EMPRESA}\n\nNOMBRE: Gestion de Compras\nOBJETIVO: Garantizar el suministro oportuno de bienes y servicios.\nENTRADAS: Solicitud de compra aprobada.\nSALIDAS: Bien/servicio entregado y verificado.\nRESPONSABLE: Jefe de Logistica.\nINDICADOR: Nivel de cumplimiento de proveedores > 90%"}
+         "ejemplo_base": "FICHA DE PROCESO - {EMPRESA}\n\nNOMBRE: Gestion de Compras\nOBJETIVO: Garantizar el suministro oportuno de bienes y servicios.\nENTRADAS: Solicitud de compra aprobada.\nSALIDAS: Bien/servicio entregado y verificado.\nRESPONSABLE: Jefe de Logistica.\nINDICADOR: Nivel de cumplimiento de proveedores > 90%"},
+        
+        # EXPANSIÓN V18.0: BLINDAJE SGC TOTAL
+        {"doc": "Matriz de Riesgos y Oportunidades (SGC)", "area": "Calidad", "ref": "ISO 9001:6.1", "norma": "CALIDAD", "desc": "Mapa de amenazas y oportunidades del sistema.", "justificacion": "ISO 9001:6.1 - Abordar riesgos y oportunidades para asegurar que el SGC logre sus resultados."},
+        {"doc": "Matriz de Comunicaciones (SGC)", "area": "Calidad", "ref": "ISO 9001:7.4", "norma": "CALIDAD", "desc": "Que, cuando, a quien y como comunicar.", "justificacion": "ISO 9001:7.4 - La organizacion debe determinar las comunicaciones internas y externas pertinentes."},
+        {"doc": "Plan de Capacitación y Toma de Conciencia", "area": "Talento Humano", "ref": "ISO 9001:7.3", "norma": "CALIDAD", "desc": "Cronograma de formacion del personal.", "justificacion": "ISO 9001:7.3 - Asegurar que las personas que realizan el trabajo bajo el control de la organizacion tomen conciencia."},
+        {"doc": "Informe de Auditoría Interna (Ciclo Previo)", "area": "Calidad", "ref": "ISO 9001:9.2", "norma": "CALIDAD", "desc": "Resultados de la ultima revision interna.", "justificacion": "ISO 9001:9.2 - La organizacion debe llevar a cabo auditorias internas a intervalos planificados."},
+        {"doc": "Acta de Revisión por la Dirección", "area": "Alta Direccion", "ref": "ISO 9001:9.3", "norma": "CALIDAD", "desc": "Revision formal del SGC por la Gerencia.", "justificacion": "ISO 9001:9.3 - La alta direccion debe revisar el SGC para asegurar su conveniencia y eficacia."}
     ]
 
     norm_cartas = []
@@ -767,7 +681,14 @@ else:
             {"doc": "Mapa de Procesos", "area": "Operaciones", "ref": "ISO 9001:4.4", "norma": "CALIDAD", "desc": "Interaccion de procesos.", "justificacion": "ISO 9001:4.4 - Exigido para demostrar el enfoque basado en procesos y su interaccion.", "instrucciones": "Grafique los procesos estrategicos, misionales y de soporte de la entidad."}
         ]
     
-    cartas_todas = base_cartas + norm_cartas
+    cartas_todas = norm_cartas if norm_cartas else base_cartas
+    
+    # Si la norma es calidad, mezclamos con base. Si no, prevalece el marco específico.
+    if "Calidad" in str(normas_activas) and norm_cartas:
+        # Evitar duplicados si Calidad ya añadió algo
+        existentes = [c['doc'] for c in norm_cartas]
+        base_extra = [c for c in base_cartas if c['doc'] not in existentes]
+        cartas_todas = norm_cartas + base_extra
     
     # --- LOGICA DE PROPORCIONALIDAD V9.0 (LEAN AUDIT) ---
     # Una empresa es 'Startup/Micro' si tiene <=10 empleados (independientemente del label de tamaño)
@@ -878,60 +799,125 @@ else:
     coherencia_media_vital = (sum(coherencias_vitales) / len(coherencias_vitales)) if coherencias_vitales else 0
     es_rigor_ok = coherencia_media_vital >= 60
 
-    # --- SIDEBAR MASTER (V4.5) ---
-    st.sidebar.markdown(f"### 🏢 {company}")
-    st.sidebar.markdown(f"**Marco:** {st.session_state['norma']}")
-    
-    # Selector de Rol Mejorado (V9.6 - Mapeo Robusto)
-    roles_disponibles = [
-        "Administrador (Global)", 
-        "⚖️ Jurídico", 
-        "🏦 Alta Dirección", 
-        "📊 Calidad / SIG", 
-        "🛡️ Ciberseguridad", 
-        "♻️ Gestión Ambiental", 
-        "🎓 Gestión Académica",
-        "👥 Talento Humano",
-        "💰 Financiera",
-        "⚙️ Operaciones"
-    ]
-    st.session_state['user_role'] = st.sidebar.selectbox("👤 ROL DEL AUDITOR:", roles_disponibles, key="role_selector_top")
-    
-    st.sidebar.divider()
-    
-    # Navegación Prioritaria (Ingesta Primero + Avance)
-    opciones = [
-        f"🗺️ Camino de Ingesta [{pct_fase_c}%]",
-        f"📊 Dashboard Analítico [{pct_total}%]",
-        "📋 Requerimientos Maestros",
-        "⚖️ Emisión de Formatos",
-        "💎 Help Center Elite"
-    ]
-    menu_raw = st.sidebar.radio("FLUJO DE TRABAJO:", opciones, key="main_menu_elite")
-    menu = menu_raw.split(" [")[0]
-    
-    # — Info del usuario logueado en sidebar —
-    _auth = st.session_state.get('auth', {})
-    if _auth and AUTH_DISPONIBLE:
-        _rol_lbl, _rol_color = get_rol_label(_auth.get('rol','visitante'))
-        st.sidebar.markdown(f"""
-        <div style='background:rgba(0,194,255,0.08);border:1px solid rgba(0,194,255,0.2);
-                    border-radius:8px;padding:0.5rem 0.75rem;margin-bottom:0.5rem;'>
-            <span style='color:#94A3B8;font-size:0.65rem;letter-spacing:1px;'>USUARIO ACTIVO</span><br>
-            <span style='color:#E2E8F0;font-weight:600;font-size:0.85rem;'>{_auth.get('nombre','')}</span><br>
-            <span style='color:{_rol_color};font-size:0.72rem;'>{_rol_lbl}</span>
-        </div>
-        """, unsafe_allow_html=True)
+    # --- SIDEBAR MASTER (V4.5 ELITE) ---
+    with st.sidebar:
+        # LOGO Y DATOS EMPRESA
+        logo_disp = logo_path if logo_path and os.path.exists(logo_path) else None
+        if logo_disp: st.image(logo_disp, width=150)
+        else: st.markdown(f"<h2 style='text-shadow: 0 0 10px #00C2FF;'>{company[:15]}</h2>", unsafe_allow_html=True)
+        
+        st.markdown(f"**Marco:** <span style='color:#00C2FF;'>{st.session_state['norma']}</span>", unsafe_allow_html=True)
+        st.divider()
 
-    if st.sidebar.button("🔒 Cierre Seguro"):
-        save_audit_state()
-        st.session_state['env'] = None
-        st.rerun()
+        # NAVEGACIÓN BASADA EN ROL
+        is_colab = st.session_state['user_role'] in ["responsable", "juridica", "finanzas"]
+        
+        if is_colab:
+            opciones = ["📋 Portal de Entrega", "💎 Help Center Elite"]
+            menu = st.radio("MI TRABAJO:", opciones, key="main_menu_colab")
+        else:
+            opciones = [
+                f"🗺️ Camino de Ingesta [{pct_fase_c}%]",
+                f"📊 Dashboard Analítico [{pct_total}%]",
+                "📋 Requerimientos Maestros",
+                "⚖️ Emisión de Formatos",
+                "💎 Help Center Elite"
+            ]
+            menu_raw = st.radio("FLUJO DE TRABAJO:", opciones, key="main_menu_auditor")
+            menu = menu_raw.split(" [")[0]
+            
+            # Selector de Rol del Auditor (Counselor)
+            roles_disponibles = ["Administrador (Global)", "⚖️ Jurídico", "🏦 Alta Dirección", "📊 Calidad / SIG", "🛡️ Ciberseguridad", "♻️ Gestión Ambiental", "🎓 Gestión Académica", "👥 Talento Humano", "💰 Financiera", "⚙️ Operaciones"]
+            st.session_state['user_role_active'] = st.selectbox("👤 PERFIL DE CONSULTA:", roles_disponibles, index=0)
 
-    if AUTH_DISPONIBLE and st.sidebar.button("🚪 Cerrar Sesión", use_container_width=True):
-        st.session_state['auth'] = None
-        st.session_state['env']  = None
-        st.rerun()
+        st.divider()
+        
+        # USUARIO Y SESIÓN
+        _auth = st.session_state.get('auth', {})
+        if _auth:
+            st.markdown(f"""
+            <div style='background:rgba(0,194,255,0.05);border:1px solid rgba(0,194,255,0.1);
+                        border-radius:12px;padding:0.75rem;margin-bottom:1rem;'>
+                <span style='color:#94A3B8;font-size:0.65rem;letter-spacing:1.5px;'>LOGUEADO COMO</span><br>
+                <span style='color:#00C2FF;font-weight:700;font-size:0.9rem;'>{_auth.get('nombre','User')}</span><br>
+                <span style='color:#475569;font-size:0.7rem;'>ROL: {_auth.get('rol','visitante').upper()}</span>
+            </div>
+            """, unsafe_allow_html=True)
+
+        if st.button("🚪 CERRAR SESIÓN", use_container_width=True, type="secondary"):
+            st.session_state['auth'] = None
+            st.session_state['env'] = None
+            st.session_state['company_name'] = ""
+            st.rerun()
+
+        # HUB DE SIMULACIÓN ADMIN (V19.1)
+        if st.session_state['user_role'] == "Administrador (Global)":
+            st.markdown("---")
+            with st.expander("🏰 HUB DE SIMULACIÓN Multi-Norma"):
+                st.caption("Poblamiento determinístico para Demos de Venta.")
+                sim_norm = st.selectbox("Norma a Simular", ["CALIDAD", "SEGURIDAD", "AMBIENTAL", "ACADEMICO"], key="sim_norm_sel")
+                if st.button("🚀 INYECTAR ECOSISTEMA REALISTA", use_container_width=True):
+                    from HMO_Simulation_Engine import HMOSimulationEngine
+                    sim_engine = HMOSimulationEngine(st.session_state['base_path'])
+                    with st.spinner(f"Simulando {sim_norm}..."):
+                        success, log = sim_engine.simulate_norm_ecosystem(sim_norm, company, st.session_state['empresa_objeto'])
+                        if success:
+                            for entry in log:
+                                st.session_state['expediente'][entry['doc']] = {"score": 100, "file_path": entry['path'], "validado": True}
+                            save_audit_state()
+                            st.success(f"{sim_norm} Inyectado.")
+                            st.rerun()
+                        else:
+                            st.error(log)
+
+        # ACCIONES RÁPIDAS
+        if not is_colab:
+            if st.button("🔄 Actualizar Datos", use_container_width=True):
+                save_audit_state(); st.rerun()
+
+    # --- MOTOR DE GENERACIÓN IA (Borradores V16-V17) ---
+    def ui_generar_borrador_ia(doc_name, area, justificacion):
+        st.markdown(f"<div style='background:rgba(0,194,255,0.05); padding:0.8rem; border-radius:10px; border:1px dashed rgba(0,194,255,0.4);'>", unsafe_allow_html=True)
+        st.caption(f"🤖 **Asistente IA:** Redacción automática para {doc_name}")
+        
+        info_doc = st.session_state['expediente'].get(doc_name, {})
+        is_signed = info_doc.get('signed', False)
+        
+        c_i1, c_i2 = st.columns(2)
+        with c_i1:
+            if st.button(f"🪄 PROPUESTA IA", key=f"btn_draft_{doc_name}", use_container_width=True, disabled=is_signed):
+                with st.spinner("Generando borrador normativo..."):
+                    engine = HMO_AI_Engine()
+                    draft_text = engine.generate_draft_text(doc_name, company, st.session_state['empresa_sector'], st.session_state['empresa_objeto'])
+                    from HMO_PDF_Generator import generate_ai_draft_pdf
+                    pdf_path = generate_ai_draft_pdf(doc_name, draft_text, st.session_state['base_path'], company=company, justification=justificacion)
+                    st.session_state['expediente'][doc_name] = {"score": 85, "validado": True, "ia_draft": True, "draft_text": draft_text}
+                    save_audit_state()
+                    st.success(f"✅ Borrador generado")
+                    st.rerun()
+        
+        with c_i2:
+            if info_doc.get('ia_draft') and not is_signed:
+                if st.button("✍️ NORMALIZAR Y FIRMAR", key=f"btn_sign_{doc_name}", use_container_width=True, type="primary"):
+                    with st.spinner("Normalizando documento SGC..."):
+                        from HMO_PDF_Generator import generate_ai_draft_pdf
+                        signer = {"user": st.session_state['auth'].get('nombre', 'Responsable'), "role": st.session_state['user_role']}
+                        pdf_path = generate_ai_draft_pdf(
+                            doc_name, info_doc['draft_text'], st.session_state['base_path'], 
+                            company=company, justification=justificacion, signer_data=signer
+                        )
+                        st.session_state['expediente'][doc_name]['signed'] = True
+                        st.session_state['expediente'][doc_name]['file_path'] = pdf_path
+                        save_audit_state()
+                        st.success("✅ Documento Firmado")
+                        st.rerun()
+            elif is_signed:
+                st.info("✅ Firmado y Validado")
+                if st.session_state['expediente'][doc_name].get('file_path'):
+                    with open(st.session_state['expediente'][doc_name]['file_path'], "rb") as f:
+                        st.download_button("📂 Descargar Certificado", f, file_name=os.path.basename(st.session_state['expediente'][doc_name]['file_path']), use_container_width=True)
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # --- BOTÓN ACTUALIZAR APP V10.0 ---
     st.sidebar.markdown("---")
@@ -1016,26 +1002,48 @@ else:
         st.markdown("</div>", unsafe_allow_html=True)
     
     elif menu == "📊 Dashboard Analítico":
-        st.markdown(f"<h1 class='norm-header'>📊 Dashboard Fase Analytics: {company}</h1>", unsafe_allow_html=True)
+        # --- CÁLCULO V15 ---
+        engine = HMO_AI_Engine()
+        chs = engine.calculate_corporate_health_score(st.session_state)
         
-        # --- PHASE CARDS LIVE (V3.1) ---
-        col1, col2, col3 = st.columns(3)
-        phases = [
-            ("Fase A: Identidad", 100 if st.session_state['auditor_name'] else 0, "Completo" if st.session_state['auditor_name'] else "Pendiente", "#10B981"),
-            ("Fase B: Dimensión", 100 if st.session_state['empresa_tamanio'] != "Pyme" or st.session_state['env'] == "Simulacion" else 0, "Completo", "#00C2FF"),
-            ("Fase C: Cuerpo Normativo", int((count_exp/len(cartas_todas))*100) if len(cartas_todas)>0 else 0, "En Progreso", "#94A3B8")
-        ]
+        st.markdown(f"""
+        <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;'>
+            <h2 style='margin:0; font-family:Orbitron;'>📊 DASHBOARD ANALYTICS V17</h2>
+            <div style='background:rgba(255,255,255,0.05); border:1px solid {chs['color']}44; border-radius:10px; padding:0.4rem 1rem;'>
+                <span style='color:{chs['color']}; font-weight:700; font-family:Orbitron;'>{chs['score']}% - {chs['level']}</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # TABLERO DE SUPERVISIÓN (V17.0 - Solo Admin)
+        if st.session_state['user_role'] == "Administrador (Global)":
+            with st.expander("🏰 TABLERO DE SUPERVISIÓN ELITE (MAESTRO)", expanded=False):
+                st.write("### Avance en tiempo real por área")
+                _areas = list(set([c.get('area') for c in cartas_todas if c.get('area')]))
+                _cols_sup = st.columns(len(_areas))
+                for _idx, _ar in enumerate(_areas):
+                    _docs_ar = [c for c in cartas_todas if c.get('area') == _ar]
+                    _ok_ar = len([d for d in _docs_ar if d['doc'] in st.session_state['expediente']])
+                    _pct_ar = int((_ok_ar / len(_docs_ar)) * 100) if _docs_ar else 100
+                    with _cols_sup[_idx]:
+                        st.markdown(f"<div style='text-align:center; font-size:0.7rem;'><b>{_ar.upper()}</b></div>", unsafe_allow_html=True)
+                        draw_donut(_pct_ar, f"{_ok_ar}/{len(_docs_ar)}", "#10B981" if _pct_ar == 100 else "#00C2FF")
+                st.divider()
         
-        for i, (title, proc, status, color) in enumerate(phases):
-            with [col1, col2, col3][i]:
-                st.markdown(f"""
-                <div class='elite-card' style='text-align: center;'>
-                    <div style='font-size: 0.8rem; color: #94A3B8;'>FASE {i+1}</div>
-                    <h3 style='color: {color};'>{title}</h3>
-                    <div style='font-size: 2.5rem; font-family: Orbitron; font-weight: 700;'>{proc}%</div>
-                    <div style='color: {color}; font-weight: 700;'>{status}</div>
-                </div>
-                """, unsafe_allow_html=True)
+        # Grid de Métricas Glass
+        c1, c2, c3, c4 = st.columns(4)
+        m_style = "background:rgba(255,255,255,0.03); backdrop-filter:blur(5px); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:0.8rem; text-align:center;"
+        
+        c1.markdown(f"<div style='{m_style}'><b>PERFIL</b><br><span style='font-size:1.5rem; color:#10B981;'>{int(chs['breakdown']['perfil'])}</span>/10</div>", unsafe_allow_html=True)
+        c2.markdown(f"<div style='{m_style}'><b>VITALES</b><br><span style='font-size:1.5rem; color:#00C2FF;'>{int(chs['breakdown']['vitales'])}</span>/60</div>", unsafe_allow_html=True)
+        c3.markdown(f"<div style='{m_style}'><b>CALIDAD IA</b><br><span style='font-size:1.5rem; color:#A855F7;'>{int(chs['breakdown']['ia'])}</span>/30</div>", unsafe_allow_html=True)
+        
+        with c4:
+            if st.button("📄 REPORTE", use_container_width=True):
+                _path = generate_maturity_report_pdf(company, st.session_state['base_path'], chs, "Analisis V15")
+                st.toast(f"PDF: {os.path.basename(_path)}")
+
+        st.divider()
         
         # --- TABLERO DE TRAZABILIDAD COMPACTO (V9.3) ---
         c_mtr1, c_mtr2, c_mtr3, c_mtr4, c_mtr5, c_mtr6 = st.columns(6)
@@ -1048,7 +1056,62 @@ else:
         c_mtr4.metric("Avance SIG", f"{progreso_global:.1f}%")
         c_mtr5.metric("Motor Experto", "BÚSQUEDA ACTIVA")
         c_mtr6.metric("Seguridad", "SHA-256")
+
+        # --- HISTORIAL DE MADUREZ & SNAPSHOTS (V19.1) ---
+        st.markdown("---")
+        col_h1, col_h2 = st.columns([2, 1])
+        with col_h1:
+            st.write("### 📈 Tendencia de Madurez Corporativa")
+            if st.session_state.get('history_chs'):
+                df_hist = pd.DataFrame(st.session_state['history_chs'])
+                fig_hist = px.line(df_hist, x="fecha", y="score", title="Evolución del CHS", markers=True)
+                fig_hist.update_layout(height=250, margin=dict(t=30, b=0, l=0, r=0), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+                st.plotly_chart(fig_hist, use_container_width=True)
+            else:
+                st.info("No hay registros históricos. Guarde un Snapshot para iniciar el seguimiento.")
         
+        with col_h2:
+            st.write("### 📸 Punto de Control")
+            if st.button("💾 GUARDAR SNAPSHOT ACTUAL", use_container_width=True, type="primary"):
+                snapshot = {
+                    "fecha": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+                    "score": chs['score'],
+                    "level": chs['level']
+                }
+                st.session_state['history_chs'].append(snapshot)
+                save_audit_state()
+                st.success("Snapshot guardado exitosamente.")
+                st.rerun()
+            
+            # Auto-Certificación Platinum
+            if chs['score'] >= 86:
+                st.markdown("<div style='background:linear-gradient(135deg, #E5E4E2 0%, #94A3B8 100%); padding:1rem; border-radius:10px; color:#0F172A; text-align:center;'>", unsafe_allow_html=True)
+                st.write("🏆 **EXCELENCIA PLATINUM**")
+                st.caption("Su organización cumple con los más altos estándares SGC.")
+                if st.button("🎓 DESCARGAR DIPLOMA", use_container_width=True):
+                    st.toast("Generando Diploma de Excelencia...")
+                st.markdown("</div>", unsafe_allow_html=True)
+        
+        # --- LOG DE TRAZABILIDAD Y VERSIONES (V17.0) ---
+        st.markdown("---")
+        with st.expander("📝 LOG DE TRAZABILIDAD Y VERSIONAMIENTO (CONTROL DE CAMBIOS)", expanded=True):
+            st.write("Historial de aprobación y normalización de documentos institucionales.")
+            
+            signed_docs = []
+            for d_name, d_val in st.session_state['expediente'].items():
+                if isinstance(d_val, dict) and d_val.get('signed'):
+                    signed_docs.append({
+                        "Documento": d_name,
+                        "Versión": "1.0",
+                        "Estatus": "APROBADO",
+                        "Verificación": "NORMALIZADO SGC"
+                    })
+            
+            if signed_docs:
+                st.table(pd.DataFrame(signed_docs))
+            else:
+                st.info("No hay documentos normalizados con firma digital en este ciclo.")
+
         # --- FILA DE ANÁLISIS Y FICHA (SIDE-BY-SIDE) ---
         col_g1, col_g2, col_g3 = st.columns([1.2, 1, 1])
         
@@ -1151,800 +1214,272 @@ else:
                 st.metric("💎 Fortalezas", fors)
                 st.markdown("</div>", unsafe_allow_html=True)
 
+        # --- MÓDULO DE PLANES DE ACCIÓN (V17.0 - MEJORA CONTINUA) ---
+        st.markdown("---")
+        with st.expander("🛠️ GESTIÓN DE PLANES DE ACCIÓN (MEJORA CONTINUA)", expanded=False):
+            st.write("Convierta sus Hallazgos / No Conformidades en tareas preventivas y correctivas.")
+            
+            hallazgos_nc = [h for h, cat in st.session_state.get('hallazgos_manuales', {}).items() if cat == "No Conformidad"]
+            
+            if not hallazgos_nc:
+                st.success("✨ No se han categorizado No Conformidades. El sistema está en equilibrio operativo.")
+            else:
+                for h_key in hallazgos_nc:
+                    st.markdown(f"<div style='border-left: 4px solid #F87171; padding-left: 1rem; margin-bottom: 1rem;'>", unsafe_allow_html=True)
+                    st.write(f"**Hallazgo de Origen:** {h_key}")
+                    
+                    p_data = st.session_state['plan_accion'].get(h_key, {"accion": "", "resp": "Calidad", "fecha": datetime.date.today()})
+                    
+                    c_p1, c_p2, c_p3 = st.columns([2, 1, 1])
+                    
+                    # Botón IA de Sugerencia
+                    if c_p1.button("🤖 Sugerir con IA", key=f"ai_sugg_{h_key}"):
+                        with st.spinner("IA analizando No Conformidad..."):
+                            ia_engine = HMO_AI_Engine()
+                            p_data['accion'] = ia_engine.suggest_corrective_action(h_key, st.session_state['norma'])
+                            st.session_state['plan_accion'][h_key] = p_data
+                            save_audit_state()
+                            st.rerun()
+
+                    accion = c_p1.text_input("Acción Correctiva Propuesta", value=p_data['accion'], placeholder="Ej: Capacitación en proceso...", key=f"plan_input_{h_key}")
+                    resp_plan = c_p2.selectbox("Cierre Responsable", ["Calidad", "Líder Proceso", "Gerencia"], index=["Calidad", "Líder Proceso", "Gerencia"].index(p_data['resp']), key=f"resp_plan_input_{h_key}")
+                    fecha_plan = c_p3.date_input("Compromiso Cierre", value=p_data['fecha'], key=f"date_plan_input_{h_key}")
+                    
+                    if accion != p_data['accion'] or resp_plan != p_data['resp'] or fecha_plan != p_data['fecha']:
+                        st.session_state['plan_accion'][h_key] = {"accion": accion, "resp": resp_plan, "fecha": fecha_plan}
+                        save_audit_state()
+                        st.toast("Mejora guardada")
+                    
+                    if accion:
+                        st.caption(f"🚀 Tarea programada para: {fecha_plan.strftime('%Y-%m-%d')} | Responsable: {resp_plan}")
+                    st.markdown("</div>", unsafe_allow_html=True)
+
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h1 class='norm-header'>🏗️ Ingesta de Materia Prima por Fases</h1>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V15</h2>", unsafe_allow_html=True)
         
-        # CÁLCULO DE PROGRESO GLOBAL DE INGESTA (SYNC V4.5)
-        st.markdown(f"### 📈 Avance Consolidado del Expediente: {pct_total}%")
-        st.progress(progreso_total)
+        # Selector de Fases V15
+        if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
+        f = st.session_state['ing_f']
         
-        col_st1, col_st2, col_st3 = st.columns(3)
-        col_st1.markdown(f"**Fase A (Identidad):** {pct_fase_a}%")
-        col_st2.markdown(f"**Fase B (Dimension):** {pct_fase_b}%")
-        col_st3.markdown(f"**Fase C (Revision):** {pct_fase_c}%")
-        st.divider()
-
-        tab_a, tab_b, tab_c, tab_final = st.tabs(["🔒 Fase A: Identidad", "📊 Fase B: Dimensión", "⚖️ 6.3.1 Revisión Documental", "🏁 Preparación Actividades"])
+        c1, c2, c3, c4 = st.columns(4)
         
-        with tab_a:
-            # Métricas de Fase A
-            fase_a_reqs = [st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']]
-            fase_a_completados = sum(1 for r in fase_a_reqs if r)
-            pct_a = int((fase_a_completados / 3) * 100)
-
-            c_m1, c_m2 = st.columns([1, 4])
-            c_m1.metric("Fase A", f"{pct_a}%")
-            with c_m2: st.progress(pct_a / 100)
-
-            if pct_a < 100:
-                st.caption(f"⚠️ **Falta:** {', '.join([r for r, v in zip(['Auditor', 'Rep. Legal', 'ID'], fase_a_reqs) if not v])}")
-
-
-            # ── OCR INTELIGENTE V15.1 — DOS CARGADORES ─────────────────────────
-            st.markdown("---")
-            st.markdown("#### 🤖 Carga Inteligente de Documentos Legales")
-            st.caption("Sube **ambos** documentos para extraer automáticamente todos los datos de la empresa.")
-
-            col_cc, col_rut = st.columns(2)
-
-            # ─── CARGADOR 1: CÁMARA DE COMERCIO ────────────────────────────────
-            with col_cc:
-                st.markdown("**📋 Cámara de Comercio**")
-                st.caption("Certificado de Existencia y Representación Legal")
-                uploaded_cc = st.file_uploader(
-                    "Arrastra el PDF aquí",
-                    type=["pdf", "jpg", "jpeg", "png"],
-                    key="ocr_uploader_cc"
-                )
-
-            # ─── CARGADOR 2: RUT ────────────────────────────────────────────────
-            with col_rut:
-                st.markdown("**🧾 RUT (DIAN)**")
-                st.caption("Registro Único Tributario")
-                uploaded_rut = st.file_uploader(
-                    "Arrastra el PDF aquí",
-                    type=["pdf", "jpg", "jpeg", "png"],
-                    key="ocr_uploader_rut"
-                )
-
-            # ─── PROCESAR CC ────────────────────────────────────────────────────
-            if uploaded_cc is not None:
-                with st.spinner("🔍 Analizando Cámara de Comercio..."):
-                    file_bytes = uploaded_cc.read()
-                    resultado = procesar_documento(file_bytes, uploaded_cc.name) if OCR_DISPONIBLE else \
-                                {"tipo_doc": "unknown", "confianza": 0, "error": "OCR no disponible."}
-
-                tipo_detectado = resultado.get("tipo_doc", "unknown")
-                confianza = resultado.get("confianza", 0)
-
-
-                if tipo_detectado == "camara_comercio":
-                    st.success(f"✅ **Cámara de Comercio detectada** — Confianza: {confianza}%")
-                    with st.expander("📋 Todos los datos extraídos", expanded=True):
-                        # ── GRUPO 1: IDENTIDAD ───────────────────────────────────
-                        st.markdown("**🏢 IDENTIDAD**")
-                        ci1, ci2, ci3 = st.columns(3)
-                        ci1.write(f"🏢 **Razón Social:** {resultado.get('company_name', '—')}")
-                        ci1.write(f"🔢 **NIT:** {resultado.get('empresa_nit', '—')}")
-                        ci2.write(f"📋 **Matrícula:** {resultado.get('matricula', '—')}")
-                        ci2.write(f"🏛️ **Tipo Sociedad:** {resultado.get('tipo_sociedad', '—')}")
-                        ci3.write(f"📅 **Fecha Matrícula:** {resultado.get('fecha_matricula', '—')}")
-                        ci3.write(f"🔄 **Fecha Renovación:** {resultado.get('fecha_renovacion', '—')}")
-                        if resultado.get('vigencia'):
-                            st.caption(f"📆 Vigencia del certificado: {resultado['vigencia']}")
-
-                        st.markdown("---")
-                        # ── GRUPO 2: UBICACIÓN / CONTACTO ────────────────────────
-                        st.markdown("**📍 UBICACIÓN Y CONTACTO**")
-                        cu1, cu2 = st.columns(2)
-                        cu1.write(f"🏙️ **Domicilio/Ciudad:** {resultado.get('domicilio', '—')}")
-                        cu1.write(f"📍 **Dirección judicial:** {resultado.get('empresa_direccion', '—')}")
-                        cu1.write(f"🏬 **Dirección comercial:** {resultado.get('direccion_comercial', '—')}")
-                        cu2.write(f"🗺️ **Municipio:** {resultado.get('empresa_municipio', '—')}")
-                        cu2.write(f"🌎 **Departamento:** {resultado.get('empresa_departamento', '—')}")
-                        cu2.write(f"📞 **Teléfono:** {resultado.get('empresa_telefono', '—')}")
-                        cu2.write(f"📧 **Email:** {resultado.get('empresa_email', '—')}")
-
-                        st.markdown("---")
-                        # ── GRUPO 3: ACTIVIDAD / CAPITAL ─────────────────────────
-                        st.markdown("**💰 ACTIVIDAD Y CAPITAL**")
-                        ca1, ca2 = st.columns(2)
-                        ca1.write(f"🏭 **CIIU:** {resultado.get('actividad_ciiu', '—')}")
-                        ca1.write(f"📝 **Actividad:** {resultado.get('descripcion_ciiu', '—')}")
-                        ca1.write(f"👥 **Empleados:** {resultado.get('num_empleados', '—')}")
-                        ca2.write(f"💵 **Capital Autorizado:** {resultado.get('capital_autorizado', '—')}")
-                        ca2.write(f"💵 **Capital Suscrito:** {resultado.get('capital_suscrito', '—')}")
-                        ca2.write(f"💵 **Capital Pagado:** {resultado.get('capital_pagado', '—')}")
-                        if resultado.get('empresa_objeto'):
-                            st.write(f"📌 **Objeto Social:** {resultado['empresa_objeto'][:500]}")
-
-                        st.markdown("---")
-                        # ── GRUPO 4: REPRESENTACIÓN ─────────────────────────────
-                        st.markdown("**👤 REPRESENTACIÓN LEGAL**")
-                        cr1, cr2 = st.columns(2)
-                        cr1.write(f"👤 **Rep. Legal:** {resultado.get('rep_legal', '—')}")
-                        cr1.write(f"🪪 **C.C.:** {resultado.get('rep_id', '—')}")
-                        cr2.write(f"💼 **Cargo:** {resultado.get('rep_cargo', '—')}")
-                        if resultado.get('junta_directiva'):
-                            st.caption("🏛️ **Junta Directiva:** " + " | ".join(resultado['junta_directiva'][:6]))
-
-                    if st.button("⚡ Aplicar TODOS los datos al expediente", key="ocr_apply_cc", use_container_width=True):
-                        updates = resultado_a_session_state(resultado)
-                        for k, v in updates.items():
-                            st.session_state[k] = v
-                        n_aplicados = len(updates)
-                        st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {
-                            "nit": resultado.get('empresa_nit', ''),
-                            "razon_social": resultado.get('company_name', ''),
-                            "rep_legal": resultado.get('rep_legal', ''),
-                            "matricula": resultado.get('matricula', ''),
-                            "confianza_ocr": confianza,
-                            "campos_extraidos": resultado.get('campos_encontrados', []),
-                            "validado_v15": True
-                        }
-                        save_audit_state()
-                        st.success(f"🎉 ¡{n_aplicados} campos inyectados automáticamente en el expediente!")
-                        st.rerun()
-
-
-
-
-                else:
-                    st.warning(f"⚠️ El documento no parece ser una Cámara de Comercio. {resultado.get('error', '')}")
-                    if resultado.get('texto_completo'):
-                        with st.expander("Ver texto extraído"):
-                            st.text(resultado['texto_completo'][:800])
-
-            # ─── PROCESAR RUT ────────────────────────────────────────────────────
-            if uploaded_rut is not None:
-                with st.spinner("🔍 Analizando RUT..."):
-                    file_bytes_rut = uploaded_rut.read()
-                    resultado_rut = procesar_documento(file_bytes_rut, uploaded_rut.name) if OCR_DISPONIBLE else \
-                                    {"tipo_doc": "unknown", "confianza": 0, "error": "OCR no disponible."}
-
-                tipo_rut = resultado_rut.get("tipo_doc", "unknown")
-                confianza_rut = resultado_rut.get("confianza", 0)
-
-                if tipo_rut == "rut":
-                    st.success(f"✅ **RUT (DIAN) detectado** — Confianza: {confianza_rut}%")
-                    with st.expander("📋 Todos los datos extraídos del RUT", expanded=True):
-                        st.markdown("**🏢 IDENTIDAD Y RÉGIMEN TRIBUTARIO**")
-                        ri1, ri2 = st.columns(2)
-                        ri1.write(f"🏢 **Razón Social:** {resultado_rut.get('company_name', '—')}")
-                        ri1.write(f"🔢 **NIT:** {resultado_rut.get('empresa_nit', '—')}")
-                        ri1.write(f"📑 **N° Formulario:** {resultado_rut.get('numero_formulario', '—')}")
-                        ri2.write(f"👤 **Tipo Persona:** {resultado_rut.get('tipo_persona', '—')}")
-                        ri2.write(f"🏷️ **Tipo Contribuyente:** {resultado_rut.get('tipo_contribuyente', '—')}")
-                        ri2.write(f"⚖️ **Régimen IVA:** {resultado_rut.get('regimen_iva', '—')}")
-                        ri2.write(f"📅 **Fecha RUT:** {resultado_rut.get('fecha_rut', '—')}")
-
-                        st.markdown("---")
-                        st.markdown("**📍 UBICACIÓN Y CONTACTO**")
-                        ru1, ru2 = st.columns(2)
-                        ru1.write(f"📍 **Dirección:** {resultado_rut.get('empresa_direccion', '—')}")
-                        ru1.write(f"🏙️ **Municipio:** {resultado_rut.get('empresa_municipio', '—')}")
-                        ru1.write(f"🌎 **Departamento:** {resultado_rut.get('empresa_departamento', '—')}")
-                        ru2.write(f"🔍 **Código Postal:** {resultado_rut.get('codigo_postal', '—')}")
-                        ru2.write(f"📧 **Email:** {resultado_rut.get('empresa_email', '—')}")
-                        ru2.write(f"📞 **Teléfono 1:** {resultado_rut.get('empresa_telefono', '—')}")
-                        if resultado_rut.get('empresa_telefono2'):
-                            ru2.write(f"📞 **Teléfono 2:** {resultado_rut.get('empresa_telefono2', '—')}")
-
-                        st.markdown("---")
-                        st.markdown("**🏭 ACTIVIDAD ECONÓMICA Y FISCAL**")
-                        ra1, ra2 = st.columns(2)
-                        ra1.write(f"🏭 **CIIU:** {resultado_rut.get('actividad_ciiu', '—')}")
-                        ra1.write(f"📝 **Actividad:** {resultado_rut.get('descripcion_ciiu', '—')}")
-                        if resultado_rut.get('responsabilidades'):
-                            st.markdown("**⚖️ Responsabilidades Tributarias:**")
-                            for resp in resultado_rut['responsabilidades']:
-                                st.caption(f"• {resp}")
-
-                    if st.button("⚡ Aplicar TODOS los datos del RUT al expediente", key="ocr_apply_rut", use_container_width=True):
-                        updates = resultado_a_session_state(resultado_rut)
-                        for k, v in updates.items():
-                            st.session_state[k] = v
-                        n_aplicados = len(updates)
-                        st.session_state['expediente']["RUT (Registro Unico Tributario)"] = {
-                            "nit": resultado_rut.get('empresa_nit', ''),
-                            "razon_social": resultado_rut.get('company_name', ''),
-                            "regimen_iva": resultado_rut.get('regimen_iva', ''),
-                            "responsabilidades": resultado_rut.get('responsabilidades', []),
-                            "confianza_ocr": confianza_rut,
-                            "campos_extraidos": resultado_rut.get('campos_encontrados', []),
-                            "validado_v15": True
-                        }
-                        save_audit_state()
-                        st.success(f"🎉 ¡{n_aplicados} campos del RUT inyectados en el expediente!")
-                        st.rerun()
-                else:
-                    st.warning(f"⚠️ El documento no parece ser un RUT. {resultado_rut.get('error', '')}")
-                    if resultado_rut.get('texto_completo'):
-                        with st.expander("Ver texto extraído"):
-                            st.text(resultado_rut['texto_completo'][:800])
-
-
-
-            st.markdown("---")
-            st.markdown("#### ✏️ Ingreso Manual")
-
-
-
-            c1, c2, c3 = st.columns(3)
-            st.session_state['auditor_name'] = c1.text_input(
-                "Auditor Líder", value=st.session_state['auditor_name'],
-                placeholder="Nombre del auditor")
-            st.session_state['rep_legal'] = c2.text_input(
-                "Representante Legal", value=st.session_state.get('rep_legal', ''),
-                placeholder="Nombre del representante")
-            st.session_state['rep_id'] = c3.text_input(
-                "C.C. Representante", value=st.session_state.get('rep_id', ''),
-                placeholder="Cédula de ciudadanía")
-
-
-            if st.button("💾 REGISTRAR"):
-                save_audit_state()
-                st.success("✅ Guardado.")
+        # Estilos Dinámicos Wizard Elite
+        def phase_btn(label, target, current, pct):
+            is_active = current == target
+            is_done = pct == 100
+            
+            # Emoji de estado
+            prefix = "✅ " if is_done else ("🔵 " if is_active else "⚪ ")
+            btn_label = f"{prefix}{label}\n{pct}%"
+            
+            btn_type = "primary" if is_active else "secondary"
+            if st.button(btn_label, use_container_width=True, type=btn_type, key=f"btn_fase_{target}"):
+                st.session_state['ing_f'] = target
                 st.rerun()
 
-        # --- FASE B: DIMENSIONAMIENTO ---
-        with tab_b:
-            fase_b_reqs_status = {
-                'tamanio': st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)", 
-                'personal': st.session_state['empresa_personal'] > 0,
-                'direccion': bool(st.session_state['empresa_direccion'])
-            }
-            fase_b_completados = sum(1 for status in fase_b_reqs_status.values() if status)
-            pct_b = int((fase_b_completados / 3) * 100)
-            
-            c_mb1, c_mb2 = st.columns([1, 4])
-            c_mb1.metric("Fase B", f"{pct_b}%")
-            with c_mb2: st.progress(pct_b / 100)
+        with c1: phase_btn("FASE A\nIdentidad", 'A', f, pct_fase_a)
+        with c2: phase_btn("FASE B\nDimensión", 'B', f, pct_fase_b)
+        with c3: phase_btn("FASE C\nRevisión", 'C', f, pct_fase_c)
+        with c4: phase_btn("FINAL\nCierre", 'FINAL', f, 100 if st.session_state.get('revisado_plantillas') else 0)
 
-            c1, c2, c3 = st.columns(3)
-            st.session_state['empresa_tamanio'] = c1.selectbox("* Tamaño:", ["Pyme (1-50 emp)", "Mediana (51-250 emp)", "Gran Empresa (+250 emp)"], index=0)
-            st.session_state['empresa_personal'] = c2.number_input("* Personal:", value=st.session_state['empresa_personal'], min_value=1)
-            st.session_state['empresa_sector'] = c3.selectbox("Sector:", ["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"], index=0)
-            st.session_state['empresa_direccion'] = st.text_area("* Dirección completa:", value=st.session_state['empresa_direccion'], height=80, placeholder="Ej: Calle 123 # 45-67, Piso 3, Torre A, Parque Empresarial Norte, Bogotá D.C.")
-            
-            if st.button("💾 GUARDAR B"):
-                save_audit_state()
-                st.success("✅ Perfilado.")
+        st.divider()
 
-        # --- FASE C: CUERPO NORMATIVO ---
-        with tab_c:
-            # BLOQUEO RETIRADO V9.1 - Acceso libre para carga de evidencias
-            if not fase_a_ready:
-                st.warning("⚠️ Nota: La Fase A (Identidad) aún no está completa, pero puede adelantar la carga de evidencias aquí.")
+        if f == 'A':
+            # --- FASE A: IDENTIDAD (VERSION ZERO-SCROLL V19.2) ---
+            st.markdown("<div style='margin-bottom: -1rem;'>", unsafe_allow_html=True)
+            col_t1, col_t2 = st.columns([1, 4])
+            with col_t1:
+                draw_donut(pct_fase_a, "AVANCE A", "#00C2FF")
+            with col_t2:
+                st.markdown("##### 🏢 Identidad del Auditor y Empresa")
+                cm1, cm2, cm3 = st.columns(3)
+                st.session_state['auditor_name'] = cm1.text_input("Auditor Líder", value=st.session_state.get('auditor_name',''), key="m_aud_v19")
+                st.session_state['rep_legal'] = cm2.text_input("Representante Legal", value=st.session_state.get('rep_legal',''), key="m_rep_v19")
+                st.session_state['rep_id'] = cm3.text_input("N° Identificación", value=st.session_state.get('rep_id',''), key="m_id_v19")
+            st.markdown("</div>", unsafe_allow_html=True)
+
+            # Cargadores OCR Compactos
+            st.markdown("<div style='margin-top: -1rem;'>", unsafe_allow_html=True)
+            col_cc, col_rut = st.columns(2)
+            with col_cc:
+                uploaded_cc = st.file_uploader("📋 Cámara de Comercio (PDF/JPG)", type=["pdf", "jpg", "jpeg", "png"], key="ocr_v19_cc", label_visibility="collapsed")
+            with col_rut:
+                uploaded_rut = st.file_uploader("🧾 RUT (DIAN)", type=["pdf", "jpg", "jpeg", "png"], key="ocr_v19_rut", label_visibility="collapsed")
+            st.markdown("</div>", unsafe_allow_html=True)
+
+            # PROCESAMIENTO OCR CC
+            if uploaded_cc:
+                with st.spinner("🔍 Analizando CC..."):
+                    res = procesar_documento(uploaded_cc.read(), uploaded_cc.name) if OCR_DISPONIBLE else {"tipo_doc":"unknown"}
+                if res.get("tipo_doc") == "camara_comercio":
+                    st.success(f"✅ CC Detectada ({res.get('confianza',0)}%)")
+                    with st.expander("📄 Datos Extraídos CC", expanded=True):
+                        st.markdown("<div style='font-size: 0.75rem;'>", unsafe_allow_html=True)
+                        cc1, cc2, cc3, cc4 = st.columns(4)
+                        cc1.write(f"**Empresa:** {res.get('company_name','—')[:20]}")
+                        cc1.write(f"**NIT:** {res.get('empresa_nit','—')}")
+                        cc2.write(f"**Matrícula:** {res.get('matricula','—')}")
+                        cc2.write(f"**Sociedad:** {res.get('tipo_sociedad','—')[:15]}")
+                        cc3.write(f"**Ciudad:** {res.get('domicilio','—')}")
+                        cc3.write(f"**Tel:** {res.get('empresa_telefono','—')}")
+                        cc4.write(f"**Rep:** {res.get('rep_legal','—')[:15]}")
+                        cc4.write(f"**ID:** {res.get('rep_id','—')}")
+                        if st.button("⚡ INYECTAR DATOS CC", key="apply_cc_v19", use_container_width=True):
+                            for k,v in resultado_a_session_state(res).items(): st.session_state[k] = v
+                            st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {"validado":True, "confianza":res.get('confianza')}
+                            save_audit_state(); st.rerun()
+                        st.markdown("</div>", unsafe_allow_html=True)
             
-            # --- MODO GOBERNANZA ADMIN V9.6 ---
-            if st.session_state['user_role'] == "Administrador (Global)":
-                st.markdown("""
-                <div style='background: rgba(0, 194, 255, 0.1); border-left: 5px solid #00C2FF; padding: 10px; margin-bottom: 20px; border-radius: 5px;'>
-                    <b style='color: #00C2FF;'>🛡️ MODO CONFIGURACIÓN ACTIVO (ADMIN)</b><br>
-                    <span style='font-size: 0.85rem;'>Usted tiene la autoridad para <b>Justificar N/A</b>. Los documentos marcados como N/A desaparecerán de la vista de los responsables.</span>
+            # PROCESAMIENTO OCR RUT
+            if uploaded_rut:
+                with st.spinner("🔍 Analizando RUT..."):
+                    res_r = procesar_documento(uploaded_rut.read(), uploaded_rut.name) if OCR_DISPONIBLE else {"tipo_doc":"unknown"}
+                if res_r.get("tipo_doc") == "rut":
+                    st.success(f"✅ RUT Detectado ({res_r.get('confianza',0)}%)")
+                    with st.expander("📄 Datos Extraídos RUT", expanded=True):
+                        st.markdown("<div style='font-size: 0.75rem;'>", unsafe_allow_html=True)
+                        rr1, rr2, rr3, rr4 = st.columns(4)
+                        rr1.write(f"**NIT:** {res_r.get('empresa_nit','—')}")
+                        rr2.write(f"**IVA:** {res_r.get('regimen_iva','—')[:15]}")
+                        rr3.write(f"**Email:** {res_r.get('empresa_email','—')[:20]}")
+                        rr4.write(f"**Dir:** {res_r.get('empresa_direccion','—')[:20]}")
+                        if st.button("⚡ INYECTAR DATOS RUT", key="apply_rut_v19", use_container_width=True):
+                            for k,v in resultado_a_session_state(res_r).items(): st.session_state[k] = v
+                            st.session_state['expediente']["RUT (Registro Unico Tributario)"] = {"validado":True, "confianza":res_r.get('confianza')}
+                            save_audit_state(); st.rerun()
+                        st.markdown("</div>", unsafe_allow_html=True)
+
+            if st.button("💾 GUARDAR CAMBIOS IDENTIDAD", use_container_width=True, type="primary"):
+                save_audit_state(); st.toast("Identidad Sincronizada")
+
+        elif f == 'B':
+            # --- FASE B: DIMENSIÓN (VERSION ZERO-SCROLL V19.2) ---
+            st.markdown("##### 📊 Dimensión Organizacional & Contexto")
+            col_b1, col_b2 = st.columns([1, 4])
+            with col_b1:
+                draw_donut(pct_fase_b, "AVANCE B", "#10B981")
+            with col_b2:
+                # Una sola fila para todos los descriptores
+                cb1, cb2, cb3 = st.columns(3)
+                st.session_state['empresa_tamanio'] = cb1.selectbox("Clasificación", ["Pyme (1-50 emp)", "Mediana (51-250 emp)", "Gran Empresa (+250 emp)"], index=0, key="b_size")
+                st.session_state['empresa_personal'] = cb2.number_input("Total Personal", value=st.session_state['empresa_personal'], min_value=1, key="b_pers")
+                st.session_state['empresa_sector'] = cb3.selectbox("Sector", ["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"], index=0, key="b_sect")
+                
+                # Dirección compacta
+                st.session_state['empresa_direccion'] = st.text_input("Dirección Domicilio Principal", value=st.session_state['empresa_direccion'], placeholder="Ej: Calle 123 # 45-67, Bogotá", key="b_dir")
+            
+            if st.button("💾 GUARDAR DIMENSIÓN Y CONTINUAR", use_container_width=True, type="primary"):
+                save_audit_state(); st.success("Perfilado exitoso.")
+                st.session_state['ing_f'] = 'C'
+                st.rerun()
+
+        elif f == 'C':
+            st.markdown("##### ⚖️ Revisión Documental (HITL)")
+            st.caption("Validación cognitiva de evidencias prioritarias para el cumplimiento normativo.")
+            
+            # Resumen de Fase C
+            docs_cargados = len(st.session_state['expediente'])
+            st.markdown(f"""
+            <div style='background:rgba(0,194,255,0.05); border:1px solid rgba(0,194,255,0.1); border-radius:10px; padding:0.8rem; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;'>
+                <span><b>Progreso de Revisión:</b> {pct_fase_c}% ({docs_cargados} de {total_total} docs)</span>
+                <div style='width:200px; background:rgba(255,255,255,0.05); border-radius:10px; height:8px;'>
+                    <div style='width:{pct_fase_c}%; background:#00C2FF; border-radius:10px; height:8px;'></div>
                 </div>
-                """, unsafe_allow_html=True)
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Malla de Documentos (Grid Elite)
+            cols = st.columns(3)
+            for i, doc in enumerate(cartas_todas):
+                with cols[i % 3]:
+                    doc_ready = doc['doc'] in st.session_state['expediente']
+                    is_vital = doc.get('prioridad') == "VITAL (Obligatorio)"
+                    
+                    st.markdown(f"""
+                    <div class='elite-card' style='border-top: 3px solid {"#10B981" if doc_ready else ("#00C2FF" if is_vital else "#475569")}; padding: 0.8rem;'>
+                        <div style='display:flex; justify-content:space-between; align-items:start;'>
+                            <span style='font-size:0.7rem; font-weight:700; color:{"#10B981" if doc_ready else "#94A3B8"};'>
+                                {"✅ CARGADO" if doc_ready else "⏳ PENDIENTE"}
+                            </span>
+                            <span style='font-size:0.6rem; background:rgba(255,255,255,0.05); padding:2px 5px; border-radius:4px;'>
+                                {doc.get('area','SIG')}
+                            </span>
+                        </div>
+                        <p style='font-size:0.85rem; font-weight:700; margin:0.5rem 0 0.2rem;'>{doc['doc'][:35]}...</p>
+                        <p style='font-size:0.65rem; color:#64748B; margin-bottom:1rem;'>{doc['desc'][:60]}...</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Acciones fuera del HTML (Streamlit Native)
+                    with st.expander("Gestionar", expanded=False):
+                        if not doc_ready:
+                            _f = st.file_uploader("Subir", key=f"up_v18_{i}", label_visibility="collapsed")
+                            if _f:
+                                st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
+                                save_audit_state(); st.rerun()
+                            if st.button("🤖 Generar IA", key=f"ia_v18_{i}", use_container_width=True):
+                                ui_generar_borrador_ia(doc['doc'], doc['area'], doc.get('justificacion',''))
+                            
+                            # NUEVO BOTÓN: DESCARGAR PLANTILLA (V19.1)
+                            ejemplo = formatear_ejemplo(doc, st.session_state)
+                            if st.button("📄 Descargar Plantilla", key=f"tpl_v18_{i}", use_container_width=True, type="secondary"):
+                                with st.spinner("Generando plantilla profesional..."):
+                                    path_tpl = generate_document_template_pdf(
+                                        doc['doc'], doc.get('instrucciones','Completar segun norma.'), 
+                                        st.session_state['base_path'], company, st.session_state['norma'], 
+                                        ejemplo_base=ejemplo
+                                    )
+                                    with open(path_tpl, "rb") as f:
+                                        st.download_button("📂 Bajar Plantilla", f, file_name=os.path.basename(path_tpl), use_container_width=True)
+                        else:
+                            st.success("Documento activo")
+                            if st.button("🗑️ Eliminar", key=f"del_v18_{i}", type="secondary"):
+                                del st.session_state['expediente'][doc['doc']]
+                                save_audit_state(); st.rerun()
+
+        elif f == 'FINAL':
+            st.markdown("##### 🏁 Cierre de Ingesta & Validación de Suficiencia")
             
-            # CABECERA DE CARGA CON METRICAS (V4.2)
-            total_req = len(cartas)
-            count_ready = len(st.session_state['expediente'])
-            doc_list_missing = [c['doc'] for c in cartas if c['doc'] not in st.session_state['expediente']]
+            # Panel de Validación
+            st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
+            st.write("### 🔍 Checklist de Suficiencia SGC")
             
-            c_head1, c_head2 = st.columns([1.5, 1])
-            with c_head1:
-                st.write("### ⚖️ 6.3.1 Revision de Informacion Documentada")
-            with c_head2:
-                # BOTON DE GUIA DE PREPARACION (V8.5 - ASCII)
-                if st.button("📄 Descargar Guia de Preparacion (PDF)", use_container_width=True):
-                    guide_path = generate_preparation_guide_pdf(st.session_state['company_name'], st.session_state['base_path'], cartas_todas, norma=st.session_state['norma'])
-                    with open(guide_path, "rb") as f:
-                        st.download_button("📂 Haz clic para Guardar Guia", f, file_name=os.path.basename(guide_path))
-                
-                st.metric("📦 Materia Prima Inyectada", f"{pct_fase_c}%", f"{count_ready}/{total_total} Listos")
+            docs_v_total = [c for c in cartas_todas if c.get('prioridad') == "VITAL (Obligatorio)"]
+            docs_v_ok = [c for c in docs_v_total if c['doc'] in st.session_state['expediente']]
+            docs_v_missing = [c for c in docs_v_total if c['doc'] not in st.session_state['expediente']]
             
-            # VISIBILIDAD DE FALTANTES - PROPORCIONALIDAD V9.0
-            if doc_list_missing:
-                # Dividir en Críticos y Recomendados
-                criticos = [d for d in doc_list_missing if any(c['doc'] == d and c['prioridad'] == "VITAL (Obligatorio)" for c in cartas)]
-                recomendados = [d for d in doc_list_missing if d not in criticos]
-                
-                with st.expander("PENDIENTES DE CARGA (Haga clic para ver)", expanded=True):
-                    if criticos:
-                        st.error(f"⚠️ **BLOQUEANTES VITALES ({len(criticos)}):**")
-                        st.write(", ".join(criticos))
-                    if recomendados:
-                        st.info(f"💡 **RECOMENDADOS/LEAN ({len(recomendados)}):**")
-                        st.write(", ".join(recomendados))
-                        if es_startup:
-                            st.caption("Nota: Por ser una empresa pequeña, estos documentos son opcionales para avanzar.")
-            else:
-                st.success("✅ ¡Expediente Completo! Puede proceder a la Emision de Formatos.")
+            c_s1, c_s2 = st.columns([1, 2])
+            with c_s1:
+                draw_donut(int((len(docs_v_ok)/len(docs_v_total))*100), "VITALES", "#10B981")
+            
+            with c_s2:
+                if not docs_v_missing:
+                    st.success("✅ **Blindaje SGC Completo:** Todos los documentos vitales han sido cargados.")
+                else:
+                    st.warning(f"⚠️ **Pendiente:** Faltan {len(docs_v_missing)} documentos vitales para el blindaje reglamentario.")
+                    with st.expander("Ver documentos faltantes"):
+                        for m in docs_v_missing:
+                            st.write(f"❌ {m['doc']}")
             
             st.divider()
-            # Agrupación por Áreas (V4.5 Limpieza de Emojis)
-            areas = list(dict.fromkeys([c['area'] for c in cartas]))
-            for i, area in enumerate(areas):
-                docs_area = [c for c in cartas if c['area'] == area]
-                conteo_ready = sum(1 for c in docs_area if c['doc'] in st.session_state['expediente'])
-                porcentaje_area = int((conteo_ready / len(docs_area)) * 100) if docs_area else 0
+            
+            st.markdown("##### ⚖️ Autorización de Emisión")
+            st.caption("Al habilitar esta opción, el sistema realizará el diligenciamiento IA de los formatos maestros.")
+            st.session_state['autorizado_emision'] = st.toggle("HABILITAR EMISIÓN DE FORMATOS IA", value=st.session_state.get('autorizado_emision', False))
+            
+            if st.session_state['autorizado_emision']:
+                if not docs_v_missing:
+                    st.success("🚀 ESTATUS ELITE: Listo para emisión.")
+                else:
+                    st.info("💡 Puedes emitir, pero el cumplimiento se marcará como parcial.")
                 
-                with st.expander(f"AREA: {area.upper()} (Avance: {porcentaje_area}%)"):
-                    for c in docs_area:
-                        idx = cartas.index(c)
-                        doc_id = c['doc']
-                        norma_tag = c.get('norma', 'SIG')
-                        es_completado = doc_id in st.session_state['expediente']
-                        
-                        # Badge Visual por Norma V9.8
-                        color_map = {"SEGURIDAD": "#F87171", "AMBIENTAL": "#34D399", "ACADÉMICO": "#A78BFA", "CALIDAD": "#60A5FA", "SIG": "#94A3B8"}
-                        badge_color = color_map.get(norma_tag, "#94A3B8")
-                        
-                        st.markdown(f"""
-                        <div style='display: flex; align-items: center; gap: 10px;'>
-                            <span style='background: {badge_color}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: bold;'>{norma_tag}</span>
-                            <b style='font-size: 1rem;'>{'✅' if es_completado else '⏳'} {doc_id}</b>
-                        </div>
-                        """, unsafe_allow_html=True)
-                        
-                        if not es_completado:
-                            with st.expander("📋 ASISTENCIA DE ELABORACIÓN ELITE (Hiper-Contextual)", expanded=False):
-                                st.markdown(f"**📌 Concepto y Justificación:** *{c.get('justificacion', 'Requisito normativo estándar.')}*")
-                                
-                                # Sub-tabs para limpieza visual V13.0
-                                tab_pasos, tab_ejemplo = st.tabs(["�️ Cómo se crea", "📖 Ejemplo Contextualizado"])
-                                
-                                with tab_pasos:
-                                    st.write("### Pasos para Crear y Generar:")
-                                    pasos = c.get('como_crear', 'Solicite el documento al área responsable y verifique que cumpla con los estándares institucionales.')
-                                    st.info(pasos)
-                                    inst = c.get('instrucciones', '')
-                                    if inst: st.caption(f"Nota técnica: {inst}")
-                                
-                                with tab_ejemplo:
-                                    st.write(f"### Ejemplo Referencial para {company}:")
-                                    metadata_ctx = {
-                                        "company_name": company,
-                                        "empresa_objeto": st.session_state.get('empresa_objeto', 'sus actividades'),
-                                        "auditor_name": st.session_state.get('auditor_name', 'Auditor Líder')
-                                    }
-                                    ejemplo_text = formatear_ejemplo(c, metadata_ctx)
-                                    st.code(ejemplo_text, language="text")
-                                    st.caption("Tip: Puede copiar este texto como base para su documento oficial.")
+                if st.button("🏗️ IR A REVISIÓN DE FORMATOS", use_container_width=True, type="primary"):
+                    st.session_state['main_menu_auditor'] = "⚖️ Emisión de Formatos [0%]" # Hack para navegar
+                    st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
 
-                                st.caption(f"Ref: {c['ref']} | {c['desc']} | Prioridad: {c.get('prioridad', 'Estándar')}")
-                                
-                                # Botón de Descarga de Plantilla V10.0
-                                if st.button(f"📑 Descargar Plantilla PDF - {doc_id}", key=f"tpl_{idx}", use_container_width=True):
-                                    # Usar contenido combinado para la plantilla
-                                    full_inst = f"{pasos}\n\nEJEMPLO:\n{ejemplo_text}"
-                                    tpl_path = generate_document_template_pdf(
-                                        doc_id, full_inst, st.session_state['base_path'],
-                                        company=company,
-                                        norma=c.get('norma', 'SIG'),
-                                        ejemplo_base=ejemplo_text
-                                    )
-                                    with open(tpl_path, "rb") as f:
-                                        st.download_button(f"📂 Guardar Plantilla {doc_id}", f, file_name=os.path.basename(tpl_path), key=f"dl_{idx}")
-                                
-                                # Ejemplo Visual para Politica de Seguridad (V10.0 Mockup)
-                                if "Politica de Seguridad" in doc_id:
-                                    img_path = os.path.join(SCRIPT_DIR, "politica_seguridad_perfecta_mockup.png")
-                                    if os.path.exists(img_path):
-                                        st.image(img_path, caption="Referencia Visual: Diagramación Profesional de Política ISO 27001", use_container_width=True)
-                            
-                            col_act1, col_act2 = st.columns([1, 1])
-                            with col_act1:
-                                # Opción de Justificación Manual (N/A) V9.4 - RESERVADO PARA ADMIN
-                                es_justificado = doc_id in st.session_state.get('justificados', [])
-                                if st.session_state['user_role'] == "Administrador (Global)":
-                                    if st.button(f"⚖️ {'Quitar' if es_justificado else 'Justificar'} N/A", key=f"na_{idx}", use_container_width=True):
-                                        if es_justificado:
-                                            st.session_state['justificados'].remove(doc_id)
-                                        else:
-                                            st.session_state['justificados'].append(doc_id)
-                                        save_audit_state()
-                                        st.rerun()
-                                else:
-                                    # Si es N/A pero el usuario no es admin, solo ve el status (aunque el filtro de arriba ya debería haberlo ocultado)
-                                    if es_justificado:
-                                        st.warning("⚖️ Este requisito ha sido marcado como N/A por el Administrador.")
-                            
-                            with col_act2:
-                                uploaded_file = st.file_uploader(
-                                    f"📥 Cargar Evidencia PDF",
-                                    type=['pdf', 'jpg', 'jpeg', 'png', 'xlsx', 'csv'],
-                                    key=f"up_{idx}", label_visibility="collapsed"
-                                )
-
-                            # ── MODO HYBRID V15.0: Upload + Validador + Formulario ────────
-                            if uploaded_file:
-                                st.markdown("---")
-                                st.markdown(f"#### 🔬 Análisis Documental V15.0: `{doc_id}`")
-
-                                # Importar validador (disponible en scope global del módulo)
-                                try:
-                                    from HMO_Document_Validator import validate_document, detectar_tipo_por_contenido, EXPEDIENTE_A_SCHEMA
-                                    VALIDATOR_OK = True
-                                except Exception:
-                                    VALIDATOR_OK = False
-
-                                # Documentos que usan FORMULARIO en lugar de OCR (contienen tablas)
-                                FORM_ONLY_DOCS = [
-                                    "Estados Financieros",
-                                    "Inventario de Activos",
-                                    "Contexto Organizacional (DOFA)",
-                                    "Aspectos e Impactos Ambientales",
-                                    "Cronograma de Actividades de Preparacion",
-                                ]
-                                # Campos bloqueados (inmutables una vez establecidos desde CC/RUT)
-                                CAMPOS_BLOQUEADOS = {
-                                    "empresa_nit": "🔒 NIT (tomado de Cámara de Comercio — no editable)",
-                                    "company_name": "🔒 Razón Social (tomado de Cámara de Comercio — no editable)",
-                                    "matricula": "🔒 Matrícula Mercantil",
-                                }
-
-                                usa_formulario = any(f in doc_id for f in FORM_ONLY_DOCS)
-
-                                if not usa_formulario:
-                                    # ── OCR + VALIDACIÓN NORMATIVA ──────────────────────────
-                                    with st.spinner("🔍 Extrayendo y validando contenido..."):
-                                        file_bytes = uploaded_file.read()
-                                        texto_doc = ""
-
-                                        if uploaded_file.name.endswith(('.xlsx', '.csv')):
-                                            try:
-                                                df = pd.read_excel(uploaded_file) if uploaded_file.name.endswith('.xlsx') else pd.read_csv(uploaded_file)
-                                                texto_doc = df.to_string()
-                                                st.success("📊 Tabla/Matriz detectada y procesada.")
-                                            except Exception as e:
-                                                texto_doc = ""; st.warning(f"Error leyendo tabla: {e}")
-                                        elif OCR_DISPONIBLE:
-                                            from HMO_OCR_Extractor import extract_text_from_pdf, extract_text_from_image
-                                            if uploaded_file.name.lower().endswith(('.jpg', '.jpeg', '.png')):
-                                                texto_doc = extract_text_from_image(file_bytes)
-                                            else:
-                                                texto_doc = extract_text_from_pdf(file_bytes)
-
-                                    if texto_doc and VALIDATOR_OK:
-                                        schema_key = EXPEDIENTE_A_SCHEMA.get(doc_id, "")
-                                        if not schema_key:
-                                            from HMO_Document_Validator import detectar_tipo_por_contenido
-                                            schema_key = detectar_tipo_por_contenido(texto_doc)
-
-                                        if schema_key and schema_key not in ("camara_comercio", "rut", "desconocido"):
-                                            resultado_val = validate_document(texto_doc, schema_key)
-                                            score = resultado_val["score"]
-                                            nivel = resultado_val["nivel"]
-
-                                            # ── RESULTADO VISUAL ──
-                                            if nivel == "APROBADO":
-                                                st.success(f"✅ **{nivel}** — Score: {score}/100 | {resultado_val['norma_ref']}")
-                                            elif nivel == "OBSERVACION":
-                                                st.warning(f"⚠️ **{nivel}** — Score: {score}/100 | Requiere ajustes menores.")
-                                            else:
-                                                st.error(f"❌ **{nivel}** — Score: {score}/100 | Documento NO corresponde al tipo solicitado.")
-
-                                            col_v1, col_v2 = st.columns(2)
-                                            with col_v1:
-                                                st.markdown("**✅ Cumplidos:**")
-                                                for c in resultado_val["cumplidos"]:
-                                                    st.caption(c)
-                                            with col_v2:
-                                                if resultado_val["faltantes"]:
-                                                    st.markdown("**⚠️ Observaciones:**")
-                                                    for f_ in resultado_val["faltantes"]:
-                                                        st.caption(f_)
-
-                                            # ── FORMULARIO HÍBRIDO: campos extraídos + editables ──
-                                            st.markdown("#### ✏️ Confirmar / Corregir Datos Extraídos")
-                                            campos_extraidos = resultado_val.get("campos_extraidos", {})
-
-                                            col_f1, col_f2 = st.columns(2)
-                                            notas_auditor = col_f1.text_area(
-                                                "📝 Observaciones del Auditor:",
-                                                placeholder="Ej: Documento del 2024, firmado por gerente...",
-                                                key=f"obs_{idx}", height=80
-                                            )
-                                            # Mostrar campos extraídos como info (no editables — solo informativos)
-                                            with col_f2:
-                                                if campos_extraidos:
-                                                    for campo, valor in campos_extraidos.items():
-                                                        st.caption(f"🔍 **{campo}**: {valor[:60]}")
-
-                                            # Campos actualizables del perfil de empresa (teléfono, email, dirección)
-                                            st.markdown("##### 🔄 Datos Actualizables de la Empresa")
-                                            st.caption("Puedes actualizar estos datos si el documento tiene información más reciente.")
-                                            col_u1, col_u2, col_u3 = st.columns(3)
-
-                                            nuevo_tel = col_u1.text_input(
-                                                "📞 Teléfono (actualizable):",
-                                                value=st.session_state.get('empresa_telefono', ''),
-                                                key=f"tel_upd_{idx}"
-                                            )
-                                            nuevo_email = col_u2.text_input(
-                                                "📧 Email (actualizable):",
-                                                value=st.session_state.get('empresa_email', ''),
-                                                key=f"email_upd_{idx}"
-                                            )
-                                            # Campos BLOQUEADOS — solo lectura
-                                            col_u3.text_input(
-                                                "🔒 NIT (bloqueado):",
-                                                value=st.session_state.get('empresa_nit', '—'),
-                                                key=f"nit_lock_{idx}",
-                                                disabled=True
-                                            )
-
-                                            if st.button(f"✅ APROBAR '{doc_id}'", key=f"val_btn_{idx}", use_container_width=True,
-                                                         disabled=(nivel == "RECHAZADO")):
-                                                # Actualizar campos editables si cambiaron
-                                                if nuevo_tel: st.session_state['empresa_telefono'] = nuevo_tel
-                                                if nuevo_email: st.session_state['empresa_email'] = nuevo_email
-                                                st.session_state['expediente'][doc_id] = {
-                                                    "score_validacion": score,
-                                                    "nivel": nivel,
-                                                    "norma_ref": resultado_val.get("norma_ref", ""),
-                                                    "secciones": resultado_val.get("secciones_encontradas", []),
-                                                    "observaciones_auditor": notas_auditor,
-                                                    "campos_extraidos": campos_extraidos,
-                                                    "validado_v15": True
-                                                }
-                                                save_audit_state()
-                                                st.success(f"🎉 '{doc_id}' registrado en el expediente.")
-                                                st.rerun()
-
-                                            if nivel == "RECHAZADO":
-                                                st.error("🚫 El documento fue rechazado. No cumple el contenido mínimo requerido. Por favor suba el documento correcto.")
-
-                                        else:
-                                            # Tipo no reconocido → aceptar con nota manual
-                                            st.warning("⚠️ No se pudo validar automáticamente. Ingrese una observación manual.")
-                                            manual_txt = st.text_area("✍️ Descripción del documento:", key=f"manual_{idx}")
-                                            if st.button(f"📌 Registrar Manualmente", key=f"man_btn_{idx}"):
-                                                st.session_state['expediente'][doc_id] = manual_txt or f"Recibido: {uploaded_file.name}"
-                                                save_audit_state(); st.rerun()
-                                    else:
-                                        st.warning("⚠️ No se pudo extraer texto. Registre observación manual.")
-                                        manual_txt = st.text_area("✍️ Observación:", key=f"manual2_{idx}")
-                                        if st.button(f"📌 Registrar", key=f"man2_btn_{idx}"):
-                                            st.session_state['expediente'][doc_id] = manual_txt or uploaded_file.name
-                                            save_audit_state(); st.rerun()
-
-                                else:
-                                    # ── MODO FORMULARIO (para documentos con tablas) ──────────
-                                    st.info(f"📋 Para **{doc_id}**, completa el formulario a continuación. Sube el PDF como evidencia adjunta y registra los datos clave.")
-                                    st.success(f"✅ Evidencia adjunta: `{uploaded_file.name}`")
-
-                                    # Formularios específicos por tipo de documento
-                                    if "Estados Financieros" in doc_id:
-                                        col_ef1, col_ef2, col_ef3 = st.columns(3)
-                                        periodo = col_ef1.text_input("📅 Período / Año fiscal:", key=f"ef_per_{idx}", placeholder="2024")
-                                        total_activo = col_ef2.text_input("💰 Total Activo:", key=f"ef_act_{idx}", placeholder="$500.000.000")
-                                        patrimonio = col_ef3.text_input("🏛️ Patrimonio:", key=f"ef_pat_{idx}", placeholder="$200.000.000")
-                                        col_ef4, col_ef5 = st.columns(2)
-                                        contador = col_ef4.text_input("👤 Nombre Contador:", key=f"ef_cnt_{idx}")
-                                        tp_contad = col_ef5.text_input("🪪 Tarjeta Profesional T.P.:", key=f"ef_tp_{idx}")
-                                        obs_ef = st.text_area("📝 Observaciones:", key=f"ef_obs_{idx}", height=60)
-
-                                        if st.button(f"✅ Registrar Estados Financieros", key=f"ef_btn_{idx}", use_container_width=True):
-                                            if periodo and total_activo:
-                                                st.session_state['expediente'][doc_id] = {
-                                                    "periodo": periodo, "total_activo": total_activo,
-                                                    "patrimonio": patrimonio, "contador": contador,
-                                                    "tarjeta_profesional": tp_contad,
-                                                    "observaciones": obs_ef, "archivo": uploaded_file.name
-                                                }
-                                                save_audit_state(); st.success("✅ Estados Financieros registrados."); st.rerun()
-                                            else:
-                                                st.warning("⚠️ El período y total activo son obligatorios.")
-
-                                    elif "Inventario" in doc_id or "Activos" in doc_id:
-                                        col_inv1, col_inv2 = st.columns(2)
-                                        total_activos = col_inv1.number_input("📦 Total de activos inventariados:", min_value=1, key=f"inv_tot_{idx}")
-                                        propietario = col_inv2.text_input("👤 Responsable del inventario:", key=f"inv_prop_{idx}")
-                                        categorias = st.multiselect("📂 Categorías incluidas:", ["Hardware", "Software", "Datos", "Infraestructura", "Personas", "Servicios"], key=f"inv_cat_{idx}")
-                                        obs_inv = st.text_area("📝 Observaciones:", key=f"inv_obs_{idx}", height=60)
-                                        if st.button(f"✅ Registrar Inventario", key=f"inv_btn_{idx}", use_container_width=True):
-                                            st.session_state['expediente'][doc_id] = {
-                                                "total_activos": total_activos, "propietario": propietario,
-                                                "categorias": categorias, "observaciones": obs_inv, "archivo": uploaded_file.name
-                                            }
-                                            save_audit_state(); st.success("✅ Inventario registrado."); st.rerun()
-
-                                    elif "DOFA" in doc_id or "Contexto" in doc_id:
-                                        st.caption("Confirma que el análisis DOFA incluye los 4 cuadrantes:")
-                                        col_d1, col_d2 = st.columns(2)
-                                        tiene_f = col_d1.checkbox("✅ Fortalezas definidas", key=f"df_{idx}")
-                                        tiene_o = col_d1.checkbox("✅ Oportunidades definidas", key=f"do_{idx}")
-                                        tiene_d = col_d2.checkbox("✅ Debilidades definidas", key=f"dd_{idx}")
-                                        tiene_a = col_d2.checkbox("✅ Amenazas definidas", key=f"da_{idx}")
-                                        obs_dofa = st.text_area("📝 Hallazgos DOFA relevantes:", key=f"dofa_obs_{idx}", height=80)
-                                        if st.button(f"✅ Registrar DOFA", key=f"dofa_btn_{idx}", use_container_width=True):
-                                            if all([tiene_f, tiene_o, tiene_d, tiene_a]):
-                                                st.session_state['expediente'][doc_id] = {
-                                                    "cuadrantes": ["F","O","D","A"], "observaciones": obs_dofa, "archivo": uploaded_file.name
-                                                }
-                                                save_audit_state(); st.success("✅ Contexto DOFA registrado."); st.rerun()
-                                            else:
-                                                st.warning("⚠️ Confirma todos los cuadrantes del DOFA.")
-
-                                    else:
-                                        # Formulario genérico para cualquier otro doc de tabla
-                                        obs_gen = st.text_area(f"📝 Describa el contenido del documento `{doc_id}`:", key=f"gen_obs_{idx}", height=100)
-                                        if st.button(f"✅ Registrar {doc_id}", key=f"gen_btn_{idx}", use_container_width=True):
-                                            st.session_state['expediente'][doc_id] = obs_gen or uploaded_file.name
-                                            save_audit_state(); st.rerun()
-
-                            # ── ESTADO YA VALIDADO ────────────────────────────────────────
-                            if doc_id in st.session_state['expediente'] and not uploaded_file:
-                                val_data = st.session_state['expediente'][doc_id]
-                                if isinstance(val_data, dict) and val_data.get("validado_v15"):
-                                    sc = val_data.get("score_validacion", 0)
-                                    nv = val_data.get("nivel", "—")
-                                    emoji = "✅" if nv == "APROBADO" else "⚠️"
-                                    st.caption(f"{emoji} Validado V15.0 — Score: {sc}/100 | Nivel: {nv}")
-                                elif isinstance(val_data, dict) and val_data.get("archivo"):
-                                    st.caption(f"📎 Archivo: {val_data.get('archivo')} | Formulario registrado")
-
-            # ── PANEL ADMIN: DESBLOQUEO DE CAMPOS INMUTABLES V15.0 ─────────────
-            if st.session_state.get('user_role') == "Administrador (Global)":
-                with st.expander("🔓 PANEL ADMIN — Corrección de Campos Bloqueados (Uso con Justificación)", expanded=False):
-                    st.warning("⚠️ Los campos bloqueados protegen la integridad jurídica del expediente. **Solo modifique si el OCR extrajo datos erróneos** (ej: documento mal escaneado).")
-
-                    CAMPOS_AUDITABLES = {
-                        "empresa_nit": ("🔢 NIT", "NIT protegido — extraído de Cámara de Comercio"),
-                        "company_name": ("🏢 Razón Social", "Nombre jurídico de la empresa"),
-                        "rep_legal": ("👤 Representante Legal", "Nombre del Rep. Legal"),
-                        "rep_id": ("🪪 C.C. Representante", "Cédula de ciudadanía del Rep. Legal"),
-                        "matricula": ("📋 Matrícula Mercantil", "Número de matrícula en Cámara de Comercio"),
-                        "empresa_email": ("📧 Email corporativo", "Email registrado en el RUT"),
-                        "empresa_telefono": ("📞 Teléfono", "Teléfono registrado en el RUT"),
-                    }
-
-                    # Inicializar log de correcciones admin si no existe
-                    if 'admin_corrections_log' not in st.session_state:
-                        st.session_state['admin_corrections_log'] = []
-
-                    col_adm1, col_adm2 = st.columns(2)
-                    campo_sel = col_adm1.selectbox(
-                        "📌 Campo a corregir:",
-                        list(CAMPOS_AUDITABLES.keys()),
-                        format_func=lambda k: CAMPOS_AUDITABLES[k][0],
-                        key="admin_campo_sel"
-                    )
-                    valor_actual = st.session_state.get(campo_sel, "—")
-
-                    col_adm1.info(f"**Valor actual en sistema:** `{valor_actual}`")
-                    col_adm1.caption(CAMPOS_AUDITABLES[campo_sel][1])
-
-                    nuevo_valor = col_adm2.text_input(
-                        f"✏️ Nuevo valor para {CAMPOS_AUDITABLES[campo_sel][0]}:",
-                        value=valor_actual if valor_actual != "—" else "",
-                        key="admin_new_val"
-                    )
-                    justificacion_admin = col_adm2.text_area(
-                        "📋 Justificación obligatoria:",
-                        placeholder="Ej: OCR leyó '8' en lugar de '0' por mal escaneado del documento. Verificado contra original físico.",
-                        key="admin_justif",
-                        height=80
-                    )
-
-                    if st.button("🔓 APLICAR CORRECCIÓN CON TRAZABILIDAD", use_container_width=True,
-                                 disabled=not (nuevo_valor and justificacion_admin)):
-                        if nuevo_valor and justificacion_admin:
-                            valor_anterior = st.session_state.get(campo_sel, "—")
-                            st.session_state[campo_sel] = nuevo_valor
-
-                            # Registro de auditoría inmutable
-                            log_entry = {
-                                "timestamp": str(datetime.datetime.now()),
-                                "campo": campo_sel,
-                                "campo_nombre": CAMPOS_AUDITABLES[campo_sel][0],
-                                "valor_anterior": valor_anterior,
-                                "valor_nuevo": nuevo_valor,
-                                "justificacion": justificacion_admin,
-                                "administrador": st.session_state.get('auditor_name', 'Admin'),
-                                "empresa": st.session_state.get('company_name', ''),
-                            }
-                            st.session_state['admin_corrections_log'].append(log_entry)
-
-                            # Guardar en archivo de auditoría
-                            try:
-                                log_path = os.path.join(st.session_state.get('base_path', '.'), "admin_corrections_audit.json")
-                                logs = []
-                                if os.path.exists(log_path):
-                                    with open(log_path, "r", encoding="utf-8") as f:
-                                        logs = json.load(f)
-                                logs.append(log_entry)
-                                with open(log_path, "w", encoding="utf-8") as f:
-                                    json.dump(logs, f, indent=4, ensure_ascii=False)
-                            except Exception:
-                                pass
-
-                            save_audit_state()
-                            st.success(f"✅ Campo `{CAMPOS_AUDITABLES[campo_sel][0]}` actualizado: **{valor_anterior}** → **{nuevo_valor}**")
-                            st.caption(f"🕐 Corrección registrada en el log de auditoría — {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-                            st.rerun()
-                    else:
-                        if not justificacion_admin:
-                            st.caption("⚠️ La justificación es obligatoria para activar el botón de corrección.")
-
-                    # Mostrar historial de correcciones de esta sesión
-                    if st.session_state.get('admin_corrections_log'):
-                        st.markdown("**📜 Historial de correcciones en esta sesión:**")
-                        for log in reversed(st.session_state['admin_corrections_log'][-5:]):
-                            st.caption(
-                                f"🕐 {log['timestamp'][:16]} | {log['campo_nombre']}: "
-                                f"`{log['valor_anterior']}` → `{log['valor_nuevo']}` | "
-                                f"Motivo: {log['justificacion'][:60]}..."
-                            )
-
-
-        # --- VALIDACIÓN & CIERRE ---
-        with tab_final:
-            st.write("### 🏁 Cierre de Ingesta y Validación de Estructura")
-            progreso_c = (len(st.session_state['expediente']) / len(cartas)) if len(cartas) > 0 else 0
-            
-            if 'revisado_plantillas' not in st.session_state: st.session_state['revisado_plantillas'] = False
-            
-            # --- CIERRE SELECTIVO V12.0 ---
-            norma_lista = any(pct >= 100 for pct in normas_resumen.values())
-            
-            # Blindaje de Rigor V12.0
-            if norma_lista and not es_rigor_ok:
-                st.error(f"🛑 **BLOQUEO DE RIGOR:** La coherencia media de los documentos vitales es de {coherencia_media_vital:.1f}%, inferior al mínimo de 60%. Revise la calidad de la materia prima.")
-            
-            if not (fase_a_ready and fase_b_ready) or not norma_lista or not es_rigor_ok:
-                st.warning("⚠️ Ingesta Incompleta o Insuficiente. Se requiere completar Fase A, B, los documentos VITALES de al menos una norma y cumplir con el rigor mínimo (60%).")
-                if not norma_lista:
-                    st.info("💡 **Estado de Normas:** " + " | ".join([f"{n}: {p}%" for n, p in normas_resumen.items()]))
-            else:
-                st.success("🏆 Materia Prima completa y validada por el Experto.")
-                st.markdown("---")
-                st.write("#### 🛡️ Paso 1: Generación y Conocimiento de Plantillas Base")
-                st.info("Antes de autorizar el diligenciamiento automático, es mandatorio que el auditor conozca y valide la estructura de las plantillas base.")
-                
-                if st.button("🏗️ GENERAR PLANTILLAS BASE PARA REVISIÓN"):
-                    with st.spinner("Preparando formatos sin diligenciar..."):
-                        # Importar generadores si no están ya en el scope
-                        from HMO_Auditor_Master_V2_Generator import create_audit_program_v2
-                        from HMO_Checklist_Legal_Generator import create_legal_checklist
-                        
-                        # Consolidar Identidad Legal (V1.6.0)
-                        identity_data = {
-                            "auditor": st.session_state['auditor_name'],
-                            "rep_legal": st.session_state['rep_legal'],
-                            "rep_id": st.session_state['rep_id'],
-                            "tamanio": st.session_state['empresa_tamanio'],
-                            "sector": st.session_state['empresa_sector'],
-                            "nit": st.session_state['empresa_nit'],
-                            "direccion": st.session_state['empresa_direccion'],
-                            "web": st.session_state['empresa_web'],
-                            "objeto_social": st.session_state['empresa_objeto']
-                        }
-                        
-                        # Generar vacíos oficialmente
-                        f1 = create_audit_program_v2(company, st.session_state['base_path'], st.session_state['logo_path'], {}, identity_data)
-                        f2 = create_legal_checklist(company, st.session_state['base_path'], st.session_state['logo_path'], {}, identity_data)
-                        st.session_state['revisado_plantillas'] = True
-                        st.success("✅ Plantillas Base generadas. Por favor, descárguelas y revíselas.")
-                        
-                if st.session_state['revisado_plantillas']:
-                    c_rev1, c_rev2 = st.columns(2)
-                    with open(os.path.join(st.session_state['base_path'], "GAD_PRO_01_Programa_Auditoria_ELITE.docx"), "rb") as f:
-                        c_rev1.download_button("📂 Revisar Programa (Vacío)", f, file_name="PLANTILLA_BASE_PROGRAMA.docx")
-                    with open(os.path.join(st.session_state['base_path'], "GAD_LIST_02_Checklist_Auditoria_ELITE.xlsx"), "rb") as f:
-                        c_rev2.download_button("📊 Revisar Checklist (Vacío)", f, file_name="PLANTILLA_BASE_CHECKLIST.xlsx")
-                    
-                    st.markdown("---")
-                    st.write("#### ✍️ Paso 2: Autorización de Diligenciamiento")
-                    st.warning("¿La estructura de las plantillas es adecuada? Si desea que el sistema proceda a inyectar la materia prima, autorice a continuación:")
-                    st.session_state['autorizado_emision'] = st.toggle("AUTORIZAR DILIGENCIAMIENTO DE FORMATOS", value=st.session_state['autorizado_emision'])
-                    
-                    if st.session_state['autorizado_emision']:
-                        st.balloons()
-                        st.success("🚀 El sistema ha sido habilitado para emitir documentos con inyección de datos del expediente.")
+    # --- SECCIÓN: FORMATOS ---
 
     # --- SECCIÓN: FORMATOS ---
     elif menu == "⚖️ Emisión de Formatos":
@@ -2036,9 +1571,41 @@ else:
                                 st.error(f"Error PDF: {e}")
                                 st.button("📄 Exportar PDF (ELITE)", disabled=True)
                         st.balloons()
-                st.markdown("</div>", unsafe_allow_html=True)
-            else:
-                st.warning("⚠️ El expediente aún no ha sido autorizado para emisión. Complete la validación en la pestaña anterior.")
+    # --- SECCIÓN: PORTAL DE COLABORADOR (V16.0) ---
+    elif menu == "📋 Portal de Entrega":
+        st.markdown(f"<h1 class='norm-header'>📋 Portal de Colaboración: {st.session_state['user_role'].upper()}</h1>", unsafe_allow_html=True)
+        st.info(f"Bienvenido. Aquí podrá gestionar los documentos requeridos para el área de **{st.session_state['user_role']}**.")
+        
+        # Filtrar documentos por el área del usuario
+        area_map = {"juridica": "Juridico", "finanzas": "Financiera", "responsable": "Talento Humano"}
+        mi_area = area_map.get(st.session_state['user_role'], "Operaciones")
+        mis_docs = [c for c in cartas_todas if c.get('area') == mi_area or c.get('prioridad') == "VITAL (Obligatorio)"]
+        
+        c_p1, c_p2 = st.columns([2, 1])
+        with c_p1:
+            st.write("### Mis Pendientes de Entrega")
+            for i, d in enumerate(mis_docs):
+                doc_ready = d['doc'] in st.session_state['expediente']
+                with st.expander(f"{'✅' if doc_ready else '⏳'} {d['doc']}"):
+                    st.markdown(f"**Requisito:** {d['justificacion']}")
+                    st.caption(f"💡 {d['instrucciones']}")
+                    
+                    if not doc_ready:
+                        ui_generar_borrador_ia(d['doc'], d['area'], d['justificacion'])
+                        st.divider()
+                        _f = st.file_uploader(f"Subir Evidencia Personalizada", key=f"up_resp_{i}")
+                        if _f:
+                            st.session_state['expediente'][d['doc']] = {"validado": True, "hitl": True}
+                            save_audit_state(); st.rerun()
+                    else:
+                        st.success("Documento cargado correctamente.")
+        
+        with c_p2:
+            st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
+            st.write("### Estatus de Cumplimiento")
+            pct_area = int((len([d for d in mis_docs if d['doc'] in st.session_state['expediente']]) / len(mis_docs)) * 100) if mis_docs else 100
+            draw_donut(pct_area, "MI PROGRESO", "#00C2FF")
+            st.markdown("</div>", unsafe_allow_html=True)
 
     # --- SECCIÓN: AYUDA ---
     elif menu == "💎 Help Center Elite":

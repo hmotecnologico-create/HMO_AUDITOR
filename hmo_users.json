@@ -34,6 +34,36 @@
             "primer_login": false,
             "creado": "2026-02-22T13:02:10.611785",
             "ultimo_acceso": null
+        },
+        {
+            "user": "responsable",
+            "hash": "c005118c213426e273ef39678e71887e4726859876793a3889078976bfe4305a",
+            "rol": "responsable",
+            "nombre": "Responsable de Área",
+            "activo": true,
+            "primer_login": true,
+            "creado": "2026-02-22T13:58:10.611785",
+            "ultimo_acceso": null
+        },
+        {
+            "user": "juridica",
+            "hash": "3994e138a2e584f937213426e273ef39678e71887e4726859876793a38890789",
+            "rol": "juridica",
+            "nombre": "Área Jurídica",
+            "activo": true,
+            "primer_login": true,
+            "creado": "2026-02-22T14:05:10.611785",
+            "ultimo_acceso": null
+        },
+        {
+            "user": "finanzas",
+            "hash": "7726859876793a38890789a2e584f937213426e273ef39678e71887e4726859",
+            "rol": "finanzas",
+            "nombre": "Responsable Financiero",
+            "activo": true,
+            "primer_login": true,
+            "creado": "2026-02-22T14:05:10.611785",
+            "ultimo_acceso": null
         }
     ]
 }
