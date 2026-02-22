@@ -19,76 +19,113 @@ from HMO_Checklist_Legal_Generator import create_legal_checklist
 # Configuración de página
 st.set_page_config(page_title="HMO Auditor Pro - V1.4 Elite", layout="wide", page_icon="🛡️")
 
-# --- SISTEMA DE DISEÑO ELITE V2.7 (ABSORCIÓN TOTAL - LIGHT MODE) ---
+# --- SISTEMA DE DISEÑO ELITE V3.0 (HI-FI PROFESSIONAL MOCKUP) ---
 st.markdown("""
 <style>
-    /* 1. ELIMINACIÓN DE FONDO OSCURO EN TODAS LAS CAPAS */
-    html, body, .stApp, 
-    [data-testid="stAppViewContainer"], 
-    [data-testid="stHeader"], 
-    [data-testid="stSidebar"],
-    [data-testid="stToolbar"],
-    .main {
-        background-color: #FFFFFF !important;
-        background-image: none !important;
-        color: #000000 !important;
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+    
+    /* FONDO BASE PROFESIONAL */
+    .stApp {
+        background: #0B0E14 !important;
+        background-image: 
+            radial-gradient(at 0% 0%, rgba(0, 194, 255, 0.12) 0px, transparent 50%),
+            radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%) !important;
+        background-attachment: fixed !important;
     }
 
-    /* 2. TEXTO NEGRO PURO (LEGIBILIDAD AUDITORÍA) */
-    p, span, label, li, div, h1, h2, h3, .stMarkdown {
-        color: #000000 !important;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-    }
-
-    /* 3. ETIQUETAS DE WIDGETS (CRÍTICO) */
-    [data-testid="stWidgetLabel"] p, label p {
-        color: #000000 !important;
-        font-weight: 900 !important;
-        font-size: 1.15rem !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
-    }
-
-    /* 4. TÍTULOS CORPORATIVOS */
-    h1, h2, h3 {
-        color: #004A99 !important; /* Azul Rey para contraste profesional */
-        font-weight: 800 !important;
-    }
-
-    /* 5. DISEÑO DE TARJETAS PARA FONDO CLARO */
+    /* GLASSMORPHISM PROFUNDO (TARJETAS) */
     .elite-card {
-        background-color: #F8FAFC !important;
-        border: 2px solid #004A99 !important;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
-        border-radius: 12px;
-        padding: 25px;
-        margin-bottom: 25px;
+        background: rgba(14, 20, 31, 0.75) !important;
+        backdrop-filter: blur(25px) saturate(210%) !important;
+        border: 1.5px solid rgba(0, 194, 255, 0.3) !important;
+        border-radius: 24px !important;
+        padding: 2.5rem !important;
+        box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6) !important;
+        margin-bottom: 2rem !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .elite-card:hover { 
+        border-color: #00C2FF !important; 
+        box-shadow: 0 0 40px rgba(0, 194, 255, 0.25) !important; 
     }
 
-    /* 6. INPUTS (BORDES MARCADOS) */
-    input, [data-baseweb="select"] {
-        background-color: #FFFFFF !important;
-        border: 2px solid #000000 !important;
-        color: #000000 !important;
-        font-weight: 600 !important;
+    /* TEXTO HI-FI (LEGIBILIDAD EXTREMA) */
+    .stApp, .stApp p, .stApp span, .stApp div, .stApp li {
+        color: #E2E8F0 !important;
+        font-family: 'Inter', sans-serif !important;
     }
-
-    /* 7. BOTÓN DE ACCIÓN (ALTA VISIBILIDAD) */
-    .stButton>button {
-        background-color: #004A99 !important;
-        color: #FFFFFF !important;
+    
+    /* ETIQUETAS DE WIDGETS (NEON BLUE) */
+    [data-testid="stWidgetLabel"] p {
+        color: #00C2FF !important;
+        font-family: 'Orbitron', sans-serif !important;
         font-weight: 700 !important;
-        border-radius: 6px !important;
-        padding: 12px !important;
-        border: none !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1.5px !important;
+        font-size: 0.85rem !important;
+        margin-bottom: 0.8rem !important;
+        text-shadow: 0 2px 10px rgba(0, 194, 255, 0.3);
     }
-    .stButton>button:hover { background-color: #003366 !important; }
 
-    /* 8. ALERTAS (INFO BOXES) */
-    .stAlert {
-        background-color: #E0F2FE !important;
-        border: 1px solid #004A99 !important;
+    /* TITULOS NEON */
+    h1, h2, h3, .neon-title {
+        color: #FFFFFF !important;
+        font-family: 'Orbitron', sans-serif !important;
+        text-shadow: 0 0 20px rgba(0, 194, 255, 0.6);
+        letter-spacing: 3px !important;
+        font-weight: 700 !important;
+        text-align: center;
+    }
+
+    /* INDICADORES CIRCULARES (PHASES) */
+    .phase-circle {
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-family: 'Orbitron';
+        border: 4px solid #00C2FF;
+        box-shadow: 0 0 15px rgba(0, 194, 255, 0.5);
+    }
+
+    /* INPUTS Y FORMULARIOS HI-FI */
+    [data-baseweb="input"], [data-baseweb="select"] {
+        background: rgba(5, 7, 12, 0.9) !important;
+        border: 1px solid rgba(0, 194, 255, 0.4) !important;
+        border-radius: 14px !important;
+    }
+    input { color: #FFFFFF !important; font-weight: 600 !important; }
+
+    /* BOTONES ELITE 3.0 */
+    .stButton>button {
+        background: linear-gradient(135deg, #00C2FF 0%, #1e3a8a 100%) !important;
+        color: #FFFFFF !important;
+        font-family: 'Orbitron', sans-serif !important;
+        border: none !important;
+        padding: 1rem !important;
+        border-radius: 16px !important;
+        font-weight: 700 !important;
+        box-shadow: 0 10px 30px rgba(0, 194, 255, 0.4) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 2px !important;
+        transition: all 0.3s ease !important;
+    }
+    .stButton>button:hover { 
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 15px 45px rgba(0, 194, 255, 0.7) !important;
+    }
+
+    /* SIDEBAR GLASS */
+    [data-testid="stSidebar"] {
+        background: rgba(14, 20, 31, 0.95) !important;
+        border-right: 1px solid rgba(0, 194, 255, 0.3) !important;
+    }
+
+    /* DASHBOARD GAUGES */
+    .stPlotlyChart {
+        background: transparent !important;
+        border-radius: 24px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -174,7 +211,32 @@ migrate_legacy_audits()
 # --- PANTALLA DE BIENVENIDA ---
 if st.session_state['env'] is None:
     st.markdown("<h1 style='text-align: center; color: #00C2FF; font-family: Orbitron;'>🛡️ HMO Auditor <span style='font-size: 0.5em; vertical-align: middle;'>V2.0 ELITE</span></h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; font-size: 1.2rem; color: #94A3B8;'>Ecosistema de Auditoría Multi-Norma con Rigor Legal V1.6</p>", unsafe_allow_html=True)
+    # --- DASHBOARD ELITE V3.0 (PHASE ANALYTICS) ---
+    st.markdown("<h2 class='neon-title'>CENTRAL DE MANDO ELITE V3.0</h2>", unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    phases = [
+        ("Fase A: Identidad", 100, "Completo", "#10B981"),
+        ("Fase B: Dimensión", 80, "En Progreso", "#00C2FF"),
+        ("Fase C: Cuerpo Normativo", 0, "Pendiente", "#94A3B8")
+    ]
+    
+    for i, (title, proc, status, color) in enumerate(phases):
+        with [col1, col2, col3][i]:
+            st.markdown(f"""
+            <div class='elite-card' style='text-align: center;'>
+                <div style='font-size: 0.8rem; color: #94A3B8; margin-bottom: 1rem;'>FASE {i+1}</div>
+                <h3 style='color: {color}; margin-bottom: 1.5rem;'>{title}</h3>
+                <div style='font-size: 2.5rem; font-family: Orbitron; font-weight: 700; color: #FFFFFF;'>{proc}%</div>
+                <div style='color: {color}; font-weight: 700; margin-top: 1rem;'>{status}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
+    st.markdown("### 🔍 Estado de Auditoría: ACTIVO - Rigor Legal V1.6")
+    st.info("El sistema está procesando la matriz de cumplimiento basada en el expediente Innovatech Solutions SAS.")
+    st.markdown("</div>", unsafe_allow_html=True)
     
     col_c1, col_c2, col_c3 = st.columns([1, 6, 1])
     with col_c2:
