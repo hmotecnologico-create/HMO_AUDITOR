@@ -1,0 +1,29 @@
+# HMO Auditor — Blindaje de Datos
+
+# Ejecución Local y Datos de Usuario
+hmo_users.json
+hmo_audit_state.json
+hmo_recovery_log.txt
+*.log
+
+# Carpetas de Salida (Documentos Generados)
+01_Direccion_y_Estrategia/
+02_Gestion_de_Calidad/
+01_Templates_Vacios/
+04_Arquitectura_y_Diseno/Scripts_Generadores/
+
+# Python / Entorno
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.env
+
+# Streamlit
+.streamlit/
+
+# Sistema
+.DS_Store
+Thumbs.db
