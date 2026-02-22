@@ -134,7 +134,43 @@ st.markdown("""
         background: transparent !important;
         border-radius: 24px;
     }
+    /* BOTÓN DE AYUDA FLOTANTE */
+    .floating-help {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        width: 60px;
+        height: 60px;
+        background: rgba(0, 194, 255, 0.2) !important;
+        backdrop-filter: blur(15px) !important;
+        border: 1px solid #00C2FF !important;
+        border-radius: 50% !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #00C2FF !important;
+        font-size: 24px !important;
+        z-index: 1001;
+        box-shadow: 0 0 20px rgba(0, 194, 255, 0.4);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none !important;
+    }
+    .floating-help:hover {
+        transform: scale(1.1) rotate(15deg);
+        background: rgba(0, 194, 255, 0.4) !important;
+        box-shadow: 0 0 30px rgba(0, 194, 255, 0.6);
+    }
+    
+    @media (max-width: 768px) { .floating-help { display: none; } }
 </style>
+""", unsafe_allow_html=True)
+
+# --- BOTÓN DE AYUDA UNIVERSAL (V3.5) ---
+st.markdown("""
+<a href='#' class='floating-help' title='Soporte Experto Elite'>
+    🛡️
+</a>
 """, unsafe_allow_html=True)
 
 # Lógica de Sesión (V1.8.0 Resiliente)
