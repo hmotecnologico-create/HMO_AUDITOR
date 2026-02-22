@@ -57,7 +57,7 @@ st.markdown("""
     }
 
     /* TEXTO HI-FI (LEGIBILIDAD EXTREMA) */
-    .stApp, .stApp p, .stApp span, .stApp div, .stApp li {
+    .stApp, .stApp p, .stApp span, .stApp li {
         color: #E2E8F0 !important;
         font-family: 'Inter', sans-serif !important;
     }
@@ -97,22 +97,25 @@ st.markdown("""
     }
 
     /* INPUTS Y FORMULARIOS HI-FI */
+    /* INPUTS Y FORMULARIOS HI-FI V4.0 */
     [data-baseweb="input"], [data-baseweb="select"], [data-baseweb="popover"] {
-        background: rgba(5, 7, 12, 0.95) !important;
-        border: 1px solid rgba(0, 194, 255, 0.5) !important;
-        border-radius: 14px !important;
+        background: rgba(5, 7, 12, 0.98) !important;
+        border: 1.5px solid rgba(0, 194, 255, 0.6) !important;
+        border-radius: 12px !important;
     }
-    input, [data-baseweb="select"] span, [data-baseweb="select"] div { 
-        color: #00C2FF !important; 
-        font-weight: 700 !important;
-        font-size: 0.85rem !important;
+    input { color: #00C2FF !important; font-weight: 700 !important; }
+    
+    /* SELECTOR DE ROL: MÁXIMA LEGIBILIDAD EXIGIDA POR AUDITORÍA */
+    div[data-baseweb="select"] span, div[data-baseweb="select"] div { 
+        color: #FFFFFF !important; 
+        font-weight: 800 !important;
+        font-size: 0.9rem !important;
+        text-shadow: 0 0 10px rgba(0, 194, 255, 0.4) !important;
     }
     [data-testid="stSidebar"] label {
-        color: #94A3B8 !important;
+        color: #00C2FF !important;
         font-weight: 700 !important;
-        font-size: 0.75rem !important;
-        text-transform: uppercase;
-        margin-bottom: 5px !important;
+        font-size: 0.7rem !important;
     }
 
     /* BOTONES ELITE 3.0 */
@@ -192,15 +195,18 @@ st.markdown("""
     }
     [data-testid="stSidebar"] hr { margin: 0.5rem 0 !important; }
 
-    /* FIX SOLAPAMIENTOS V3.8 */
-    .norm-header {
-        margin-top: -1rem !important;
-        margin-bottom: 2rem !important;
-        z-index: 10;
-        position: relative;
+    /* ESTILOS DE EXPANDER V4.1 */
+    [data-testid="stExpander"] {
+        background: rgba(14, 20, 31, 0.4) !important;
+        border: 1.5px solid rgba(0, 194, 255, 0.2) !important;
+        border-radius: 12px !important;
+        margin-bottom: 1rem !important;
+        padding: 0.2rem !important;
     }
-    body { overflow-x: hidden !important; }
-    .stApp { overflow-x: hidden !important; }
+    [data-testid="stExpander"] summary {
+        color: #00C2FF !important;
+        font-weight: 700 !important;
+    }
 
     @media (max-width: 768px) { .floating-help { display: none; } }
 </style>
@@ -394,42 +400,50 @@ else:
     st.sidebar.markdown(f"**🏢 {company}**")
     st.sidebar.markdown(f"**💎 Marco:** {st.session_state['norma']}")
     
-    # Selector de Rol (Prioridad V3.9) - Contraste Mejorado
+    # --- MOTOR DE CÁLCULO DE AUDITORÍA (SYNC V4.0) ---
+    count_exp = len(st.session_state['expediente'])
+    fase_a_ready = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
+    fase_b_ready = st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)" or st.session_state['env'] == "Simulacion"
+    
+    pct_fase_a = 100 if fase_a_ready else 0
+    pct_fase_b = 100 if fase_b_ready else 0
+    pct_fase_c = int((count_exp / total_total) * 100) if total_total > 0 else 0
+    
+    pct_total = int((pct_fase_a + pct_fase_b + pct_fase_c) / 3)
+
+    # --- SIDEBAR MASTER (V4.0) ---
+    st.sidebar.markdown(f"**🏢 {company}**")
+    st.sidebar.markdown(f"**💎 Marco:** {st.session_state['norma']}")
+    
+    # Selector de Rol (V4.0 - Hi-Contrast)
     roles_disponibles = ["Administrador (Global)", "⚖️ Jurídico", "🏦 Alta Dirección", "📊 Calidad / SIG", "🛡️ Ciberseguridad", "♻️ Gestión Ambiental", "🎓 Gestión Académica"]
-    st.session_state['user_role'] = st.sidebar.selectbox("🔑 SELECCIONAR ROL DEL AUDITOR:", roles_disponibles, key="role_selector_top")
+    st.session_state['user_role'] = st.sidebar.selectbox("👤 ROL DEL AUDITOR:", roles_disponibles, key="role_selector_top")
     
     st.sidebar.divider()
     
-    # Cálculos de Progreso para Menú
-    count_exp = len(st.session_state['expediente'])
-    pct_ingesta = int((count_exp / total_total) * 100) if total_total > 0 else 0
-    pct_dashboard = int(((1 if fase_a_ready else 0) + (1 if st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)" else 0) + (count_exp / total_total)) / 3 * 100) if total_total > 0 else 0
-
-    # Navegación Unificada Reordenada (V3.9)
+    # Navegación Prioritaria (Ingesta Primero + Avance)
     opciones = [
-        f"🗺️ Camino de Ingesta (HITL) [{pct_ingesta}%]",
-        f"📊 Dashboard Analítico [{pct_dashboard}%]",
-        "📋 Requerimientos Maestros",
-        "⚖️ Emisión de Títulos/Formatos",
+        f"🗺️ Camino de Ingesta [{pct_fase_c}%]",
+        f"📊 Dashboard Analytics [{pct_total}%]",
+        "📋 Req. Maestros",
+        "⚖️ Emisión de Formatos",
         "💎 Help Center Elite"
     ]
-    menu_raw = st.sidebar.radio("Navegación:", opciones, key="main_menu_elite")
-    menu = menu_raw.split(" [")[0] # Limpiar para lógica interna
+    menu_raw = st.sidebar.radio("FLUJO DE TRABAJO:", opciones, key="main_menu_elite")
+    menu = menu_raw.split(" [")[0]
     
-    if st.sidebar.button("🔒 Cerrar Sesión Segura"):
+    if st.sidebar.button("🔒 Cierre Seguro"):
         save_audit_state()
         st.session_state['env'] = None
         st.rerun()
 
-    # Filtrado por Rol
+    # Filtrado Dinámico por Rol
     if st.session_state['user_role'] == "Administrador (Global)":
         cartas = cartas_todas
     else:
-        role_pure = st.session_state['user_role'].split(" ")[-1].strip()
-        cartas = [c for c in cartas_todas if role_pure in c['area']]
-        if not cartas: # Fallback
-            cartas = [c for c in cartas_todas if st.session_state['user_role'] in c['area']]
-        if not cartas: cartas = cartas_todas # Emergency Fallback
+        role_search = st.session_state['user_role'].split(" ")[-1].strip()
+        cartas = [c for c in cartas_todas if role_search in c['area'] or st.session_state['user_role'] in c['area']]
+        if not cartas: cartas = cartas_todas
     count_exp = len(st.session_state['expediente'])
     fase_a_ready = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
     fase_b_ready = st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)" or st.session_state['env'] == "Simulacion"
@@ -544,19 +558,21 @@ else:
         with col_g1:
             st.markdown("<div class='elite-card'><b>Radar de Madurez Normativa (Kiviat)</b>", unsafe_allow_html=True)
             labels = ['Misión/Visión', 'Ética', 'Estructura', 'Norma Cl.4', 'Norma Cl.5', 'Norma Cl.6']
-            # Mapear avance a labels del radar
-            values = [100 if i < st.session_state['paso_ingesta'] else 30 for i in range(len(labels))]
-            fig = go.Figure(data=go.Scatterpolar(r=values, theta=labels, fill='toself', line_color='#1E3A8A'))
-            fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False, height=350, margin=dict(l=40, r=40, t=20, b=20))
+            # Mapear avance a labels del radar (V4.0 Veracidad)
+            values = [100 if label in st.session_state['expediente'] else (100 if i < 3 and st.session_state['env'] == "Simulacion" else 0) for i, label in enumerate(labels)]
+            fig = go.Figure(data=go.Scatterpolar(r=values, theta=labels, fill='toself', line_color='#00C2FF'))
+            fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False, height=350, margin=dict(l=40, r=40, t=20, b=20), paper_bgcolor='rgba(0,0,0,0)')
             st.plotly_chart(fig, use_container_width=True)
             st.markdown("</div>", unsafe_allow_html=True)
             
         with col_g2:
-            st.markdown("<div class='elite-card'><b>Trazabilidad de Expediente</b>", unsafe_allow_html=True)
+            st.markdown("<div class='elite-card'><b>Certificación de Expediente</b>", unsafe_allow_html=True)
             for i, c in enumerate(cartas):
-                estado = "✅" if i < st.session_state['paso_ingesta'] else "⏳"
+                doc_name = c['doc']
+                cargado = doc_name in st.session_state['expediente']
+                estado = "✅" if cargado else "⏳"
                 prefijo = "💎" if i < len(base_cartas) else "📜"
-                st.write(f"{estado} {prefijo} **{c['doc']}**")
+                st.write(f"{estado} {prefijo} **{doc_name}**")
             st.markdown("</div>", unsafe_allow_html=True)
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
@@ -614,13 +630,14 @@ else:
                 st.error("🔒 El Cuerpo Normativo está bloqueado. Complete primero la Fase A: Identidad.")
             else:
                 st.write("### ⚙️ Carga de Anexos Técnicos")
-                # Agrupación por Áreas (Excluyendo lo que ya se pidió en A si fuera el caso, pero aquí mantenemos el loop departamental)
+                # Agrupación por Áreas (V4.1 Sincronización Real)
                 areas = list(dict.fromkeys([c['area'] for c in cartas]))
                 for i, area in enumerate(areas):
                     docs_area = [c for c in cartas if c['area'] == area]
-                    completados_area = sum(1 for c in docs_area if cartas.index(c) < st.session_state['paso_ingesta'])
+                    conteo_ready = sum(1 for c in docs_area if c['doc'] in st.session_state['expediente'])
+                    porcentaje_area = int((conteo_ready / len(docs_area)) * 100) if docs_area else 0
                     
-                    with st.expander(f"{area} - Avance: {(completados_area/len(docs_area))*100:.0f}%"):
+                    with st.expander(f"➡️ {area} - Avance: {porcentaje_area}%"):
                          for c in docs_area:
                             idx = cartas.index(c)
                             doc_id = c['doc']
@@ -662,13 +679,14 @@ else:
                                     save_audit_state()
                                     st.rerun()
                                     
-                # RESUMEN DE MATERIA PRIMA FALTANTE (FASE C)
+                # RESUMEN DE MATERIA PRIMA FALTANTE (FASE C V4.1)
                 st.markdown("---")
                 total_req = len(cartas)
-                doc_list_missing = [c['doc'] for c in cartas if cartas.index(c) >= st.session_state['paso_ingesta']]
+                count_ready = len(st.session_state['expediente'])
+                doc_list_missing = [c['doc'] for c in cartas if c['doc'] not in st.session_state['expediente']]
                 
                 c_inf1, c_inf2 = st.columns(2)
-                c_inf1.metric("Materia Prima Fase C", f"{progreso_c*100:.0f}%", f"{st.session_state['paso_ingesta']}/{total_req} Cargados")
+                c_inf1.metric("Materia Prima Carga Real", f"{pct_fase_c}%", f"{count_ready}/{total_total} Documentos")
                 
                 if doc_list_missing:
                     with c_inf2:
