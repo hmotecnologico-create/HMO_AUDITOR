@@ -729,141 +729,141 @@ else:
                 st.warning("⚠️ Nota: La Fase A (Identidad) aún no está completa, pero puede adelantar la carga de evidencias aquí.")
             
             # CABECERA DE CARGA CON METRICAS (V4.2)
-                total_req = len(cartas)
-                count_ready = len(st.session_state['expediente'])
-                doc_list_missing = [c['doc'] for c in cartas if c['doc'] not in st.session_state['expediente']]
+            total_req = len(cartas)
+            count_ready = len(st.session_state['expediente'])
+            doc_list_missing = [c['doc'] for c in cartas if c['doc'] not in st.session_state['expediente']]
+            
+            c_head1, c_head2 = st.columns([1.5, 1])
+            with c_head1:
+                st.write("### ⚖️ 6.3.1 Revision de Informacion Documentada")
+            with c_head2:
+                # BOTON DE GUIA DE PREPARACION (V8.5 - ASCII)
+                if st.button("📄 Descargar Guia de Preparacion (PDF)", use_container_width=True):
+                    guide_path = generate_preparation_guide_pdf(st.session_state['company_name'], st.session_state['base_path'], cartas_todas, norma=st.session_state['norma'])
+                    with open(guide_path, "rb") as f:
+                        st.download_button("📂 Haz clic para Guardar Guia", f, file_name=os.path.basename(guide_path))
                 
-                c_head1, c_head2 = st.columns([1.5, 1])
-                with c_head1:
-                    st.write("### ⚖️ 6.3.1 Revision de Informacion Documentada")
-                with c_head2:
-                    # BOTON DE GUIA DE PREPARACION (V8.5 - ASCII)
-                    if st.button("📄 Descargar Guia de Preparacion (PDF)", use_container_width=True):
-                        guide_path = generate_preparation_guide_pdf(st.session_state['company_name'], st.session_state['base_path'], cartas_todas, norma=st.session_state['norma'])
-                        with open(guide_path, "rb") as f:
-                            st.download_button("📂 Haz clic para Guardar Guia", f, file_name=os.path.basename(guide_path))
-                    
-                    st.metric("📦 Materia Prima Inyectada", f"{pct_fase_c}%", f"{count_ready}/{total_total} Listos")
+                st.metric("📦 Materia Prima Inyectada", f"{pct_fase_c}%", f"{count_ready}/{total_total} Listos")
+            
+            # VISIBILIDAD DE FALTANTES - PROPORCIONALIDAD V9.0
+            if doc_list_missing:
+                # Dividir en Críticos y Recomendados
+                criticos = [d for d in doc_list_missing if any(c['doc'] == d and c['prioridad'] == "VITAL (Obligatorio)" for c in cartas)]
+                recomendados = [d for d in doc_list_missing if d not in criticos]
                 
-                # VISIBILIDAD DE FALTANTES - PROPORCIONALIDAD V9.0
-                if doc_list_missing:
-                    # Dividir en Críticos y Recomendados
-                    criticos = [d for d in doc_list_missing if any(c['doc'] == d and c['prioridad'] == "VITAL (Obligatorio)" for c in cartas)]
-                    recomendados = [d for d in doc_list_missing if d not in criticos]
-                    
-                    with st.expander("PENDIENTES DE CARGA (Haga clic para ver)", expanded=True):
-                        if criticos:
-                            st.error(f"⚠️ **BLOQUEANTES VITALES ({len(criticos)}):**")
-                            st.write(", ".join(criticos))
-                        if recomendados:
-                            st.info(f"💡 **RECOMENDADOS/LEAN ({len(recomendados)}):**")
-                            st.write(", ".join(recomendados))
-                            if es_startup:
-                                st.caption("Nota: Por ser una empresa pequeña, estos documentos son opcionales para avanzar.")
-                else:
-                    st.success("✅ ¡Expediente Completo! Puede proceder a la Emision de Formatos.")
+                with st.expander("PENDIENTES DE CARGA (Haga clic para ver)", expanded=True):
+                    if criticos:
+                        st.error(f"⚠️ **BLOQUEANTES VITALES ({len(criticos)}):**")
+                        st.write(", ".join(criticos))
+                    if recomendados:
+                        st.info(f"💡 **RECOMENDADOS/LEAN ({len(recomendados)}):**")
+                        st.write(", ".join(recomendados))
+                        if es_startup:
+                            st.caption("Nota: Por ser una empresa pequeña, estos documentos son opcionales para avanzar.")
+            else:
+                st.success("✅ ¡Expediente Completo! Puede proceder a la Emision de Formatos.")
+            
+            st.divider()
+            # Agrupación por Áreas (V4.5 Limpieza de Emojis)
+            areas = list(dict.fromkeys([c['area'] for c in cartas]))
+            for i, area in enumerate(areas):
+                docs_area = [c for c in cartas if c['area'] == area]
+                conteo_ready = sum(1 for c in docs_area if c['doc'] in st.session_state['expediente'])
+                porcentaje_area = int((conteo_ready / len(docs_area)) * 100) if docs_area else 0
                 
-                st.divider()
-                # Agrupación por Áreas (V4.5 Limpieza de Emojis)
-                areas = list(dict.fromkeys([c['area'] for c in cartas]))
-                for i, area in enumerate(areas):
-                    docs_area = [c for c in cartas if c['area'] == area]
-                    conteo_ready = sum(1 for c in docs_area if c['doc'] in st.session_state['expediente'])
-                    porcentaje_area = int((conteo_ready / len(docs_area)) * 100) if docs_area else 0
-                    
-                    with st.expander(f"AREA: {area.upper()} (Avance: {porcentaje_area}%)"):
-                         for c in docs_area:
-                            idx = cartas.index(c)
-                            doc_id = c['doc']
-                            es_completado = doc_id in st.session_state['expediente']
+                with st.expander(f"AREA: {area.upper()} (Avance: {porcentaje_area}%)"):
+                     for c in docs_area:
+                        idx = cartas.index(c)
+                        doc_id = c['doc']
+                        es_completado = doc_id in st.session_state['expediente']
+                        
+                        st.write(f"**{'✅' if es_completado else '⏳'} {doc_id}**")
+                        
+                        if not es_completado:
+                            st.markdown(f"**📌 Justificación:** *{c.get('justificacion', 'Requisito normativo estándar.')}*")
+                            st.caption(f"Ref: {c['ref']} | {c['desc']} | Prioridad: {c.get('prioridad', 'Estándar')}")
                             
-                            st.write(f"**{'✅' if es_completado else '⏳'} {doc_id}**")
-                            
-                            if not es_completado:
-                                st.markdown(f"**📌 Justificación:** *{c.get('justificacion', 'Requisito normativo estándar.')}*")
-                                st.caption(f"Ref: {c['ref']} | {c['desc']} | Prioridad: {c.get('prioridad', 'Estándar')}")
-                                
-                                col_act1, col_act2 = st.columns([1, 1])
-                                with col_act1:
-                                    # Opción de Justificación Manual (N/A) V9.0
-                                    es_justificado = doc_id in st.session_state.get('justificados', [])
-                                    if st.button(f"⚖️ {'Quitar' if es_justificado else 'Justificar'} N/A", key=f"na_{idx}", use_container_width=True):
-                                        if es_justificado:
-                                            st.session_state['justificados'].remove(doc_id)
-                                        else:
-                                            st.session_state['justificados'].append(doc_id)
-                                        save_audit_state()
-                                        st.rerun()
-                                
-                                with col_act2:
-                                    uploaded_file = st.file_uploader(f"📥 Cargar Evidencia", type=['pdf', 'docx', 'xlsx', 'csv'], key=f"up_{idx}", label_visibility="collapsed")
-                                if uploaded_file:
-                                    st.info(f"🧿 Motor de Reconocimiento Cognitivo V8.0...")
-                                    st.write("---")
-                                    # Lógica de Parsing Estructurado para Matrices (V8.0)
-                                    extracted_data = ""
-                                    if uploaded_file.name.endswith(('.xlsx', '.csv')):
-                                        try:
-                                            df = pd.read_excel(uploaded_file) if uploaded_file.name.endswith('.xlsx') else pd.read_csv(uploaded_file)
-                                            extracted_data = df.to_markdown() # Formato que Llama3 entiende muy bien
-                                            st.success("📊 Estructura de Tabla Detectada y Procesada.")
-                                        except:
-                                            extracted_data = "Error en parsing estructurado."
-                                    
-                                    st.caption("🔍 Pasos de la IA:")
-                                    st.write("1. Analizando coherencia sintáctica...")
-                                    st.write("2. Validando semántica contra ISO 9001:2015...")
-                                    st.write("3. Verificando integridad de la materia prima...")
-                                    
-                                    col_ocr1, col_ocr2 = st.columns(2)
-                                    with col_ocr1:
-                                        raw_txt = st.text_area("📄 Texto Detectado", value=f"Contenido verificado de {doc_id}...", height=100, key=f"ocr_{idx}")
-                                    with col_ocr2:
-                                        manual_txt = st.text_area("✍️ Ajuste Auditor", placeholder="Añada observaciones...", key=f"val_{idx}")
-                                    
-                                    if st.button(f"✅ VALIDAR SEMÁNTICA {doc_id.upper()}", key=f"btn_{idx}"):
-                                        with st.spinner("🧠 Llama3 Analizando Coherencia Normativa..."):
-                                            ai_engine = HMO_AI_Engine()
-                                            if ai_engine.test_connection():
-                                                # Decidir si es análisis estructural o de documento
-                                                if extracted_data:
-                                                    analisis = ai_engine.analyze_risk_matrix(extracted_data)
-                                                else:
-                                                    analisis = ai_engine.analyze_document(doc_id, manual_txt if manual_txt else raw_txt, target_norm=st.session_state['norma'])
-                                                
-                                                if "error" not in analisis:
-                                                    st.session_state['expediente'][doc_id] = {
-                                                        "contenido": manual_txt if manual_txt else (extracted_data if extracted_data else raw_txt),
-                                                        "coherencia": analisis.get("Coherencia", 0),
-                                                        "hallazgos": analisis.get("Hallazgos_Clave", []),
-                                                        "resumen": analisis.get("Resumen_Ejecutivo", "")
-                                                    }
-                                                    st.success(f"✅ {doc_id} validado por IA con {analisis.get('Coherencia')}% de coherencia.")
-                                                else:
-                                                    st.warning("⚠️ Error en respuesta de Llama3. Usando validación estándar.")
-                                                    st.session_state['expediente'][doc_id] = manual_txt if manual_txt else raw_txt
-                                            else:
-                                                st.error("🚨 Ollama (Llama3) No Detectado localmente.")
-                                                st.session_state['expediente'][doc_id] = manual_txt if manual_txt else raw_txt
-                                        
-                                        save_audit_state()
-                                        st.rerun()
-                                    
-                                    # Evaluador de Rigor
-                                    es_grande = "Gran" in st.session_state['empresa_tamanio']
-                                    check_content = manual_txt if manual_txt else raw_txt
-                                    if len(check_content) < (150 if es_grande else 80):
-                                        st.warning("⚠️ Contenido limitado para los estándares de rigor.")
+                            col_act1, col_act2 = st.columns([1, 1])
+                            with col_act1:
+                                # Opción de Justificación Manual (N/A) V9.0
+                                es_justificado = doc_id in st.session_state.get('justificados', [])
+                                if st.button(f"⚖️ {'Quitar' if es_justificado else 'Justificar'} N/A", key=f"na_{idx}", use_container_width=True):
+                                    if es_justificado:
+                                        st.session_state['justificados'].remove(doc_id)
                                     else:
-                                        st.success("💎 Densidad informativa óptima.")
-                            else:
-                                st.success(f"Documento indexado: {len(st.session_state['expediente'][doc_id])} caracteres.")
-                                if st.button(f"🗑️ Eliminar y Re-cargar {doc_id}", key=f"del_{idx}"):
-                                    del st.session_state['expediente'][doc_id]
+                                        st.session_state['justificados'].append(doc_id)
                                     save_audit_state()
                                     st.rerun()
+                            
+                            with col_act2:
+                                uploaded_file = st.file_uploader(f"📥 Cargar Evidencia", type=['pdf', 'docx', 'xlsx', 'csv'], key=f"up_{idx}", label_visibility="collapsed")
+                            if uploaded_file:
+                                st.info(f"🧿 Motor de Reconocimiento Cognitivo V8.0...")
+                                st.write("---")
+                                # Lógica de Parsing Estructurado para Matrices (V8.0)
+                                extracted_data = ""
+                                if uploaded_file.name.endswith(('.xlsx', '.csv')):
+                                    try:
+                                        df = pd.read_excel(uploaded_file) if uploaded_file.name.endswith('.xlsx') else pd.read_csv(uploaded_file)
+                                        extracted_data = df.to_markdown() # Formato que Llama3 entiende muy bien
+                                        st.success("📊 Estructura de Tabla Detectada y Procesada.")
+                                    except:
+                                        extracted_data = "Error en parsing estructurado."
+                                
+                                st.caption("🔍 Pasos de la IA:")
+                                st.write("1. Analizando coherencia sintáctica...")
+                                st.write("2. Validando semántica contra ISO 9001:2015...")
+                                st.write("3. Verificando integridad de la materia prima...")
+                                
+                                col_ocr1, col_ocr2 = st.columns(2)
+                                with col_ocr1:
+                                    raw_txt = st.text_area("📄 Texto Detectado", value=f"Contenido verificado de {doc_id}...", height=100, key=f"ocr_{idx}")
+                                with col_ocr2:
+                                    manual_txt = st.text_area("✍️ Ajuste Auditor", placeholder="Añada observaciones...", key=f"val_{idx}")
+                                
+                                if st.button(f"✅ VALIDAR SEMÁNTICA {doc_id.upper()}", key=f"btn_{idx}"):
+                                    with st.spinner("🧠 Llama3 Analizando Coherencia Normativa..."):
+                                        ai_engine = HMO_AI_Engine()
+                                        if ai_engine.test_connection():
+                                            # Decidir si es análisis estructural o de documento
+                                            if extracted_data:
+                                                analisis = ai_engine.analyze_risk_matrix(extracted_data)
+                                            else:
+                                                analisis = ai_engine.analyze_document(doc_id, manual_txt if manual_txt else raw_txt, target_norm=st.session_state['norma'])
+                                            
+                                            if "error" not in analisis:
+                                                st.session_state['expediente'][doc_id] = {
+                                                    "contenido": manual_txt if manual_txt else (extracted_data if extracted_data else raw_txt),
+                                                    "coherencia": analisis.get("Coherencia", 0),
+                                                    "hallazgos": analisis.get("Hallazgos_Clave", []),
+                                                    "resumen": analisis.get("Resumen_Ejecutivo", "")
+                                                }
+                                                st.success(f"✅ {doc_id} validado por IA con {analisis.get('Coherencia')}% de coherencia.")
+                                            else:
+                                                st.warning("⚠️ Error en respuesta de Llama3. Usando validación estándar.")
+                                                st.session_state['expediente'][doc_id] = manual_txt if manual_txt else raw_txt
+                                        else:
+                                            st.error("🚨 Ollama (Llama3) No Detectado localmente.")
+                                            st.session_state['expediente'][doc_id] = manual_txt if manual_txt else raw_txt
                                     
-                # El bloque de faltantes al final ha sido movido arriba.
+                                    save_audit_state()
+                                    st.rerun()
+                                
+                                # Evaluador de Rigor
+                                es_grande = "Gran" in st.session_state['empresa_tamanio']
+                                check_content = manual_txt if manual_txt else raw_txt
+                                if len(check_content) < (150 if es_grande else 80):
+                                    st.warning("⚠️ Contenido limitado para los estándares de rigor.")
+                                else:
+                                    st.success("💎 Densidad informativa óptima.")
+                        else:
+                            st.success(f"Documento indexado: {len(st.session_state['expediente'][doc_id])} caracteres.")
+                            if st.button(f"🗑️ Eliminar y Re-cargar {doc_id}", key=f"del_{idx}"):
+                                del st.session_state['expediente'][doc_id]
+                                save_audit_state()
+                                st.rerun()
+                                
+            # El bloque de faltantes al final ha sido movido arriba.
 
         # --- VALIDACIÓN & CIERRE ---
         with tab_final:
