@@ -8,7 +8,11 @@ import datetime
 def create_audit_program_v2(company_name, output_path, logo_path=None, kb=None, identity_data=None):
     doc = Document()
     kb = kb or {}
-    ident = identity_data or {"auditor": "Auditor Asignado", "rep_legal": "Representante Legal", "rep_id": "N/A", "tamanio": "No Definido", "sector": "No Definido"}
+    ident = identity_data or {
+        "auditor": "Auditor Asignado", "rep_legal": "Representante Legal", "rep_id": "N/A", 
+        "tamanio": "No Definido", "sector": "No Definido", "nit": "N/A", 
+        "direccion": "No especificada", "web": "N/A", "objeto_social": "No definido"
+    }
     
     # 1. ENCABEZADO (Validez Jurídica)
     section = doc.sections[0]
@@ -44,14 +48,16 @@ def create_audit_program_v2(company_name, output_path, logo_path=None, kb=None, 
     
     # 2. DATOS GENERALES (Materia Prima Fase A y B)
     doc.add_heading('1. DATOS GENERALES Y DIMENSIONAMIENTO', level=1)
-    table_gen = doc.add_table(rows=7, cols=2)
+    table_gen = doc.add_table(rows=9, cols=2)
     table_gen.style = 'Table Grid'
     
     data_gen = [
         ("Auditor Líder Responsable", ident["auditor"]),
-        ("Representante Entidad", ident["rep_legal"]),
-        ("Dimensión Organizacional", ident["tamanio"]),
-        ("Sector Económico", ident["sector"]),
+        ("Representante Entidad", ident["rep_legal"] + f" ({ident['rep_id']})"),
+        ("NIT / Identificación Fiscal", ident.get("nit", "N/A")),
+        ("Dirección Principal Sede", ident.get("direccion", "No especificada")),
+        ("Dimensionamiento Org.", ident["tamanio"]),
+        ("Sector Económico / Objeto", f"{ident['sector']} - {ident.get('objeto_social', '')[:50]}..."),
         ("Tipo de Auditoría", "Interna de Calidad (ISO 9001:2015)"),
         ("Fecha Programada", str(datetime.date.today())),
         ("ID Expediente Digital", f"EXP-{company_name[:4].upper()}-2026")

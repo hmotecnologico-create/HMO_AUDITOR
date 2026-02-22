@@ -8,7 +8,11 @@ def create_legal_checklist(company_name, output_path, logo_path=None, kb=None, i
     ws = wb.active
     ws.title = "AUD-LIST-02 Checklist Legal"
     kb = kb or {}
-    ident = identity_data or {"auditor": "Auditor Asignado", "rep_legal": "Representante Legal", "rep_id": "N/A", "tamanio": "Pyme", "sector": "No Definido"}
+    ident = identity_data or {
+        "auditor": "Auditor Asignado", "rep_legal": "Representante Legal", "rep_id": "N/A", 
+        "tamanio": "No Definido", "sector": "No Definido", "nit": "N/A", 
+        "direccion": "No especificada", "web": "N/A", "objeto_social": "No definido"
+    }
     
     # Estilos predefinidos
     center_align = Alignment(horizontal="center", vertical="center", wrap_text=True)
@@ -45,9 +49,11 @@ def create_legal_checklist(company_name, output_path, logo_path=None, kb=None, i
     ws.merge_cells(f'A5:G5')
     ws['A5'].font = Font(bold=True)
     
-    ws.append(["Auditor Responsable:", ident["auditor"], "", "Representante Legal:", ident["rep_legal"]])
-    ws.append(["ID Representante:", ident["rep_id"], "", "Tamaño Empresa:", ident["tamanio"]])
-    ws.append(["Sector Económico:", ident["sector"], "", "ID Expediente:", f"EXP-{company_name[:4].upper()}"])
+    ws.append(["Auditor Responsable:", ident["auditor"], "", "Empresa:", company_name])
+    ws.append(["NIT / ID Fiscal:", ident.get("nit", "N/A"), "", "Dirección:", ident.get("direccion", "N/A")])
+    ws.append(["Representante Legal:", ident["rep_legal"], "", "ID Rep:", ident["rep_id"]])
+    ws.append(["Tamaño Empresa:", ident["tamanio"], "", "ID Expediente:", f"EXP-{company_name[:4].upper()}"])
+    ws.append(["Sector / Objeto:", f"{ident['sector']} - {ident.get('objeto_social', '')[:40]}..."])
     
     # 7. LISTA DE VERIFICACIÓN
     ws.append([])

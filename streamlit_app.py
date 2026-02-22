@@ -119,7 +119,8 @@ st.markdown("""
 
 # Lógica de Sesión
 for key, default in [('env', None), ('norma', "Calidad (ISO 9001)"), ('paso_ingesta', 0), ('logo_path', None), ('expediente', {}), ('autorizado_emision', False), 
-                    ('auditor_name', ""), ('rep_legal', ""), ('rep_id', ""), ('empresa_tamanio', "Pyme"), ('empresa_sector', "Servicios")]:
+                    ('auditor_name', ""), ('rep_legal', ""), ('rep_id', ""), ('empresa_tamanio', "Pyme"), ('empresa_sector', "Servicios"),
+                    ('empresa_nit', ""), ('empresa_direccion', ""), ('empresa_web', ""), ('empresa_objeto', ""), ('empresa_personal', 0)]:
     if key not in st.session_state: st.session_state[key] = default
 
 # ... [Funciones de persistencia omitidas por brevedad] ...
@@ -135,6 +136,9 @@ def save_audit_state():
             "auditor_name": st.session_state['auditor_name'], "rep_legal": st.session_state['rep_legal'],
             "rep_id": st.session_state['rep_id'], "empresa_tamanio": st.session_state['empresa_tamanio'],
             "empresa_sector": st.session_state['empresa_sector'],
+            "empresa_nit": st.session_state['empresa_nit'], "empresa_direccion": st.session_state['empresa_direccion'],
+            "empresa_web": st.session_state['empresa_web'], "empresa_objeto": st.session_state['empresa_objeto'],
+            "empresa_personal": st.session_state['empresa_personal'],
             "last_update": datetime.datetime.now().isoformat()
         }
         with open(os.path.join(base_dir, "audit_state.json"), "w") as f: json.dump(state, f, indent=4)
@@ -151,8 +155,8 @@ def load_audit_state(company_folder):
 
 # --- PANTALLA DE BIENVENIDA ---
 if st.session_state['env'] is None:
-    st.markdown("<h1 style='text-align: center; color: #1E3A8A;'>🛡️ HMO Auditor <span style='font-size: 0.5em; vertical-align: middle;'>V1.4 ELITE</span></h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; font-size: 1.2rem; color: #64748B;'>Ecosistema de Auditoría Multi-Norma con Inteligencia RAG Local</p>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #00C2FF; font-family: Orbitron;'>🛡️ HMO Auditor <span style='font-size: 0.5em; vertical-align: middle;'>V2.0 ELITE</span></h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-size: 1.2rem; color: #94A3B8;'>Ecosistema de Auditoría Multi-Norma con Rigor Legal V1.6</p>", unsafe_allow_html=True)
     
     col_c1, col_c2, col_c3 = st.columns([1, 6, 1])
     with col_c2:
@@ -182,23 +186,27 @@ if st.session_state['env'] is None:
         new_company = col_f1.text_input("Nombre de la Organización:", placeholder="Ej: Universidad San José")
         logo_file = col_f2.file_uploader("Cargar Identidad Visual (Logo JPG/PNG)", type=['png', 'jpg', 'jpeg'])
 
-        st.info("💡 El entorno de 'Simulación' utiliza los documentos pre-cargados de Innovatech Solutions SAS para demostración de capacidades RAG.")
+        st.info("💡 El entorno de 'Simulación' integra datos de Cámara de Comercio, RUT y Matriz de Responsables de Innovatech Solutions SAS.")
         
         btn_col1, btn_col2 = st.columns(2)
-        if btn_col1.button("🎓 Lanzar Simulación Académica", use_container_width=True):
+        if btn_col1.button("🎓 Lanzar Simulación Elite (V1.6)", use_container_width=True):
             st.session_state['env'], st.session_state['company_name'] = "Simulacion", "Innovatech Solutions SAS"
             st.session_state['base_path'] = setup_company_folders("Innovatech Solutions SAS")
             st.session_state['paso_ingesta'] = 0
             
-            # MATERIA PRIMA SIMULADA (Innovatech V1.5.2)
-            st.session_state['auditor_name'] = "Juan Gabriel"
-            st.session_state['rep_legal'] = "Ing. Roberto Innova"
-            st.session_state['rep_id'] = "CC. 80.123.456"
-            st.session_state['empresa_tamanio'] = "Pyme (1-50 emp)"
-            st.session_state['empresa_sector'] = "Tecnología"
+            # MATERIA PRIMA SIMULADA (Innovatech V1.6.0)
+            st.session_state['auditor_name'] = "Juan Gabriel Ortiz"
+            st.session_state['rep_legal'] = "Ing. Carlos Martínez Serna"
+            st.session_state['rep_id'] = "C.C. 1.018.445.678"
+            st.session_state['empresa_tamanio'] = "Gran Empresa (+250 emp)"
+            st.session_state['empresa_sector'] = "Tecnología / Fabricación"
+            st.session_state['empresa_nit'] = "901.455.789-2"
+            st.session_state['empresa_direccion'] = "Calle 100 #7-33, Bogotá D.C."
+            st.session_state['empresa_web'] = "www.innovatechsolutions.com.co"
+            st.session_state['empresa_objeto'] = "Desarrollo de Software y Fabricación de Hardware Disruptivo"
+            st.session_state['empresa_personal'] = 350
             
-            st.session_state['expediente'] = {} # Vacío para permitir demostración de ingesta
-            
+            st.session_state['expediente'] = {}
             if logo_file:
                 path = os.path.join(st.session_state['base_path'], "logo.png")
                 with open(path, "wb") as f: f.write(logo_file.getbuffer())
@@ -241,11 +249,13 @@ else:
         st.session_state['env'] = None
         st.rerun()
 
-    # --- CONFIGURACIÓN DE PASOS DE INGESTA POR DEPARTAMENTOS ---
+    # --- CONFIGURACIÓN DE PASOS DE INGESTA V1.6 (RIGOR LEGAL) ---
     base_cartas = [
-        {"doc": "Misión y Visión Corporativa", "area": "🏦 Alta Dirección", "ref": "Estratégico", "desc": "Definición del propósito y dirección.", "file_hint": "Mision_Vision.pdf"},
-        {"doc": "Valores y Código de Ética", "area": "🏦 Alta Dirección", "ref": "Cultura", "desc": "Principios rectores de la organización.", "file_hint": "Codigo_Etica.pdf"},
-        {"doc": "Organigrama Funcional", "area": "🏦 Alta Dirección", "ref": "Estructura", "desc": "Jerarquía y responsabilidades.", "file_hint": "Organigrama.pdf"}
+        {"doc": "Cámara de Comercio (Existencia Legal)", "area": "⚖️ Jurídico", "ref": "Legalidad", "desc": "Certificado actualizado con objeto social y NIT.", "file_hint": "Camara_Comercio.pdf"},
+        {"doc": "RUT (Registro Único Tributario)", "area": "⚖️ Jurídico", "ref": "Fiscal", "desc": "Identificación tributaria y responsabilidades.", "file_hint": "RUT.pdf"},
+        {"doc": "Misión y Visión Corporativa", "area": "🏦 Alta Dirección", "ref": "Estratégico", "desc": "Propósito y rumbo organizacional.", "file_hint": "Mision_Vision.docx"},
+        {"doc": "Matriz de Responsables de Área", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Liderazgo nominal por procesos.", "file_hint": "Matriz_Responsables.docx"},
+        {"doc": "Organigrama Funcional", "area": "🏦 Alta Dirección", "ref": "Estructura", "desc": "Jerarquía y mandos medios.", "file_hint": "Organigrama.docx"}
     ]
 
     if "Académico" in st.session_state['norma']:
@@ -313,9 +323,21 @@ else:
         
         st.divider()
         
-        # Métricas Globales
-        col_m1, col_m2, col_m3 = st.columns(3)
-        total_total = len(cartas)
+        # --- FICHA DE IDENTIDAD LEGAL (V1.6.0) ---
+        st.markdown(f"<div class='elite-card'>", unsafe_allow_html=True)
+        st.write("### 📜 Ficha de Identidad Legal & Tributaria")
+        cl1, cl2 = st.columns(2)
+        with cl1:
+            st.markdown(f"**NIT:** `{st.session_state['empresa_nit']}`")
+            st.markdown(f"**Dirección:** `{st.session_state['empresa_direccion']}`")
+            st.markdown(f"**Web:** [{st.session_state['empresa_web']}](https://{st.session_state['empresa_web']})")
+        with cl2:
+            st.markdown(f"**Sector:** {st.session_state['empresa_sector']}")
+            st.markdown(f"**Personal:** {st.session_state['empresa_personal']} colaboradores")
+            st.markdown(f"**Objeto Social:** *{st.session_state['empresa_objeto']}*")
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+        st.divider()
         progreso_global = ((1 if fase_a_ok else 0) + (1 if fase_b_ok else 0) + (st.session_state['paso_ingesta'] / total_total)) / 3 * 100
         
         col_m1.metric("Cumplimiento Global", f"{progreso_global:.1f}%")
@@ -475,9 +497,22 @@ else:
                         from HMO_Auditor_Master_V2_Generator import create_audit_program_v2
                         from HMO_Checklist_Legal_Generator import create_legal_checklist
                         
+                        # Consolidar Identidad Legal (V1.6.0)
+                        identity_data = {
+                            "auditor": st.session_state['auditor_name'],
+                            "rep_legal": st.session_state['rep_legal'],
+                            "rep_id": st.session_state['rep_id'],
+                            "tamanio": st.session_state['empresa_tamanio'],
+                            "sector": st.session_state['empresa_sector'],
+                            "nit": st.session_state['empresa_nit'],
+                            "direccion": st.session_state['empresa_direccion'],
+                            "web": st.session_state['empresa_web'],
+                            "objeto_social": st.session_state['empresa_objeto']
+                        }
+                        
                         # Generar vacíos oficialmente
-                        f1 = create_audit_program_v2(company, st.session_state['base_path'], st.session_state['logo_path'], {}, {})
-                        f2 = create_legal_checklist(company, st.session_state['base_path'], st.session_state['logo_path'], {}, {})
+                        f1 = create_audit_program_v2(company, st.session_state['base_path'], st.session_state['logo_path'], {}, identity_data)
+                        f2 = create_legal_checklist(company, st.session_state['base_path'], st.session_state['logo_path'], {}, identity_data)
                         st.session_state['revisado_plantillas'] = True
                         st.success("✅ Plantillas Base generadas. Por favor, descárguelas y revíselas.")
                         
@@ -533,27 +568,32 @@ else:
                 st.write("**GAD-PROG-01: Programa de Auditoría**")
                 st.caption("Documento maestro de planeación.")
                 
+                # Consolidar Identidad Legal (V1.6.0)
+                identity_data = {
+                    "auditor": st.session_state['auditor_name'],
+                    "rep_legal": st.session_state['rep_legal'],
+                    "rep_id": st.session_state['rep_id'],
+                    "tamanio": st.session_state['empresa_tamanio'],
+                    "sector": st.session_state['empresa_sector'],
+                    "nit": st.session_state['empresa_nit'],
+                    "direccion": st.session_state['empresa_direccion'],
+                    "web": st.session_state['empresa_web'],
+                    "objeto_social": st.session_state['empresa_objeto']
+                }
+
                 # Botón de Plantilla Vacía (Siempre disponible)
                 from HMO_Auditor_Master_V2_Generator import create_audit_program_v2
                 if st.button("📥 Descargar Plantilla Vacía", key="empty_prog"):
                     path = os.path.join(base_path, "01_Templates_Vacios", f"PLANTILLA_PROG.docx")
-                    create_audit_program_v2(company, os.path.dirname(path), st.session_state['logo_path'], {})
+                    create_audit_program_v2(company, os.path.dirname(path), st.session_state['logo_path'], {}, identity_data)
                     with open(path, "rb") as f: st.download_button("Guardar Template", f, file_name="Plantilla_Vacia_PROG.docx")
                 
                 # Botón de Motivado (Solo con Autorización)
                 if st.session_state['autorizado_emision']:
                     if st.button("🚀 EMITIR DILIGENCIADO ELITE", key="full_prog"):
                         with st.spinner("Generando Matriz Legal y Programa Motivado..."):
-                            ident_data = {
-                                "auditor": st.session_state['auditor_name'],
-                                "rep_legal": st.session_state['rep_legal'],
-                                "rep_id": st.session_state['rep_id'],
-                                "tamanio": st.session_state['empresa_tamanio'],
-                                "sector": st.session_state['empresa_sector']
-                            }
-                            
-                            f1 = create_audit_program_v2(company, st.session_state['base_path'], st.session_state['logo_path'], st.session_state['expediente'], ident_data)
-                            f2 = create_legal_checklist(company, st.session_state['base_path'], st.session_state['logo_path'], st.session_state['expediente'], ident_data)
+                            f1 = create_audit_program_v2(company, st.session_state['base_path'], st.session_state['logo_path'], st.session_state['expediente'], identity_data)
+                            f2 = create_legal_checklist(company, st.session_state['base_path'], st.session_state['logo_path'], st.session_state['expediente'], identity_data)
                             
                             st.success("✅ Documentos Diligenciados con Materia Prima Real.")
                             with open(f1, "rb") as f: st.download_button("📂 Descargar Programa de Auditoría", f, file_name=os.path.basename(f1))
@@ -569,13 +609,13 @@ else:
                 from HMO_Checklist_Legal_Generator import create_legal_checklist
                 if st.button("📥 Descargar Plantilla Vacía", key="empty_list"):
                     path = os.path.join(base_path, "01_Templates_Vacios", f"PLANTILLA_LIST.xlsx")
-                    create_legal_checklist(company, os.path.dirname(path), st.session_state['logo_path'], {})
+                    create_legal_checklist(company, os.path.dirname(path), st.session_state['logo_path'], {}, identity_data)
                     with open(path, "rb") as f: st.download_button("Guardar Template", f, file_name="Plantilla_Vacia_LIST.xlsx")
                 
                 if st.session_state['autorizado_emision']:
                     if st.button("🚀 EMITIR DILIGENCIADA ELITE", key="full_list"):
                         path = os.path.join(base_path, "02_Auditoria_IA", f"FULL_LIST.xlsx")
-                        create_legal_checklist(company, os.path.dirname(path), st.session_state['logo_path'], st.session_state['kb'])
+                        create_legal_checklist(company, os.path.dirname(path), st.session_state['logo_path'], st.session_state['expediente'], identity_data)
                         with open(path, "rb") as f: st.download_button("Descargar Checklist Motivada", f, file_name=f"ELITE_Diligenciada_LIST_{company}.xlsx")
                 st.markdown("</div>", unsafe_allow_html=True)
 
