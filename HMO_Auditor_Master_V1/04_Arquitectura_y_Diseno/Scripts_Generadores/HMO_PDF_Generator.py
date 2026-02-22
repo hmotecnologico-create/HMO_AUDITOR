@@ -6,21 +6,21 @@ import os
 class HMO_PDF(FPDF):
     def header(self):
         self.set_font('helvetica', 'B', 12)
-        self.cell(0, 10, 'HMO AUDITOR ELITE - SISTEMA DE GESTIÓN DE CALIDAD', align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.cell(0, 10, 'HMO AUDITOR ELITE - SISTEMA DE GESTION DE CALIDAD', align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         self.set_font('helvetica', 'I', 8)
-        self.cell(0, 5, f'Código: GAD-PROG-01 | Versión: 03 | Fecha: {datetime.date.today()}', align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.cell(0, 5, f'Codigo: GAD-PROG-01 | Version: 03 | Fecha: {datetime.date.today()}', align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         self.ln(10)
 
     def footer(self):
         self.set_y(-15)
         self.set_font('helvetica', 'I', 8)
-        self.cell(0, 10, f'Página {self.page_no()} | Confidencial HMO Auditor - ISO 19011 Compliance', align='C')
+        self.cell(0, 10, f'Pagina {self.page_no()} | Confidencial HMO Auditor - ISO 19011 Compliance', align='C')
 
 def generate_audit_program_pdf(company_name, output_path, kb=None, identity_data=None):
     pdf = HMO_PDF()
     pdf.add_page()
     pdf.set_font("helvetica", "B", 16)
-    pdf.cell(0, 10, "PROGRAMA DE AUDITORÍA INTERNA", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 10, "PROGRAMA DE AUDITORIA INTERNA", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.ln(10)
 
     # 1. Datos Generales
@@ -31,9 +31,9 @@ def generate_audit_program_pdf(company_name, output_path, kb=None, identity_data
     
     data = [
         ("Empresa Auditada", company_name),
-        ("Auditor Líder", identity_data.get("auditor", "N/A")),
+        ("Auditor Lider", identity_data.get("auditor", "N/A")),
         ("NIT / ID Legal", identity_data.get("nit", "N/A")),
-        ("Sector Económico", identity_data.get("sector", "N/A")),
+        ("Sector Economico", identity_data.get("sector", "N/A")),
         ("Norma de Referencia", "ISO 9001:2015 / ISO 19011:2018"),
     ]
     
@@ -45,9 +45,9 @@ def generate_audit_program_pdf(company_name, output_path, kb=None, identity_data
     
     pdf.ln(10)
     
-    # 2. Análisis Cognitivo de Evidencias
+    # 2. Analisis Cognitivo de Evidencias
     pdf.set_font("helvetica", "B", 12)
-    pdf.cell(0, 10, "2. ANÁLISIS COGNITIVO DE EVIDENCIAS (ISO 19011:6.4)", fill=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 10, "2. ANALISIS COGNITIVO DE EVIDENCIAS (ISO 19011:6.4)", fill=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     
     if kb:
         for doc, data in kb.items():
@@ -56,8 +56,8 @@ def generate_audit_program_pdf(company_name, output_path, kb=None, identity_data
             pdf.cell(0, 8, f">> {doc}{status}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
             pdf.set_font("helvetica", "", 9)
             
-            summary = data.get('resumen', "Verificado") if isinstance(data, dict) else "Analizado por motor estándar."
-            pdf.multi_cell(0, 5, f"Resumen Semántico: {summary}")
+            summary = data.get('resumen', "Verificado") if isinstance(data, dict) else "Analizado por motor estandar."
+            pdf.multi_cell(0, 5, f"Resumen Semantico: {summary}")
             
             if isinstance(data, dict) and data.get('hallazgos'):
                 pdf.set_font("helvetica", "I", 8)
@@ -70,9 +70,9 @@ def generate_audit_program_pdf(company_name, output_path, kb=None, identity_data
     
     # 3. Conclusiones y Firmas
     pdf.set_font("helvetica", "B", 12)
-    pdf.cell(0, 10, "3. CONCLUSIONES Y VALIDACIÓN LEGAL", fill=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 10, "3. CONCLUSIONES Y VALIDACION LEGAL", fill=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.set_font("helvetica", "", 10)
-    pdf.multi_cell(0, 6, "Tras el análisis multidimensional de la materia prima inyectada, se concluye que la organización cumple con los requisitos de planificación y preparación establecidos en la norma ISO 19011:2018.")
+    pdf.multi_cell(0, 6, "Tras el analisis multidimensional de la materia prima inyectada, se concluye que la organizacion cumple con los requisitos de planificacion y preparacion establecidos en la norma ISO 19011:2018.")
     
     pdf.ln(20)
     # Firmas
@@ -85,19 +85,19 @@ def generate_audit_program_pdf(company_name, output_path, kb=None, identity_data
 
 def generate_preparation_guide_pdf(company_name, output_path, doc_requirements, norma="ISO 9001:2015"):
     """
-    Genera una guía de preparación para que el humano sepa qué y cómo crear los documentos.
+    Genera una guia de preparacion para que el humano sepa que y como crear los documentos.
     """
     pdf = HMO_PDF()
     pdf.add_page()
     pdf.set_font("helvetica", "B", 16)
-    pdf.cell(0, 10, "GUÍA DE PREPARACIÓN DOCUMENTAL", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 10, "GUIA DE PREPARACION DOCUMENTAL", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.set_font("helvetica", "I", 10)
     pdf.cell(0, 8, f"Norma de Referencia: {norma}", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.ln(5)
 
     pdf.set_font("helvetica", "", 10)
-    intro = (f"Esta guía ha sido generada para {company_name} con el fin de facilitar la recolección "
-             "de evidencias necesarias para la fase de Revisión de Información Documentada (ISO 19011:6.3.1).")
+    intro = (f"Esta guia ha sido generada para {company_name} con el fin de facilitar la recoleccion "
+             "de evidencias necesarias para la fase de Revision de Informacion Documentada (ISO 19011:6.3.1).")
     pdf.multi_cell(0, 5, intro)
     pdf.ln(10)
 

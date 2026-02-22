@@ -658,22 +658,34 @@ else:
             if not fase_a_ready:
                 st.error("🔒 El Cuerpo Normativo está bloqueado. Complete primero la Fase A: Identidad.")
             else:
-                # CABECERA DE CARGA CON MÉTRICAS (V4.2)
+                # CABECERA DE CARGA CON METRICAS (V4.2)
                 total_req = len(cartas)
                 count_ready = len(st.session_state['expediente'])
                 doc_list_missing = [c['doc'] for c in cartas if c['doc'] not in st.session_state['expediente']]
                 
                 c_head1, c_head2 = st.columns([1.5, 1])
                 with c_head1:
-                    st.write("### ⚖️ 6.3.1 Revisión de Información Documentada")
+                    st.write("### ⚖️ 6.3.1 Revision de Informacion Documentada")
                 with c_head2:
-                    # BOTÓN DE GUÍA DE PREPARACIÓN (V8.4)
-                    if st.button("📄 Descargar Guía de Preparación (PDF)", use_container_width=True):
+                    # BOTON DE GUIA DE PREPARACION (V8.5 - ASCII)
+                    if st.button("📄 Descargar Guia de Preparacion (PDF)", use_container_width=True):
                         guide_path = generate_preparation_guide_pdf(st.session_state['company_name'], st.session_state['base_path'], cartas_todas, norma=st.session_state['norma'])
                         with open(guide_path, "rb") as f:
-                            st.download_button("📂 Haz clic para Guardar Guía", f, file_name=os.path.basename(guide_path))
+                            st.download_button("📂 Haz clic para Guardar Guia", f, file_name=os.path.basename(guide_path))
                     
                     st.metric("📦 Materia Prima Inyectada", f"{pct_fase_c}%", f"{count_ready}/{total_total} Listos")
+                
+                # VISIBILIDAD DE FALTANTES - POSICIÓN PRIORITARIA (V8.5)
+                if doc_list_missing:
+                    with st.expander("⚠️ DOCUMENTOS PENDIENTES DE CARGA (Haga clic para ver todos)", expanded=True):
+                        st.info(f"Faltan {len(doc_list_missing)} documentos para completar el expediente.")
+                        cols_m = st.columns(3)
+                        for i, m_doc in enumerate(doc_list_missing):
+                            cols_m[i % 3].write(f"- {m_doc}")
+                else:
+                    st.success("✅ ¡Expediente Completo! Puede proceder a la Emision de Formatos.")
+                
+                st.divider()
                 # Agrupación por Áreas (V4.5 Limpieza de Emojis)
                 areas = list(dict.fromkeys([c['area'] for c in cartas]))
                 for i, area in enumerate(areas):
@@ -681,7 +693,8 @@ else:
                     conteo_ready = sum(1 for c in docs_area if c['doc'] in st.session_state['expediente'])
                     porcentaje_area = int((conteo_ready / len(docs_area)) * 100) if docs_area else 0
                     
-                    with st.expander(f"PROCESO: {area} -- Avance: {porcentaje_area}%"):
+                    area_label = area.replace("🔹", "").replace("⚓", "").replace("⚙️", "").strip()
+                    with st.expander(f"PROCESO: {area_label} (Avance: {porcentaje_area}%)"):
                          for c in docs_area:
                             idx = cartas.index(c)
                             doc_id = c['doc']
@@ -759,13 +772,7 @@ else:
                                     save_audit_state()
                                     st.rerun()
                                     
-                if doc_list_missing:
-                    st.warning(f"**Documentos Pendientes de Carga:**")
-                    cols_missing = st.columns(2)
-                    for i, doc_missing in enumerate(doc_list_missing):
-                        cols_missing[i % 2].markdown(f"- {doc_missing}")
-                if not doc_list_missing:
-                    st.success("✅ ¡Cuerpo Normativo Completo!")
+                # El bloque de faltantes al final ha sido movido arriba.
 
         # --- VALIDACIÓN & CIERRE ---
         with tab_final:
