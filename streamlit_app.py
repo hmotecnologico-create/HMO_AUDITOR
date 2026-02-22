@@ -162,6 +162,25 @@ st.markdown("""
         box-shadow: 0 0 30px rgba(0, 194, 255, 0.6);
     }
     
+    /* COMPACTACIÓN EXTREMA SIDEBAR */
+    [data-testid="stSidebarNav"] { display: none; }
+    [data-testid="stSidebar"] .block-container { padding-top: 1rem !important; }
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p, [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2, [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h3 {
+        font-size: 0.8rem !important;
+        margin-bottom: 2px !important;
+        margin-top: 5px !important;
+    }
+    [data-testid="stSidebar"] .stRadio > label { display: none !important; }
+    [data-testid="stSidebar"] [data-testid="stRadio"] label {
+        font-size: 0.75rem !important;
+        padding: 2px 0px !important;
+        min-height: 20px !important;
+    }
+    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] {
+        gap: 0px !important;
+    }
+    [data-testid="stSidebar"] hr { margin: 0.5rem 0 !important; }
+
     @media (max-width: 768px) { .floating-help { display: none; } }
 </style>
 """, unsafe_allow_html=True)
@@ -316,28 +335,19 @@ else:
     company, base_path = st.session_state['company_name'], st.session_state['base_path']
     
     # Sidebar Superior
-    st.sidebar.markdown(f"<h2 style='color: white;'>🏢 {company}</h2>", unsafe_allow_html=True)
-    st.sidebar.markdown(f"<p style='color: #94A3B8;'>💎 Marco: {st.session_state['norma']}</p>", unsafe_allow_html=True)
+    st.sidebar.markdown(f"**🏢 {company}**")
+    st.sidebar.markdown(f"**💎 Marco:** {st.session_state['norma']}")
     st.sidebar.divider()
     
-    # Categorización Elite
-    st.sidebar.markdown("### 🛰️ ESTRATEGIA")
-    menu_estrat = st.sidebar.radio("Vista Ejecutiva", ["📊 Dashboard Analítico"])
-    
-    st.sidebar.markdown("### 📋 PLANEACIÓN")
-    menu_plan = st.sidebar.radio("Preparación", ["📋 Requerimientos Maestros"])
-    
-    st.sidebar.markdown("### 🏗️ EJECUCIÓN")
-    menu_exec = st.sidebar.radio("Ciclo de Auditoría (A-B-C)", ["🗺️ Camino de Ingesta (HITL)"])
-    
-    st.sidebar.markdown("### ⚖️ ENTREGABLES")
-    menu_prod = st.sidebar.radio("Emisión Digital", ["⚖️ Emisión de Títulos/Formatos", "💎 Help Center Elite"])
-    
-    # Consolidar selección
-    menu = menu_estrat if menu_estrat == "📊 Dashboard Analítico" else \
-           menu_plan if menu_plan == "📋 Requerimientos Maestros" else \
-           menu_exec if menu_exec == "🗺️ Camino de Ingesta (HITL)" else \
-           menu_prod
+    # Navegación Unificada (Fix Inactivo & Scroll)
+    opciones = [
+        "📊 Dashboard Analítico",
+        "📋 Requerimientos Maestros",
+        "🗺️ Camino de Ingesta (HITL)",
+        "⚖️ Emisión de Títulos/Formatos",
+        "💎 Help Center Elite"
+    ]
+    menu = st.sidebar.radio("Navegación:", opciones, key="main_menu_elite")
     
     # Selector de Rol
     st.sidebar.divider()
