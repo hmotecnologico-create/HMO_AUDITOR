@@ -1143,95 +1143,334 @@ else:
                                         st.warning("⚖️ Este requisito ha sido marcado como N/A por el Administrador.")
                             
                             with col_act2:
-                                uploaded_file = st.file_uploader(f"📥 Cargar Evidencia", type=['pdf', 'docx', 'xlsx', 'csv'], key=f"up_{idx}", label_visibility="collapsed")
+                                uploaded_file = st.file_uploader(
+                                    f"📥 Cargar Evidencia PDF",
+                                    type=['pdf', 'jpg', 'jpeg', 'png', 'xlsx', 'csv'],
+                                    key=f"up_{idx}", label_visibility="collapsed"
+                                )
+
+                            # ── MODO HYBRID V15.0: Upload + Validador + Formulario ────────
                             if uploaded_file:
-                                st.info(f"🧿 Motor de Reconocimiento Cognitivo V8.0...")
-                                st.write("---")
-                                # Lógica de Parsing Estructurado para Matrices (V8.0)
-                                extracted_data = ""
-                                if uploaded_file.name.endswith(('.xlsx', '.csv')):
-                                    try:
-                                        df = pd.read_excel(uploaded_file) if uploaded_file.name.endswith('.xlsx') else pd.read_csv(uploaded_file)
-                                        extracted_data = df.to_markdown() # Formato que Llama3 entiende muy bien
-                                        st.success("📊 Estructura de Tabla Detectada y Procesada.")
-                                    except:
-                                        extracted_data = "Error en parsing estructurado."
-                                
-                                st.caption("🔍 Pasos de la IA:")
-                                st.write("1. Analizando coherencia sintáctica...")
-                                st.write("2. Validando semántica contra ISO 9001:2015...")
-                                st.write("3. Verificando integridad de la materia prima...")
-                                
-                                col_ocr1, col_ocr2 = st.columns(2)
-                                with col_ocr1:
-                                    raw_txt = st.text_area("📄 Texto Detectado", value=f"Contenido verificado de {doc_id}...", height=100, key=f"ocr_{idx}")
-                                with col_ocr2:
-                                    manual_txt = st.text_area("✍️ Ajuste Auditor", placeholder="Añada observaciones...", key=f"val_{idx}")
-                                
-                                if st.button(f"✅ VALIDAR SEMÁNTICA {doc_id.upper()}", key=f"btn_{idx}"):
-                                    with st.spinner("🧠 Llama3 Analizando Coherencia Normativa..."):
-                                        ai_engine = HMO_AI_Engine()
-                                        if ai_engine.test_connection():
-                                            # Decidir si es análisis estructural o de documento
-                                            if extracted_data:
-                                                analisis = ai_engine.analyze_risk_matrix(extracted_data)
-                                            else:
-                                                analisis = ai_engine.analyze_document(doc_id, manual_txt if manual_txt else raw_txt, target_norm=st.session_state['norma'])
-                                            
-                                            if "error" not in analisis:
-                                                st.session_state['expediente'][doc_id] = {
-                                                    "contenido": manual_txt if manual_txt else (extracted_data if extracted_data else raw_txt),
-                                                    "coherencia": analisis.get("Coherencia", 0),
-                                                    "hallazgos": analisis.get("Hallazgos_Clave", []),
-                                                    "resumen": analisis.get("Resumen_Ejecutivo", "")
-                                                }
-                                                st.success(f"✅ {doc_id} validado por IA con {analisis.get('Coherencia')}% de coherencia.")
-                                            else:
-                                                st.warning("⚠️ Error en respuesta de Llama3. Usando validación estándar.")
-                                                st.session_state['expediente'][doc_id] = manual_txt if manual_txt else raw_txt
-                                        else:
-                                            st.error("🚨 Ollama (Llama3) No Detectado localmente.")
-                                            st.session_state['expediente'][doc_id] = manual_txt if manual_txt else raw_txt
-                                    
-                                    save_audit_state()
-                                    st.rerun()
-                                
-                                # Botón de Feedback Loop V11.0
-                                if doc_id in st.session_state['expediente'] and manual_txt:
-                                    if st.button("💡 Notificar Mejora a Central", key=f"feed_{idx}", use_container_width=True):
-                                        fb_data = {
-                                            "doc": doc_id,
-                                            "ai_raw": raw_txt,
-                                            "human_fix": manual_txt,
-                                            "norma": st.session_state['norma'],
-                                            "timestamp": str(datetime.datetime.now())
-                                        }
-                                        # Guardar localmente para sincronización futura
-                                        fb_path = os.path.join(SCRIPT_DIR, "feedback_loop.json")
-                                        feedbacks = []
-                                        if os.path.exists(fb_path):
+                                st.markdown("---")
+                                st.markdown(f"#### 🔬 Análisis Documental V15.0: `{doc_id}`")
+
+                                # Importar validador (disponible en scope global del módulo)
+                                try:
+                                    from HMO_Document_Validator import validate_document, detectar_tipo_por_contenido, EXPEDIENTE_A_SCHEMA
+                                    VALIDATOR_OK = True
+                                except Exception:
+                                    VALIDATOR_OK = False
+
+                                # Documentos que usan FORMULARIO en lugar de OCR (contienen tablas)
+                                FORM_ONLY_DOCS = [
+                                    "Estados Financieros",
+                                    "Inventario de Activos",
+                                    "Contexto Organizacional (DOFA)",
+                                    "Aspectos e Impactos Ambientales",
+                                    "Cronograma de Actividades de Preparacion",
+                                ]
+                                # Campos bloqueados (inmutables una vez establecidos desde CC/RUT)
+                                CAMPOS_BLOQUEADOS = {
+                                    "empresa_nit": "🔒 NIT (tomado de Cámara de Comercio — no editable)",
+                                    "company_name": "🔒 Razón Social (tomado de Cámara de Comercio — no editable)",
+                                    "matricula": "🔒 Matrícula Mercantil",
+                                }
+
+                                usa_formulario = any(f in doc_id for f in FORM_ONLY_DOCS)
+
+                                if not usa_formulario:
+                                    # ── OCR + VALIDACIÓN NORMATIVA ──────────────────────────
+                                    with st.spinner("🔍 Extrayendo y validando contenido..."):
+                                        file_bytes = uploaded_file.read()
+                                        texto_doc = ""
+
+                                        if uploaded_file.name.endswith(('.xlsx', '.csv')):
                                             try:
-                                                with open(fb_path, "r") as f: feedbacks = json.load(f)
-                                            except: pass
-                                        feedbacks.append(fb_data)
-                                        with open(fb_path, "w") as f: json.dump(feedbacks, f, indent=4)
-                                        st.success("✅ Gracias. Esta lección será enviada a Central para mejorar el cerebro IA.")
-                                
-                                # Evaluador de Rigor
-                                es_grande = "Gran" in st.session_state['empresa_tamanio']
-                                check_content = manual_txt if manual_txt else raw_txt
-                                if len(check_content) < (150 if es_grande else 80):
-                                    st.warning("⚠️ Contenido limitado para los estándares de rigor.")
+                                                df = pd.read_excel(uploaded_file) if uploaded_file.name.endswith('.xlsx') else pd.read_csv(uploaded_file)
+                                                texto_doc = df.to_string()
+                                                st.success("📊 Tabla/Matriz detectada y procesada.")
+                                            except Exception as e:
+                                                texto_doc = ""; st.warning(f"Error leyendo tabla: {e}")
+                                        elif OCR_DISPONIBLE:
+                                            from HMO_OCR_Extractor import extract_text_from_pdf, extract_text_from_image
+                                            if uploaded_file.name.lower().endswith(('.jpg', '.jpeg', '.png')):
+                                                texto_doc = extract_text_from_image(file_bytes)
+                                            else:
+                                                texto_doc = extract_text_from_pdf(file_bytes)
+
+                                    if texto_doc and VALIDATOR_OK:
+                                        schema_key = EXPEDIENTE_A_SCHEMA.get(doc_id, "")
+                                        if not schema_key:
+                                            from HMO_Document_Validator import detectar_tipo_por_contenido
+                                            schema_key = detectar_tipo_por_contenido(texto_doc)
+
+                                        if schema_key and schema_key not in ("camara_comercio", "rut", "desconocido"):
+                                            resultado_val = validate_document(texto_doc, schema_key)
+                                            score = resultado_val["score"]
+                                            nivel = resultado_val["nivel"]
+
+                                            # ── RESULTADO VISUAL ──
+                                            if nivel == "APROBADO":
+                                                st.success(f"✅ **{nivel}** — Score: {score}/100 | {resultado_val['norma_ref']}")
+                                            elif nivel == "OBSERVACION":
+                                                st.warning(f"⚠️ **{nivel}** — Score: {score}/100 | Requiere ajustes menores.")
+                                            else:
+                                                st.error(f"❌ **{nivel}** — Score: {score}/100 | Documento NO corresponde al tipo solicitado.")
+
+                                            col_v1, col_v2 = st.columns(2)
+                                            with col_v1:
+                                                st.markdown("**✅ Cumplidos:**")
+                                                for c in resultado_val["cumplidos"]:
+                                                    st.caption(c)
+                                            with col_v2:
+                                                if resultado_val["faltantes"]:
+                                                    st.markdown("**⚠️ Observaciones:**")
+                                                    for f_ in resultado_val["faltantes"]:
+                                                        st.caption(f_)
+
+                                            # ── FORMULARIO HÍBRIDO: campos extraídos + editables ──
+                                            st.markdown("#### ✏️ Confirmar / Corregir Datos Extraídos")
+                                            campos_extraidos = resultado_val.get("campos_extraidos", {})
+
+                                            col_f1, col_f2 = st.columns(2)
+                                            notas_auditor = col_f1.text_area(
+                                                "📝 Observaciones del Auditor:",
+                                                placeholder="Ej: Documento del 2024, firmado por gerente...",
+                                                key=f"obs_{idx}", height=80
+                                            )
+                                            # Mostrar campos extraídos como info (no editables — solo informativos)
+                                            with col_f2:
+                                                if campos_extraidos:
+                                                    for campo, valor in campos_extraidos.items():
+                                                        st.caption(f"🔍 **{campo}**: {valor[:60]}")
+
+                                            # Campos actualizables del perfil de empresa (teléfono, email, dirección)
+                                            st.markdown("##### 🔄 Datos Actualizables de la Empresa")
+                                            st.caption("Puedes actualizar estos datos si el documento tiene información más reciente.")
+                                            col_u1, col_u2, col_u3 = st.columns(3)
+
+                                            nuevo_tel = col_u1.text_input(
+                                                "📞 Teléfono (actualizable):",
+                                                value=st.session_state.get('empresa_telefono', ''),
+                                                key=f"tel_upd_{idx}"
+                                            )
+                                            nuevo_email = col_u2.text_input(
+                                                "📧 Email (actualizable):",
+                                                value=st.session_state.get('empresa_email', ''),
+                                                key=f"email_upd_{idx}"
+                                            )
+                                            # Campos BLOQUEADOS — solo lectura
+                                            col_u3.text_input(
+                                                "🔒 NIT (bloqueado):",
+                                                value=st.session_state.get('empresa_nit', '—'),
+                                                key=f"nit_lock_{idx}",
+                                                disabled=True
+                                            )
+
+                                            if st.button(f"✅ APROBAR '{doc_id}'", key=f"val_btn_{idx}", use_container_width=True,
+                                                         disabled=(nivel == "RECHAZADO")):
+                                                # Actualizar campos editables si cambiaron
+                                                if nuevo_tel: st.session_state['empresa_telefono'] = nuevo_tel
+                                                if nuevo_email: st.session_state['empresa_email'] = nuevo_email
+                                                st.session_state['expediente'][doc_id] = {
+                                                    "score_validacion": score,
+                                                    "nivel": nivel,
+                                                    "norma_ref": resultado_val.get("norma_ref", ""),
+                                                    "secciones": resultado_val.get("secciones_encontradas", []),
+                                                    "observaciones_auditor": notas_auditor,
+                                                    "campos_extraidos": campos_extraidos,
+                                                    "validado_v15": True
+                                                }
+                                                save_audit_state()
+                                                st.success(f"🎉 '{doc_id}' registrado en el expediente.")
+                                                st.rerun()
+
+                                            if nivel == "RECHAZADO":
+                                                st.error("🚫 El documento fue rechazado. No cumple el contenido mínimo requerido. Por favor suba el documento correcto.")
+
+                                        else:
+                                            # Tipo no reconocido → aceptar con nota manual
+                                            st.warning("⚠️ No se pudo validar automáticamente. Ingrese una observación manual.")
+                                            manual_txt = st.text_area("✍️ Descripción del documento:", key=f"manual_{idx}")
+                                            if st.button(f"📌 Registrar Manualmente", key=f"man_btn_{idx}"):
+                                                st.session_state['expediente'][doc_id] = manual_txt or f"Recibido: {uploaded_file.name}"
+                                                save_audit_state(); st.rerun()
+                                    else:
+                                        st.warning("⚠️ No se pudo extraer texto. Registre observación manual.")
+                                        manual_txt = st.text_area("✍️ Observación:", key=f"manual2_{idx}")
+                                        if st.button(f"📌 Registrar", key=f"man2_btn_{idx}"):
+                                            st.session_state['expediente'][doc_id] = manual_txt or uploaded_file.name
+                                            save_audit_state(); st.rerun()
+
                                 else:
-                                    st.success("💎 Densidad informativa óptima.")
-                        else:
-                            st.success(f"Documento indexado: {len(st.session_state['expediente'][doc_id])} caracteres.")
-                            if st.button(f"🗑️ Eliminar y Re-cargar {doc_id}", key=f"del_{idx}"):
-                                del st.session_state['expediente'][doc_id]
-                                save_audit_state()
-                                st.rerun()
-                                
-            # El bloque de faltantes al final ha sido movido arriba.
+                                    # ── MODO FORMULARIO (para documentos con tablas) ──────────
+                                    st.info(f"📋 Para **{doc_id}**, completa el formulario a continuación. Sube el PDF como evidencia adjunta y registra los datos clave.")
+                                    st.success(f"✅ Evidencia adjunta: `{uploaded_file.name}`")
+
+                                    # Formularios específicos por tipo de documento
+                                    if "Estados Financieros" in doc_id:
+                                        col_ef1, col_ef2, col_ef3 = st.columns(3)
+                                        periodo = col_ef1.text_input("📅 Período / Año fiscal:", key=f"ef_per_{idx}", placeholder="2024")
+                                        total_activo = col_ef2.text_input("💰 Total Activo:", key=f"ef_act_{idx}", placeholder="$500.000.000")
+                                        patrimonio = col_ef3.text_input("🏛️ Patrimonio:", key=f"ef_pat_{idx}", placeholder="$200.000.000")
+                                        col_ef4, col_ef5 = st.columns(2)
+                                        contador = col_ef4.text_input("👤 Nombre Contador:", key=f"ef_cnt_{idx}")
+                                        tp_contad = col_ef5.text_input("🪪 Tarjeta Profesional T.P.:", key=f"ef_tp_{idx}")
+                                        obs_ef = st.text_area("📝 Observaciones:", key=f"ef_obs_{idx}", height=60)
+
+                                        if st.button(f"✅ Registrar Estados Financieros", key=f"ef_btn_{idx}", use_container_width=True):
+                                            if periodo and total_activo:
+                                                st.session_state['expediente'][doc_id] = {
+                                                    "periodo": periodo, "total_activo": total_activo,
+                                                    "patrimonio": patrimonio, "contador": contador,
+                                                    "tarjeta_profesional": tp_contad,
+                                                    "observaciones": obs_ef, "archivo": uploaded_file.name
+                                                }
+                                                save_audit_state(); st.success("✅ Estados Financieros registrados."); st.rerun()
+                                            else:
+                                                st.warning("⚠️ El período y total activo son obligatorios.")
+
+                                    elif "Inventario" in doc_id or "Activos" in doc_id:
+                                        col_inv1, col_inv2 = st.columns(2)
+                                        total_activos = col_inv1.number_input("📦 Total de activos inventariados:", min_value=1, key=f"inv_tot_{idx}")
+                                        propietario = col_inv2.text_input("👤 Responsable del inventario:", key=f"inv_prop_{idx}")
+                                        categorias = st.multiselect("📂 Categorías incluidas:", ["Hardware", "Software", "Datos", "Infraestructura", "Personas", "Servicios"], key=f"inv_cat_{idx}")
+                                        obs_inv = st.text_area("📝 Observaciones:", key=f"inv_obs_{idx}", height=60)
+                                        if st.button(f"✅ Registrar Inventario", key=f"inv_btn_{idx}", use_container_width=True):
+                                            st.session_state['expediente'][doc_id] = {
+                                                "total_activos": total_activos, "propietario": propietario,
+                                                "categorias": categorias, "observaciones": obs_inv, "archivo": uploaded_file.name
+                                            }
+                                            save_audit_state(); st.success("✅ Inventario registrado."); st.rerun()
+
+                                    elif "DOFA" in doc_id or "Contexto" in doc_id:
+                                        st.caption("Confirma que el análisis DOFA incluye los 4 cuadrantes:")
+                                        col_d1, col_d2 = st.columns(2)
+                                        tiene_f = col_d1.checkbox("✅ Fortalezas definidas", key=f"df_{idx}")
+                                        tiene_o = col_d1.checkbox("✅ Oportunidades definidas", key=f"do_{idx}")
+                                        tiene_d = col_d2.checkbox("✅ Debilidades definidas", key=f"dd_{idx}")
+                                        tiene_a = col_d2.checkbox("✅ Amenazas definidas", key=f"da_{idx}")
+                                        obs_dofa = st.text_area("📝 Hallazgos DOFA relevantes:", key=f"dofa_obs_{idx}", height=80)
+                                        if st.button(f"✅ Registrar DOFA", key=f"dofa_btn_{idx}", use_container_width=True):
+                                            if all([tiene_f, tiene_o, tiene_d, tiene_a]):
+                                                st.session_state['expediente'][doc_id] = {
+                                                    "cuadrantes": ["F","O","D","A"], "observaciones": obs_dofa, "archivo": uploaded_file.name
+                                                }
+                                                save_audit_state(); st.success("✅ Contexto DOFA registrado."); st.rerun()
+                                            else:
+                                                st.warning("⚠️ Confirma todos los cuadrantes del DOFA.")
+
+                                    else:
+                                        # Formulario genérico para cualquier otro doc de tabla
+                                        obs_gen = st.text_area(f"📝 Describa el contenido del documento `{doc_id}`:", key=f"gen_obs_{idx}", height=100)
+                                        if st.button(f"✅ Registrar {doc_id}", key=f"gen_btn_{idx}", use_container_width=True):
+                                            st.session_state['expediente'][doc_id] = obs_gen or uploaded_file.name
+                                            save_audit_state(); st.rerun()
+
+                            # ── ESTADO YA VALIDADO ────────────────────────────────────────
+                            if doc_id in st.session_state['expediente'] and not uploaded_file:
+                                val_data = st.session_state['expediente'][doc_id]
+                                if isinstance(val_data, dict) and val_data.get("validado_v15"):
+                                    sc = val_data.get("score_validacion", 0)
+                                    nv = val_data.get("nivel", "—")
+                                    emoji = "✅" if nv == "APROBADO" else "⚠️"
+                                    st.caption(f"{emoji} Validado V15.0 — Score: {sc}/100 | Nivel: {nv}")
+                                elif isinstance(val_data, dict) and val_data.get("archivo"):
+                                    st.caption(f"📎 Archivo: {val_data.get('archivo')} | Formulario registrado")
+
+            # ── PANEL ADMIN: DESBLOQUEO DE CAMPOS INMUTABLES V15.0 ─────────────
+            if st.session_state.get('user_role') == "Administrador (Global)":
+                with st.expander("🔓 PANEL ADMIN — Corrección de Campos Bloqueados (Uso con Justificación)", expanded=False):
+                    st.warning("⚠️ Los campos bloqueados protegen la integridad jurídica del expediente. **Solo modifique si el OCR extrajo datos erróneos** (ej: documento mal escaneado).")
+
+                    CAMPOS_AUDITABLES = {
+                        "empresa_nit": ("🔢 NIT", "NIT protegido — extraído de Cámara de Comercio"),
+                        "company_name": ("🏢 Razón Social", "Nombre jurídico de la empresa"),
+                        "rep_legal": ("👤 Representante Legal", "Nombre del Rep. Legal"),
+                        "rep_id": ("🪪 C.C. Representante", "Cédula de ciudadanía del Rep. Legal"),
+                        "matricula": ("📋 Matrícula Mercantil", "Número de matrícula en Cámara de Comercio"),
+                        "empresa_email": ("📧 Email corporativo", "Email registrado en el RUT"),
+                        "empresa_telefono": ("📞 Teléfono", "Teléfono registrado en el RUT"),
+                    }
+
+                    # Inicializar log de correcciones admin si no existe
+                    if 'admin_corrections_log' not in st.session_state:
+                        st.session_state['admin_corrections_log'] = []
+
+                    col_adm1, col_adm2 = st.columns(2)
+                    campo_sel = col_adm1.selectbox(
+                        "📌 Campo a corregir:",
+                        list(CAMPOS_AUDITABLES.keys()),
+                        format_func=lambda k: CAMPOS_AUDITABLES[k][0],
+                        key="admin_campo_sel"
+                    )
+                    valor_actual = st.session_state.get(campo_sel, "—")
+
+                    col_adm1.info(f"**Valor actual en sistema:** `{valor_actual}`")
+                    col_adm1.caption(CAMPOS_AUDITABLES[campo_sel][1])
+
+                    nuevo_valor = col_adm2.text_input(
+                        f"✏️ Nuevo valor para {CAMPOS_AUDITABLES[campo_sel][0]}:",
+                        value=valor_actual if valor_actual != "—" else "",
+                        key="admin_new_val"
+                    )
+                    justificacion_admin = col_adm2.text_area(
+                        "📋 Justificación obligatoria:",
+                        placeholder="Ej: OCR leyó '8' en lugar de '0' por mal escaneado del documento. Verificado contra original físico.",
+                        key="admin_justif",
+                        height=80
+                    )
+
+                    if st.button("🔓 APLICAR CORRECCIÓN CON TRAZABILIDAD", use_container_width=True,
+                                 disabled=not (nuevo_valor and justificacion_admin)):
+                        if nuevo_valor and justificacion_admin:
+                            valor_anterior = st.session_state.get(campo_sel, "—")
+                            st.session_state[campo_sel] = nuevo_valor
+
+                            # Registro de auditoría inmutable
+                            log_entry = {
+                                "timestamp": str(datetime.datetime.now()),
+                                "campo": campo_sel,
+                                "campo_nombre": CAMPOS_AUDITABLES[campo_sel][0],
+                                "valor_anterior": valor_anterior,
+                                "valor_nuevo": nuevo_valor,
+                                "justificacion": justificacion_admin,
+                                "administrador": st.session_state.get('auditor_name', 'Admin'),
+                                "empresa": st.session_state.get('company_name', ''),
+                            }
+                            st.session_state['admin_corrections_log'].append(log_entry)
+
+                            # Guardar en archivo de auditoría
+                            try:
+                                log_path = os.path.join(st.session_state.get('base_path', '.'), "admin_corrections_audit.json")
+                                logs = []
+                                if os.path.exists(log_path):
+                                    with open(log_path, "r", encoding="utf-8") as f:
+                                        logs = json.load(f)
+                                logs.append(log_entry)
+                                with open(log_path, "w", encoding="utf-8") as f:
+                                    json.dump(logs, f, indent=4, ensure_ascii=False)
+                            except Exception:
+                                pass
+
+                            save_audit_state()
+                            st.success(f"✅ Campo `{CAMPOS_AUDITABLES[campo_sel][0]}` actualizado: **{valor_anterior}** → **{nuevo_valor}**")
+                            st.caption(f"🕐 Corrección registrada en el log de auditoría — {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                            st.rerun()
+                    else:
+                        if not justificacion_admin:
+                            st.caption("⚠️ La justificación es obligatoria para activar el botón de corrección.")
+
+                    # Mostrar historial de correcciones de esta sesión
+                    if st.session_state.get('admin_corrections_log'):
+                        st.markdown("**📜 Historial de correcciones en esta sesión:**")
+                        for log in reversed(st.session_state['admin_corrections_log'][-5:]):
+                            st.caption(
+                                f"🕐 {log['timestamp'][:16]} | {log['campo_nombre']}: "
+                                f"`{log['valor_anterior']}` → `{log['valor_nuevo']}` | "
+                                f"Motivo: {log['justificacion'][:60]}..."
+                            )
+
 
         # --- VALIDACIÓN & CIERRE ---
         with tab_final:
