@@ -1131,9 +1131,16 @@ else:
 
 
             c1, c2, c3 = st.columns(3)
-            st.session_state['auditor_name'] = c1.text_input("* Auditor:", value=st.session_state['auditor_name'])
-            st.session_state['rep_legal'] = c2.text_input("* Representante:", value=st.session_state['rep_legal'])
-            st.session_state['rep_id'] = c3.text_input("* ID Rep:", value=st.session_state['rep_id'])
+            st.session_state['auditor_name'] = c1.text_input(
+                "Auditor Líder", value=st.session_state['auditor_name'],
+                placeholder="Nombre del auditor")
+            st.session_state['rep_legal'] = c2.text_input(
+                "Representante Legal", value=st.session_state.get('rep_legal', ''),
+                placeholder="Nombre del representante")
+            st.session_state['rep_id'] = c3.text_input(
+                "C.C. Representante", value=st.session_state.get('rep_id', ''),
+                placeholder="Cédula de ciudadanía")
+
 
             if st.button("💾 REGISTRAR"):
                 save_audit_state()
