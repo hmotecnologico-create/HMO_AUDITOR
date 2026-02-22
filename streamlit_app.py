@@ -508,8 +508,19 @@ else:
     st.sidebar.markdown(f"### 🏢 {company}")
     st.sidebar.markdown(f"**Marco:** {st.session_state['norma']}")
     
-    # Selector de Rol (V4.0 - Hi-Contrast)
-    roles_disponibles = ["Administrador (Global)", "⚖️ Jurídico", "🏦 Alta Dirección", "📊 Calidad / SIG", "🛡️ Ciberseguridad", "♻️ Gestión Ambiental", "🎓 Gestión Académica"]
+    # Selector de Rol Mejorado (V9.6 - Mapeo Robusto)
+    roles_disponibles = [
+        "Administrador (Global)", 
+        "⚖️ Jurídico", 
+        "🏦 Alta Dirección", 
+        "📊 Calidad / SIG", 
+        "🛡️ Ciberseguridad", 
+        "♻️ Gestión Ambiental", 
+        "🎓 Gestión Académica",
+        "👥 Talento Humano",
+        "💰 Financiera",
+        "⚙️ Operaciones"
+    ]
     st.session_state['user_role'] = st.sidebar.selectbox("👤 ROL DEL AUDITOR:", roles_disponibles, key="role_selector_top")
     
     st.sidebar.divider()
@@ -530,13 +541,49 @@ else:
         st.session_state['env'] = None
         st.rerun()
 
-    # Filtrado Dinámico por Rol
+    # --- BOTÓN DE SINCRONIZACIÓN GLOBAL V9.4 ---
+    st.sidebar.markdown("---")
+    if st.sidebar.button("📡 Sincronizar con Central", use_container_width=True, help="Actualiza el expediente con datos de otras terminales via Cloud."):
+        with st.sidebar:
+            with st.spinner("Conectando con Servidor Maestro..."):
+                try:
+                    import subprocess
+                    # Paso 1: Pull de cambios remotos
+                    subprocess.run(["git", "pull", "origin", "main"], capture_output=True, text=True)
+                    # Paso 2: Push de cambios locales (incluyendo el estado actual)
+                    save_audit_state()
+                    subprocess.run(["git", "add", "."], capture_output=True)
+                    subprocess.run(["git", "commit", "-m", "Sincronización automática de terminal"], capture_output=True)
+                    subprocess.run(["git", "push", "origin", "main"], capture_output=True)
+                    st.success("✅ Sincronización Exitosa.")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Error de enlace: {e}")
+
+    # Filtrado Dinámico por Rol & Gobernanza V9.6
+    ROLE_AREA_MAP = {
+        "⚖️ Jurídico": "Juridico",
+        "🏦 Alta Dirección": "Alta Direccion",
+        "📊 Calidad / SIG": "Calidad",
+        "🛡️ Ciberseguridad": "Ciberseguridad",
+        "♻️ Gestión Ambiental": "Gestion Ambiental",
+        "🎓 Gestión Académica": "Gestion Academica",
+        "👥 Talento Humano": "Talento Humano",
+        "💰 Financiera": "Financiera",
+        "⚙️ Operaciones": "Operaciones"
+    }
+
     if st.session_state['user_role'] == "Administrador (Global)":
         cartas = cartas_todas
     else:
-        role_search = st.session_state['user_role'].split(" ")[-1].strip()
-        cartas = [c for c in cartas_todas if role_search in c['area'] or st.session_state['user_role'] in c['area']]
-        if not cartas: cartas = cartas_todas
+        target_area = ROLE_AREA_MAP.get(st.session_state['user_role'], "")
+        # Filtro 1: Segmentación por Área (Búsqueda flexible)
+        cartas_base = [c for c in cartas_todas if target_area.lower() in str(c['area']).lower()]
+        if not cartas_base: cartas_base = cartas_todas
+        
+        # Filtro 2: Exclusión de documentos N/A (Justificados por Admin)
+        cartas = [c for c in cartas_base if c['doc'] not in st.session_state.get('justificados', [])]
+
     # Eliminación de redundancias de cálculo para evitar NameErrors (Corte V9.3)
 
     # --- SECCIÓN: REQUERIMIENTOS MAESTROS ---
@@ -728,6 +775,15 @@ else:
             if not fase_a_ready:
                 st.warning("⚠️ Nota: La Fase A (Identidad) aún no está completa, pero puede adelantar la carga de evidencias aquí.")
             
+            # --- MODO GOBERNANZA ADMIN V9.6 ---
+            if st.session_state['user_role'] == "Administrador (Global)":
+                st.markdown("""
+                <div style='background: rgba(0, 194, 255, 0.1); border-left: 5px solid #00C2FF; padding: 10px; margin-bottom: 20px; border-radius: 5px;'>
+                    <b style='color: #00C2FF;'>🛡️ MODO CONFIGURACIÓN ACTIVO (ADMIN)</b><br>
+                    <span style='font-size: 0.85rem;'>Usted tiene la autoridad para <b>Justificar N/A</b>. Los documentos marcados como N/A desaparecerán de la vista de los responsables.</span>
+                </div>
+                """, unsafe_allow_html=True)
+            
             # CABECERA DE CARGA CON METRICAS (V4.2)
             total_req = len(cartas)
             count_ready = len(st.session_state['expediente'])
@@ -785,15 +841,20 @@ else:
                             
                             col_act1, col_act2 = st.columns([1, 1])
                             with col_act1:
-                                # Opción de Justificación Manual (N/A) V9.0
+                                # Opción de Justificación Manual (N/A) V9.4 - RESERVADO PARA ADMIN
                                 es_justificado = doc_id in st.session_state.get('justificados', [])
-                                if st.button(f"⚖️ {'Quitar' if es_justificado else 'Justificar'} N/A", key=f"na_{idx}", use_container_width=True):
+                                if st.session_state['user_role'] == "Administrador (Global)":
+                                    if st.button(f"⚖️ {'Quitar' if es_justificado else 'Justificar'} N/A", key=f"na_{idx}", use_container_width=True):
+                                        if es_justificado:
+                                            st.session_state['justificados'].remove(doc_id)
+                                        else:
+                                            st.session_state['justificados'].append(doc_id)
+                                        save_audit_state()
+                                        st.rerun()
+                                else:
+                                    # Si es N/A pero el usuario no es admin, solo ve el status (aunque el filtro de arriba ya debería haberlo ocultado)
                                     if es_justificado:
-                                        st.session_state['justificados'].remove(doc_id)
-                                    else:
-                                        st.session_state['justificados'].append(doc_id)
-                                    save_audit_state()
-                                    st.rerun()
+                                        st.warning("⚖️ Este requisito ha sido marcado como N/A por el Administrador.")
                             
                             with col_act2:
                                 uploaded_file = st.file_uploader(f"📥 Cargar Evidencia", type=['pdf', 'docx', 'xlsx', 'csv'], key=f"up_{idx}", label_visibility="collapsed")
