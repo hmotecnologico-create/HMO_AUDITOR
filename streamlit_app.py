@@ -254,6 +254,15 @@ def setup_company_folders(company_name):
         os.makedirs(os.path.join(base_path, f), exist_ok=True)
     return base_path
 
+
+def formatear_ejemplo(doc_item, metadata):
+    """Inyecta datos reales de la empresa en el ejemplo base del documento."""
+    ejemplo = doc_item.get('ejemplo_base', 'No hay ejemplo disponible para este documento.')
+    ejemplo = ejemplo.replace("{EMPRESA}", metadata.get('company_name', 'LA EMPRESA'))
+    ejemplo = ejemplo.replace("{OBJETO}", metadata.get('empresa_objeto', 'sus actividades comerciales'))
+    ejemplo = ejemplo.replace("{AUDITOR}", metadata.get('auditor_name', 'El Auditor'))
+    return ejemplo
+
 def save_audit_state():
     if st.session_state['env'] and st.session_state.get('company_name'):
         base_dir = st.session_state['base_path']
