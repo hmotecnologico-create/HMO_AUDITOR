@@ -386,35 +386,35 @@ else:
     
     # --- CONFIGURACIÓN DE CARTAS Y PROGRESO (V3.9 PRE-RENDER) ---
     base_cartas = [
-        {"doc": "Cámara de Comercio (Existencia Legal)", "area": "⚖️ Jurídico", "ref": "Legalidad", "desc": "Certificado actualizado con objeto social y NIT."},
-        {"doc": "RUT (Registro Único Tributario)", "area": "⚖️ Jurídico", "ref": "Fiscal", "desc": "Identificación tributaria y responsabilidades."},
-        {"doc": "Acta de Compromiso Directivo", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Acuerdo de preparación, asignación de recursos y roles."},
-        {"doc": "Cronograma de Actividades de Preparación", "area": "🏦 Alta Dirección", "ref": "Planeación", "desc": "Calendario con hitos de entrega de evidencias (Inicio-Fin)."},
-        {"doc": "Misión y Visión Corporativa", "area": "🏦 Alta Dirección", "ref": "Estratégico", "desc": "Propósito y rumbo organizacional."},
-        {"doc": "Matriz de Responsables de Área", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Liderazgo nominal por procesos."},
-        {"doc": "Organigrama Funcional", "area": "🏦 Alta Dirección", "ref": "Estructura", "desc": "Jerarquía y mandos medios."}
+        {"doc": "Cámara de Comercio (Existencia Legal)", "area": "⚖️ Jurídico", "ref": "Legalidad", "desc": "Certificado actualizado con objeto social y NIT.", "justificacion": "ISO 19011:6.3.1 - Necesario para verificar la base legal y representación de la entidad auditada."},
+        {"doc": "RUT (Registro Único Tributario)", "area": "⚖️ Jurídico", "ref": "Fiscal", "desc": "Identificación tributaria y responsabilidades.", "justificacion": "Requisito legal/fiscal para la identificación de la persona jurídica según normativa nacional."},
+        {"doc": "Acta de Compromiso Directivo", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Acuerdo de preparación, asignación de recursos y roles.", "justificacion": "ISO 9001:5.1 e ISO 19011:6.2.2 - El compromiso de la dirección es vital para el éxito de la auditoría."},
+        {"doc": "Cronograma de Actividades de Preparación", "area": "🏦 Alta Dirección", "ref": "Planeación", "desc": "Calendario con hitos de entrega de evidencias (Inicio-Fin).", "justificacion": "ISO 19011:6.3.2 - Base para la planificación detallada de las actividades de auditoría de campo."},
+        {"doc": "Misión y Visión Corporativa", "area": "🏦 Alta Dirección", "ref": "Estratégico", "desc": "Propósito y rumbo organizacional.", "justificacion": "ISO 9001:4.1 - Fundamental para entender el contexto organizacional y los objetivos estratégicos."},
+        {"doc": "Matriz de Responsables de Área", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Liderazgo nominal por procesos.", "justificacion": "ISO 9001:5.3 - Define las responsabilidades y autoridades dentro de los procesos de la entidad."},
+        {"doc": "Organigrama Funcional", "area": "🏦 Alta Dirección", "ref": "Estructura", "desc": "Jerarquía y mandos medios.", "justificacion": "ISO 19011:6.3.1 - Requerido para mapear la cadena de mando y los flujos de comunicación oficiales."}
     ]
 
     if "Académico" in st.session_state['norma']:
         norm_cartas = [
-            {"doc": "PEI (Proyecto Educativo)", "area": "🎓 Gestión Académica", "ref": "Ley 115", "desc": "Columna vertebral académica."},
-            {"doc": "Registro Calificado", "area": "⚖️ Jurídico/Normativo", "ref": "Dec. 1330", "desc": "Autorización ministerial."},
-            {"doc": "Estatuto Docente", "area": "👥 Talento Humano", "ref": "Dec. 1278", "desc": "Reglamentación docente."}
+            {"doc": "PEI (Proyecto Educativo)", "area": "🎓 Gestión Académica", "ref": "Ley 115", "desc": "Columna vertebral académica.", "justificacion": "Ley 115 de 1994 - Documento maestro que define la identidad y el modelo pedagógico de la institución."},
+            {"doc": "Registro Calificado", "area": "⚖️ Jurídico/Normativo", "ref": "Dec. 1330", "desc": "Autorización ministerial.", "justificacion": "Decreto 1330 de 2019 - Habilitación legal para la oferta y desarrollo de programas académicos."},
+            {"doc": "Estatuto Docente", "area": "👥 Talento Humano", "ref": "Dec. 1278", "desc": "Reglamentación docente.", "justificacion": "Decreto 1278/2277 - Marco normativo para la gestión del personal docente y su escalafón."}
         ]
     elif "Seguridad" in st.session_state['norma']:
         norm_cartas = [
-            {"doc": "Política de Seguridad", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:5.2", "desc": "Directrices de protección."},
-            {"doc": "Análisis de Riesgos", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:6.1", "desc": "Mapa de vulnerabilidades."}
+            {"doc": "Política de Seguridad", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:5.2", "desc": "Directrices de protección.", "justificacion": "ISO 27001:5.2 - La dirección debe establecer una política de seguridad que sea apropiada."},
+            {"doc": "Análisis de Riesgos", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:6.1", "desc": "Mapa de vulnerabilidades.", "justificacion": "ISO 27001:6.1 - Base para el tratamiento planificado de los riesgos de seguridad de la información."}
         ]
     elif "Ambiental" in st.session_state['norma']:
         norm_cartas = [
-            {"doc": "Aspectos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.1.2", "desc": "Evaluación de impactos."},
-            {"doc": "Objetivos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.2", "desc": "Metas de eco-eficiencia."}
+            {"doc": "Aspectos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.1.2", "desc": "Evaluación de impactos.", "justificacion": "ISO 14001:6.1.2 - Determinación de aspectos ambientales y sus impactos asociados."},
+            {"doc": "Objetivos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.2", "desc": "Metas de eco-eficiencia.", "justificacion": "ISO 14001:6.2 - La organización debe establecer objetivos ambientales en las funciones relevantes."}
         ]
     else: # ISO 9001
         norm_cartas = [
-            {"doc": "Contexto Organizacional", "area": "📊 Calidad", "ref": "ISO 9001:4.1", "desc": "Análisis de entorno (DOFA)."},
-            {"doc": "Mapa de Procesos", "area": "⚙️ Operaciones", "ref": "ISO 9001:4.4", "desc": "Interacción de procesos."}
+            {"doc": "Contexto Organizacional", "area": "📊 Calidad", "ref": "ISO 9001:4.1", "desc": "Análisis de entorno (DOFA).", "justificacion": "ISO 9001:4.1 - Requisito fundamental para entender las cuestiones externas e internas que afectan al SGC."},
+            {"doc": "Mapa de Procesos", "area": "⚙️ Operaciones", "ref": "ISO 9001:4.4", "desc": "Interacción de procesos.", "justificacion": "ISO 9001:4.4 - Exigido para demostrar el enfoque basado en procesos y su interacción."}
         ]
     
     cartas_todas = base_cartas + norm_cartas
@@ -684,6 +684,7 @@ else:
                             st.write(f"**{'✅' if es_completado else '⏳'} {doc_id}**")
                             
                             if not es_completado:
+                                st.markdown(f"**📌 Justificación:** *{c.get('justificacion', 'Requisito normativo estándar.')}*")
                                 st.caption(f"Ref: {c['ref']} | {c['desc']}")
                                 uploaded_file = st.file_uploader(f"📥 {doc_id}: Cargue aquí el documento oficial (.pdf, .docx, .xlsx, .csv)", type=['pdf', 'docx', 'xlsx', 'csv'], key=f"up_{idx}")
                                 if uploaded_file:
