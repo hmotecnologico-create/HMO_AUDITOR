@@ -426,15 +426,42 @@ else:
         ]
     
     cartas_todas = base_cartas + norm_cartas
-    total_total = len(cartas_todas)
-    # --- MOTOR DE CÁLCULO UNIFICADO V4.5 ---
-    count_exp = len(st.session_state['expediente'])
-    fase_a_ready = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
-    fase_b_ready = st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)" or st.session_state['env'] == "Simulacion"
     
-    pct_fase_a = 100 if fase_a_ready else 0
-    pct_fase_b = 100 if fase_b_ready else 0
-    pct_fase_c = int((count_exp / total_total) * 100) if total_total > 0 else 0
+    # --- LOGICA DE PROPORCIONALIDAD V9.0 (LEAN AUDIT) ---
+    # Una empresa es 'Startup/Micro' si tiene <=10 empleados (independientemente del label de tamaño)
+    es_startup = st.session_state['empresa_personal'] <= 10
+    
+    # Clasificación de Documentos
+    docs_vitales = [
+        "Camara de Comercio (Existencia Legal)", "RUT (Registro Unico Tributario)", 
+        "Acta de Compromiso Directivo", "Mision y Vision Corporativa", 
+        "Contexto Organizacional", "Mapa de Procesos", "Politica de Seguridad", 
+        "PEI (Proyecto Educativo)", "Aspectos Ambientales"
+    ]
+    
+    for c in cartas_todas:
+        if c['doc'] in docs_vitales:
+            c['prioridad'] = "VITAL (Obligatorio)"
+        else:
+            c['prioridad'] = "SOPORTE (Recomendado)" if not es_startup else "LEAN (Opcional)"
+
+    total_total = len(cartas_todas)
+    # --- MOTOR DE CÁLCULO UNIFICADO V9.0 (JUSTIFICACIONES N/A) ---
+    if 'justificados' not in st.session_state: st.session_state['justificados'] = []
+    
+    docs_en_expediente = list(st.session_state['expediente'].keys())
+    docs_validados = list(set(docs_en_expediente + st.session_state['justificados']))
+    
+    count_exp = len([d for d in docs_validados if any(c['doc'] == d for c in cartas_todas)])
+    
+    # En modo Startup, solo los vitales cuentan para el progreso del 100% de la fase
+    if es_startup:
+        vitales_en_cartas = [c for c in cartas_todas if c['prioridad'] == "VITAL (Obligatorio)"]
+        total_a_evaluar = len(vitales_en_cartas) if vitales_en_cartas else 1
+        cargados_vitales = len([d for d in docs_validados if any(c['doc'] == d and c['prioridad'] == "VITAL (Obligatorio)" for c in cartas_todas)])
+        pct_fase_c = int((cargados_vitales / total_a_evaluar) * 100)
+    else:
+        pct_fase_c = int((count_exp / total_total) * 100) if total_total > 0 else 0
     pct_total = int((pct_fase_a + pct_fase_b + pct_fase_c) / 3)
 
     # Variables de compatibilidad para evitar discrepancias
@@ -613,8 +640,13 @@ else:
             for i, c in enumerate(cartas):
                 doc_name = c['doc']
                 cargado = doc_name in st.session_state['expediente']
-                estado = "✅" if cargado else "⏳"
-                prefijo = "💎" if i < len(base_cartas) else "📜"
+                justificado = doc_name in st.session_state['justificados']
+                
+                if cargado: estado = "✅"
+                elif justificado: estado = "⚖️"
+                else: estado = "⏳"
+                
+                prefijo = "💎" if c.get('prioridad') == "VITAL (Obligatorio)" else "📜"
                 st.write(f"{estado} {prefijo} **{doc_name}**")
             st.markdown("</div>", unsafe_allow_html=True)
 
@@ -627,9 +659,9 @@ else:
         st.progress(progreso_total)
         
         col_st1, col_st2, col_st3 = st.columns(3)
-        col_st1.markdown(f"**Fase A:** {'✅' if fase_a_ready else '⏳'}")
-        col_st2.markdown(f"**Fase B:** {'✅' if fase_b_ready else '⏳'}")
-        col_st3.markdown(f"**Fase C:** {pct_fase_c}%")
+        col_st1.markdown(f"**Fase A (Identidad):** {pct_fase_a}%")
+        col_st2.markdown(f"**Fase B (Dimension):** {pct_fase_b}%")
+        col_st3.markdown(f"**Fase C (Revision):** {pct_fase_c}%")
         st.divider()
 
         tab_a, tab_b, tab_c, tab_final = st.tabs(["🔒 Fase A: Identidad", "📊 Fase B: Dimensión", "⚖️ 6.3.1 Revisión Documental", "🏁 Preparación Actividades"])
@@ -663,12 +695,10 @@ else:
             st.session_state['rep_id'] = c1.text_input("* 🆔 Documento de Identidad (Representante):", value=st.session_state['rep_id'], placeholder="Cédula o ID Legal")
             
             if st.button("💾 REGISTRAR IDENTIDAD"):
-                if pct_a < 100:
-                    st.error("🔒 No puede registrar sin completar los campos obligatorios (*).")
-                else:
-                    save_audit_state()
-                    st.success("✅ Identidad Registrada.")
-                    st.rerun()
+                save_audit_state()
+                st.success("✅ Identidad Registrada.")
+                st.rerun()
+                # El bloqueo prohibitivo ha sido retirado por solicitud V9.1 (Rigor Consultivo)
 
         # --- FASE B: DIMENSIONAMIENTO ---
         with tab_b:
@@ -720,10 +750,11 @@ else:
 
         # --- FASE C: CUERPO NORMATIVO ---
         with tab_c:
+            # BLOQUEO RETIRADO V9.1 - Acceso libre para carga de evidencias
             if not fase_a_ready:
-                st.error("🔒 El Cuerpo Normativo está bloqueado. Complete primero la Fase A: Identidad.")
-            else:
-                # CABECERA DE CARGA CON METRICAS (V4.2)
+                st.warning("⚠️ Nota: La Fase A (Identidad) aún no está completa, pero puede adelantar la carga de evidencias aquí.")
+            
+            # CABECERA DE CARGA CON METRICAS (V4.2)
                 total_req = len(cartas)
                 count_ready = len(st.session_state['expediente'])
                 doc_list_missing = [c['doc'] for c in cartas if c['doc'] not in st.session_state['expediente']]
@@ -740,13 +771,21 @@ else:
                     
                     st.metric("📦 Materia Prima Inyectada", f"{pct_fase_c}%", f"{count_ready}/{total_total} Listos")
                 
-                # VISIBILIDAD DE FALTANTES - POSICIÓN PRIORITARIA (V8.5)
+                # VISIBILIDAD DE FALTANTES - PROPORCIONALIDAD V9.0
                 if doc_list_missing:
+                    # Dividir en Críticos y Recomendados
+                    criticos = [d for d in doc_list_missing if any(c['doc'] == d and c['prioridad'] == "VITAL (Obligatorio)" for c in cartas)]
+                    recomendados = [d for d in doc_list_missing if d not in criticos]
+                    
                     with st.expander("PENDIENTES DE CARGA (Haga clic para ver)", expanded=True):
-                        st.info(f"Faltan {len(doc_list_missing)} documentos para completar el expediente.")
-                        cols_m = st.columns(3)
-                        for i, m_doc in enumerate(doc_list_missing):
-                            cols_m[i % 3].write(f"- {m_doc}")
+                        if criticos:
+                            st.error(f"⚠️ **BLOQUEANTES VITALES ({len(criticos)}):**")
+                            st.write(", ".join(criticos))
+                        if recomendados:
+                            st.info(f"💡 **RECOMENDADOS/LEAN ({len(recomendados)}):**")
+                            st.write(", ".join(recomendados))
+                            if es_startup:
+                                st.caption("Nota: Por ser una empresa pequeña, estos documentos son opcionales para avanzar.")
                 else:
                     st.success("✅ ¡Expediente Completo! Puede proceder a la Emision de Formatos.")
                 
@@ -768,8 +807,22 @@ else:
                             
                             if not es_completado:
                                 st.markdown(f"**📌 Justificación:** *{c.get('justificacion', 'Requisito normativo estándar.')}*")
-                                st.caption(f"Ref: {c['ref']} | {c['desc']}")
-                                uploaded_file = st.file_uploader(f"📥 {doc_id}: Cargue aquí el documento oficial (.pdf, .docx, .xlsx, .csv)", type=['pdf', 'docx', 'xlsx', 'csv'], key=f"up_{idx}")
+                                st.caption(f"Ref: {c['ref']} | {c['desc']} | Prioridad: {c.get('prioridad', 'Estándar')}")
+                                
+                                col_act1, col_act2 = st.columns([1, 1])
+                                with col_act1:
+                                    # Opción de Justificación Manual (N/A) V9.0
+                                    es_justificado = doc_id in st.session_state.get('justificados', [])
+                                    if st.button(f"⚖️ {'Quitar' if es_justificado else 'Justificar'} N/A", key=f"na_{idx}", use_container_width=True):
+                                        if es_justificado:
+                                            st.session_state['justificados'].remove(doc_id)
+                                        else:
+                                            st.session_state['justificados'].append(doc_id)
+                                        save_audit_state()
+                                        st.rerun()
+                                
+                                with col_act2:
+                                    uploaded_file = st.file_uploader(f"📥 Cargar Evidencia", type=['pdf', 'docx', 'xlsx', 'csv'], key=f"up_{idx}", label_visibility="collapsed")
                                 if uploaded_file:
                                     st.info(f"🧿 Motor de Reconocimiento Cognitivo V8.0...")
                                     st.write("---")
