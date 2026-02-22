@@ -406,18 +406,30 @@ else:
     if "Académico" in str(normas_activas):
         norm_cartas += [
             {"doc": "PEI (Proyecto Educativo)", "area": "Gestion Academica", "ref": "Ley 115", "desc": "Columna vertebral academica.", "justificacion": "Ley 115 de 1994 - Documento maestro que define la identidad y el modelo pedagogico de la institucion.", "instrucciones": "Recopile el documento PEI vigente del consejo directivo. Debe incluir el Horizonte Institucional y el Plan de Estudios."},
-            {"doc": "Registro Calificado", "area": "Juridico/Normativo", "ref": "Dec. 1330", "desc": "Autorizacion ministerial.", "justificacion": "Decreto 1330 de 2019 - Habilitacion legal para la oferta y desarrollo de programas academicos.", "instrucciones": "Adjunte la resolucion ministerial vigente que autoriza el programa."},
-            {"doc": "Estatuto Docente", "area": "Talento Humano", "ref": "Dec. 1278", "desc": "Reglamentacion docente.", "justificacion": "Decreto 1278/2277 - Marco normativo para la gestion del personal docente y su escalafon.", "instrucciones": "Extraiga el reglamento de escalafon y deberes docentes aprobado por la institucion."}
+            {"doc": "Registro Calificado", "area": "Juridico", "ref": "Dec. 1330", "desc": "Autorizacion ministerial.", "justificacion": "Decreto 1330 de 2019 - Habilitacion legal para la oferta y desarrollo de programas academicos.", "instrucciones": "Adjunte la resolucion ministerial vigente que autoriza el programa."},
+            {"doc": "Estatuto Docente", "area": "Talento Humano", "ref": "Dec. 1278", "desc": "Reglamentacion docente.", "justificacion": "Decreto 1278/2277 - Marco normativo para la gestion del personal docente y su escalafon.", "instrucciones": "Extraiga el reglamento de escalafon y deberes docentes aprobado por la institucion."},
+            {"doc": "Manual de Convivencia", "area": "Gestion Academica", "ref": "Ley 115", "desc": "Acuerdos preventivos y correctivos.", "justificacion": "ISO 9001:S3 - Define las normas de interaccion y justicia escolar.", "instrucciones": "Manual vigente aprobado por el Consejo Directivo con fecha de actualizacion."},
+            {"doc": "Plan de Estudios por Competencias", "area": "Gestion Academica", "ref": "Dec. 1330", "desc": "Disenio curricular.", "justificacion": "Aseguramiento de la Calidad Academica s/ Dec. 1330.", "instrucciones": "Documento que detalle las competencias, contenidos y criterios de evaluacion."},
+            {"doc": "Informe de Autoevaluacion Institucional", "area": "Alta Direccion", "ref": "Calidad Academica", "desc": "Corte de madurez educativa.", "justificacion": "Requisito para renovacion de registros calificados.", "instrucciones": "Informe final del proceso de autoevaluacion con sustento en indicadores."},
+            {"doc": "Plan de Mejoramiento Institucional (PMI)", "area": "Calidad", "ref": "Estrategico", "desc": "Acciones de mejora continua.", "justificacion": "ISO 9001:10.3 - Asegura la evolucion constante de la institucion.", "instrucciones": "Plan de accion con presupuesto, responsables y cronograma de cumplimiento."}
         ]
     if "Seguridad" in str(normas_activas):
         norm_cartas += [
             {"doc": "Politica de Seguridad", "area": "Ciberseguridad", "ref": "ISO 27001:5.2", "desc": "Directrices de proteccion.", "justificacion": "ISO 27001:5.2 - La direccion debe establecer una politica de seguridad que sea apropiada.", "instrucciones": "Redacte la directriz de seguridad donde la gerencia se compromete con la proteccion de datos."},
-            {"doc": "Analisis de Riesgos", "area": "Ciberseguridad", "ref": "ISO 27001:6.1", "desc": "Mapa de vulnerabilidades.", "justificacion": "ISO 27001:6.1 - Base para el tratamiento planificado de los riesgos de seguridad de la informacion.", "instrucciones": "Realice un levantamiento de activos de informacion y califique su probabilidad e impacto."}
+            {"doc": "Analisis de Riesgos", "area": "Ciberseguridad", "ref": "ISO 27001:6.1", "desc": "Mapa de vulnerabilidades.", "justificacion": "ISO 27001:6.1 - Base para el tratamiento planificado de los riesgos de seguridad de la informacion.", "instrucciones": "Realice un levantamiento de activos de informacion y califique su probabilidad e impacto."},
+            {"doc": "Declaracion de Aplicabilidad (SoA)", "area": "Ciberseguridad", "ref": "ISO 27001:6.1.3", "desc": "Inventario de controles aplicables.", "justificacion": "ISO 27001:6.1.3 d) - Documento obligatorio que resume los controles de seguridad seleccionados.", "instrucciones": "Listado de los 93 controles del Anexo A con justificacion de inclusion o exclusion."},
+            {"doc": "Inventario de Activos de Informacion", "area": "Ciberseguridad", "ref": "ISO 27001:A.5.9", "desc": "Activos criticos de la entidad.", "justificacion": "ISO 27001:A.5.9 - Los activos asociados con informacion deben ser identificados.", "instrucciones": "Matriz con activos (HW, SW, Datos), propietario y clasificacion de criticidad."},
+            {"doc": "Plan de Continuidad de Negocio (BCP)", "area": "Operaciones", "ref": "ISO 27001:A.5.30", "desc": "Capacidad de recuperacion.", "justificacion": "ISO 27001:A.5.30 - Asegura la disponibilidad de la informacion ante incidentes graves.", "instrucciones": "Procedimiento de recuperacion ante desastres y analisis de impacto."},
+            {"doc": "Politica de Control de Acceso", "area": "Ciberseguridad", "ref": "ISO 27001:A.8.1", "desc": "Restriccion de privilegios.", "justificacion": "ISO 27001:A.8.1 - Reglas y derechos de acceso al sistema.", "instrucciones": "Documento que define como se otorgan y revocan permisos de usuario."}
         ]
     if "Ambiental" in str(normas_activas):
         norm_cartas += [
             {"doc": "Aspectos Ambientales", "area": "Gestion Ambiental", "ref": "ISO 14001:6.1.2", "desc": "Evaluacion de impactos.", "justificacion": "ISO 14001:6.1.2 - Determinacion de aspectos ambientales y sus impactos asociados.", "instrucciones": "Documente como sus actividades (residuos, ruido, agua) afectan el entorno."},
-            {"doc": "Objetivos Ambientales", "area": "Gestion Ambiental", "ref": "ISO 14001:6.2", "desc": "Metas de eco-eficiencia.", "justificacion": "ISO 14001:6.2 - La organizacion debe establecer objetivos ambientales en las funciones relevantes.", "instrucciones": "Defina metas medibles (ej. reduccion de papel al 20%) para el año en curso."}
+            {"doc": "Objetivos Ambientales", "area": "Gestion Ambiental", "ref": "ISO 14001:6.2", "desc": "Metas de eco-eficiencia.", "justificacion": "ISO 14001:6.2 - La organizacion debe establecer objetivos ambientales en las funciones relevantes.", "instrucciones": "Defina metas medibles (ej. reduccion de papel al 20%) para el año en curso."},
+            {"doc": "Matriz de Requisitos Legales Ambientales", "area": "Juridico", "ref": "ISO 14001:6.1.3", "desc": "Cumplimiento normativo verde.", "justificacion": "ISO 14001:6.1.3 - Identificacion de obligaciones de cumplimiento ambiental.", "instrucciones": "Cuadro con leyes, decretos y resoluciones ambientales vigentes aplicables."},
+            {"doc": "Plan de Gestion de Residuos Solidos (PGIRS)", "area": "Gestion Ambiental", "ref": "Ley Ambiental", "desc": "Manejo de residuos.", "justificacion": "ISO 14001:8.1 - Control operacional del proceso de residuos.", "instrucciones": "Manual de separacion en la fuente y disposicion final de residuos."},
+            {"doc": "Programa de Uso Eficiente de Agua y Energia", "area": "Operaciones", "ref": "Sostenibilidad", "desc": "Ahorro de recursos.", "justificacion": "ISO 14001:8.1 - Gestion del consumo de recursos naturales.", "instrucciones": "Plan de reduccion de consumos con indicadores mensuales."},
+            {"doc": "Plan de Respuesta a Emergencias Ambientales", "area": "Operaciones", "ref": "ISO 14001:8.2", "desc": "Mitigacion de derrames.", "justificacion": "ISO 14001:8.2 - Preparacion y respuesta ante emergencias.", "instrucciones": "Procedimiento de actuacion ante posibles accidentes ambientales."}
         ]
     if "Calidad" in str(normas_activas):
         norm_cartas += [
@@ -431,12 +443,14 @@ else:
     # Una empresa es 'Startup/Micro' si tiene <=10 empleados (independientemente del label de tamaño)
     es_startup = st.session_state['empresa_personal'] <= 10
     
-    # Clasificación de Documentos
+    # Clasificación de Documentos Vitales (Soportan el 100% en modo Lean)
     docs_vitales = [
         "Camara de Comercio (Existencia Legal)", "RUT (Registro Unico Tributario)", 
         "Acta de Compromiso Directivo", "Mision y Vision Corporativa", 
         "Contexto Organizacional", "Mapa de Procesos", "Politica de Seguridad", 
-        "PEI (Proyecto Educativo)", "Aspectos Ambientales"
+        "PEI (Proyecto Educativo)", "Aspectos Ambientales",
+        "Declaracion de Aplicabilidad (SoA)", "Matriz de Requisitos Legales Ambientales",
+        "Manual de Convivencia", "Informe de Autoevaluacion Institucional"
     ]
     
     for c in cartas_todas:
