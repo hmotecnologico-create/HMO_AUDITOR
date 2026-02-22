@@ -73,6 +73,36 @@ st.markdown("""
         box-shadow: 0 0 40px rgba(0, 194, 255, 0.25) !important; 
     }
 
+    /* MINI DOC CARD (V19.5 ELITE TECH) */
+    .doc-card-mini {
+        background: rgba(15, 23, 42, 0.4) !important;
+        backdrop-filter: blur(12px) saturate(180%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 14px !important;
+        padding: 0.7rem !important;
+        margin-bottom: 0.5rem !important;
+        height: 155px !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+        transition: all 0.3s ease;
+    }
+    .doc-card-mini:hover { 
+        background: rgba(15, 23, 42, 0.6) !important;
+        border-color: rgba(0, 194, 255, 0.5) !important;
+        transform: translateY(-2px);
+    }
+    
+    .status-badge {
+        font-size: 0.55rem;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 2px 6px;
+        border-radius: 5px;
+        text-transform: uppercase;
+        color: #94A3B8;
+    }
+
     /* TEXTO HI-FI (LEGIBILIDAD EXTREMA) */
     .stApp, .stApp p, .stApp li {
         color: #E2E8F0 !important;
@@ -1386,68 +1416,70 @@ else:
                 st.rerun()
 
         elif f == 'C':
-            st.markdown("##### ⚖️ Revisión Documental (HITL)")
-            st.caption("Validación cognitiva de evidencias prioritarias para el cumplimiento normativo.")
+            st.markdown("##### ⚖️ Revisión Documental (ULTRA-DENSE V19.5)")
             
-            # Resumen de Fase C
+            # Resumen Compacto
             docs_cargados = len(st.session_state['expediente'])
             st.markdown(f"""
-            <div style='background:rgba(0,194,255,0.05); border:1px solid rgba(0,194,255,0.1); border-radius:10px; padding:0.8rem; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;'>
-                <span><b>Progreso de Revisión:</b> {pct_fase_c}% ({docs_cargados} de {total_total} docs)</span>
-                <div style='width:200px; background:rgba(255,255,255,0.05); border-radius:10px; height:8px;'>
-                    <div style='width:{pct_fase_c}%; background:#00C2FF; border-radius:10px; height:8px;'></div>
+            <div style='background:rgba(0,194,255,0.03); border-radius:8px; padding:0.4rem 1rem; margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center;'>
+                <span style='font-size:0.75rem;'><b>Avance:</b> {pct_fase_c}% ({docs_cargados}/{total_total})</span>
+                <div style='width:50%; background:rgba(255,255,255,0.05); border-radius:10px; height:6px;'>
+                    <div style='width:{pct_fase_c}%; background:#00C2FF; border-radius:10px; height:6px;'></div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
 
-            # Malla de Documentos (Grid Elite)
-            cols = st.columns(3)
+            # Malla de Documentos 4 Columnas (Estilo Mockup)
+            cols = st.columns(4)
             for i, doc in enumerate(cartas_todas):
-                with cols[i % 3]:
+                with cols[i % 4]:
                     doc_ready = doc['doc'] in st.session_state['expediente']
                     is_vital = doc.get('prioridad') == "VITAL (Obligatorio)"
                     
+                    status_icon = "✅" if doc_ready else ("⏳" if is_vital else "📁")
+                    status_color = "#10B981" if doc_ready else ("#00C2FF" if is_vital else "#475569")
+                    
+                    # Carcasa de Tarjeta (V19.5 Elite Tech Style)
                     st.markdown(f"""
-                    <div class='elite-card' style='border-top: 3px solid {"#10B981" if doc_ready else ("#00C2FF" if is_vital else "#475569")}; padding: 0.8rem;'>
-                        <div style='display:flex; justify-content:space-between; align-items:start;'>
-                            <span style='font-size:0.7rem; font-weight:700; color:{"#10B981" if doc_ready else "#94A3B8"};'>
-                                {"✅ CARGADO" if doc_ready else "⏳ PENDIENTE"}
-                            </span>
-                            <span style='font-size:0.6rem; background:rgba(255,255,255,0.05); padding:2px 5px; border-radius:4px;'>
-                                {doc.get('area','SIG')}
-                            </span>
+                    <div class="doc-card-mini" style="border-left: 4px solid {status_color};">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+                            <span style="font-size:1.1rem; filter: drop-shadow(0 0 5px {status_color}80);">{status_icon}</span>
+                            <span class="status-badge">{doc.get('area','SIG')[:12]}</span>
                         </div>
-                        <p style='font-size:0.85rem; font-weight:700; margin:0.5rem 0 0.2rem;'>{doc['doc'][:35]}...</p>
-                        <p style='font-size:0.65rem; color:#64748B; margin-bottom:1rem;'>{doc['desc'][:60]}...</p>
+                        <p style="font-size:0.8rem; font-weight:700; color:#FFFFFF; margin:0; line-height:1.2; height: 2.4rem; overflow:hidden;">{doc['doc']}</p>
+                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin: 0.5rem 0;">
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # Acciones fuera del HTML (Streamlit Native)
-                    with st.expander("Gestionar", expanded=False):
-                        if not doc_ready:
-                            _f = st.file_uploader("Subir", key=f"up_v18_{i}", label_visibility="collapsed")
+                    # Botonera de Acción Flotante
+                    st.markdown("<div style='margin-top:-3.8rem; padding: 0 0.5rem;'>", unsafe_allow_html=True)
+                    ca1, ca2, ca3 = st.columns(3)
+                    
+                    if not doc_ready:
+                        with ca1:
+                            _f = st.file_uploader("📥", key=f"up_v19_{i}", label_visibility="collapsed")
                             if _f:
                                 st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
                                 save_audit_state(); st.rerun()
-                            if st.button("🤖 Generar IA", key=f"ia_v18_{i}", use_container_width=True):
+                        with ca2:
+                            if st.button("🤖", key=f"ia_v19_{i}", help="Draft IA", use_container_width=True):
                                 ui_generar_borrador_ia(doc['doc'], doc['area'], doc.get('justificacion',''))
-                            
-                            # NUEVO BOTÓN: DESCARGAR PLANTILLA (V19.1)
+                        with ca3:
                             ejemplo = formatear_ejemplo(doc, st.session_state)
-                            if st.button("📄 Descargar Plantilla", key=f"tpl_v18_{i}", use_container_width=True, type="secondary"):
-                                with st.spinner("Generando plantilla profesional..."):
+                            if st.button("📄", key=f"tpl_v19_{i}", help="Template", use_container_width=True):
+                                with st.spinner("..."):
                                     path_tpl = generate_document_template_pdf(
-                                        doc['doc'], doc.get('instrucciones','Completar segun norma.'), 
-                                        st.session_state['base_path'], company, st.session_state['norma'], 
-                                        ejemplo_base=ejemplo
+                                        doc['doc'], doc.get('instrucciones','Completar.'), 
+                                        st.session_state['base_path'], company, st.session_state['norma'], ejemplo_base=ejemplo
                                     )
                                     with open(path_tpl, "rb") as f:
-                                        st.download_button("📂 Bajar Plantilla", f, file_name=os.path.basename(path_tpl), use_container_width=True)
-                        else:
-                            st.success("Documento activo")
-                            if st.button("🗑️ Eliminar", key=f"del_v18_{i}", type="secondary"):
+                                        st.download_button("💾", f, file_name=os.path.basename(path_tpl), key=f"dl_v19_{i}", use_container_width=True)
+                    else:
+                        with ca2:
+                            if st.button("🗑️", key=f"del_v19_{i}", help="Eliminar", use_container_width=True):
                                 del st.session_state['expediente'][doc['doc']]
                                 save_audit_state(); st.rerun()
+                    st.markdown("</div><br>", unsafe_allow_html=True)
 
         elif f == 'FINAL':
             st.markdown("##### 🏁 Cierre de Ingesta & Validación de Suficiencia")
@@ -1594,22 +1626,43 @@ else:
         
         c_p1, c_p2 = st.columns([2, 1])
         with c_p1:
-            st.write("### Mis Pendientes de Entrega")
+        # Malla para Colaborador (V19.5 Unificada)
+        st.write("### Mis Pendientes de Entrega")
+        if not mis_docs:
+            st.info("No tienes requerimientos pendientes para tu área.")
+        else:
+            cols_colab = st.columns(4)
             for i, d in enumerate(mis_docs):
-                doc_ready = d['doc'] in st.session_state['expediente']
-                with st.expander(f"{'✅' if doc_ready else '⏳'} {d['doc']}"):
-                    st.markdown(f"**Requisito:** {d['justificacion']}")
-                    st.caption(f"💡 {d['instrucciones']}")
+                with cols_colab[i % 4]:
+                    doc_ready = d['doc'] in st.session_state['expediente']
+                    status_icon = "✅" if doc_ready else "⏳"
+                    status_color = "#10B981" if doc_ready else "#00C2FF"
                     
+                    st.markdown(f"""
+                    <div class="doc-card-mini" style="border-left: 4px solid {status_color};">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+                            <span style="font-size:1.1rem; filter: drop-shadow(0 0 5px {status_color}80);">{status_icon}</span>
+                            <span class="status-badge">VITAL</span>
+                        </div>
+                        <p style="font-size:0.8rem; font-weight:700; color:#FFFFFF; margin:0; line-height:1.2; height: 2.4rem; overflow:hidden;">{d['doc']}</p>
+                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin: 0.5rem 0;">
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    st.markdown("<div style='margin-top:-3.8rem; padding: 0 0.5rem;'>", unsafe_allow_html=True)
+                    ca1, ca2 = st.columns(2)
                     if not doc_ready:
-                        ui_generar_borrador_ia(d['doc'], d['area'], d['justificacion'])
-                        st.divider()
-                        _f = st.file_uploader(f"Subir Evidencia Personalizada", key=f"up_resp_{i}")
-                        if _f:
-                            st.session_state['expediente'][d['doc']] = {"validado": True, "hitl": True}
-                            save_audit_state(); st.rerun()
+                        with ca1:
+                            _f = st.file_uploader("📥", key=f"up_colab_{i}", label_visibility="collapsed")
+                            if _f:
+                                st.session_state['expediente'][d['doc']] = {"validado": True, "hitl": True}
+                                save_audit_state(); st.rerun()
+                        with ca2:
+                            if st.button("🤖", key=f"ia_colab_{i}", help="Draft IA", use_container_width=True):
+                                ui_generar_borrador_ia(d['doc'], d['area'], d['justificacion'])
                     else:
-                        st.success("Documento cargado correctamente.")
+                        st.markdown("<p style='font-size:0.6rem; color:#10B981; text-align:center;'>LISTO</p>", unsafe_allow_html=True)
+                    st.markdown("</div><br>", unsafe_allow_html=True)
         
         with c_p2:
             st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
