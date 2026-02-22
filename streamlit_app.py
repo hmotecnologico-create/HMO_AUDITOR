@@ -391,9 +391,17 @@ else:
         {"doc": "RUT (Registro Unico Tributario)", "area": "Juridico", "ref": "Fiscal", "norma": "SIG", "desc": "Identificacion tributaria y responsabilidades.", "justificacion": "Requisito legal/fiscal para la identificacion de la persona juridica segun normativa nacional.", "instrucciones": "Descargue el PDF actualizado desde el portal de la DIAN."},
         {"doc": "Acta de Compromiso Directivo", "area": "Alta Direccion", "ref": "Gobierno", "norma": "SIG", "desc": "Acuerdo de preparacion, asignacion de recursos y roles.", "justificacion": "ISO 9001:5.1 e ISO 19011:6.2.2 - El compromiso de la direccion es vital para el exito de la auditoria.", "instrucciones": "Redacte un acta simple firmada por la gerencia donde se declare la voluntad de realizar la auditoria interna y se designen los responsables por area."},
         {"doc": "Cronograma de Actividades de Preparacion", "area": "Alta Direccion", "ref": "Planeacion", "norma": "SIG", "desc": "Calendario con hitos de entrega de evidencias (Inicio-Fin).", "justificacion": "ISO 19011:6.3.2 - Base para la planificacion detallada de las actividades de auditoria de campo.", "instrucciones": "Diseñe un calendario (Excel o Gantt) que muestre las fechas limite en las que cada oficina debe entregar su documentacion al auditor."},
-        {"doc": "Mision y Vision Corporativa", "area": "Alta Direccion", "ref": "Estrategico", "norma": "SIG", "desc": "Proposito y rumbo organizacional.", "justificacion": "ISO 9001:4.1 - Fundamental para entender el contexto organizacional y los objetivos estrategicos.", "instrucciones": "Extraiga los textos oficiales del manual estrategico o la pagina web de la empresa y plasmelos en un documento PDF o Word con membrete oficial."},
-        {"doc": "Matriz de Responsables de Area", "area": "Alta Direccion", "ref": "Gobierno", "norma": "SIG", "desc": "Liderazgo nominal por procesos.", "justificacion": "ISO 9001:5.3 - Define las responsabilidades y autoridades dentro de los procesos de la entidad.", "instrucciones": "Cree un cuadro que relacione cada proceso con su responsable (Cargo y Nombre completo)."},
-        {"doc": "Organigrama Funcional", "area": "Alta Direccion", "ref": "Estructura", "norma": "SIG", "desc": "Jerarquia y mandos medios.", "justificacion": "ISO 19011:6.3.1 - Requerido para mapear la cadena de mando y los flujos de comunicacion oficiales.", "instrucciones": "Utilice herramientas como Visio o PowerPoint para diagramar la estructura jerarquica actual de la empresa, desde la gerencia hasta los cargos operativos."},
+        {"doc": "Mision y Vision Corporativa", "area": "Alta Direccion", "ref": "Estrategico", "norma": "SIG", "desc": "Proposito y rumbo organizacional.", "justificacion": "ISO 9001:4.1 - Fundamental para entender el contexto organizacional y los objetivos estrategicos.", 
+         "instrucciones": "Extraiga los textos oficiales del manual estrategico o la pagina web de la empresa.",
+         "como_crear": "1. Reúna al comité directivo.\n2. Defina el 'Para qué existimos' (Misión).\n3. Defina el 'Hacia dónde vamos' (Visión).\n4. Plásmelo en un documento Word con membrete oficial.",
+         "ejemplo_base": "MISIÓN: En {EMPRESA}, nos dedicamos a {OBJETO} con los más altos estándares de calidad.\nVISIÓN: Para el 2030, seremos líderes regionales en el sector..."},
+        {"doc": "Matriz de Responsables de Area", "area": "Alta Direccion", "ref": "Gobierno", "norma": "SIG", "desc": "Liderazgo nominal por procesos.", "justificacion": "ISO 9001:5.3 - Define las responsabilidades y autoridades dentro de los procesos de la entidad.", 
+         "instrucciones": "Cree un cuadro que relacione cada proceso con su responsable.",
+         "como_crear": "1. Identifique los procesos del mapa.\n2. Asigne un líder nominal.\n3. Defina su rol principal en el SGC.\n4. Genere una tabla en Excel o Word.",
+         "ejemplo_base": "PROCESO: Compras | LÍDER: Juan Pérez | ROL: Asegurar el suministro de insumos para {EMPRESA}."},
+        {"doc": "Organigrama Funcional", "area": "Alta Direccion", "ref": "Estructura", "norma": "SIG", "desc": "Jerarquia y mandos medios.", "justificacion": "ISO 19011:6.3.1 - Requerido para mapear la cadena de mando.", 
+         "como_crear": "1. Dibuje los niveles jerárquicos.\n2. Use herramientas como Visio o LucidChart.\n3. Asegúrese de que el SIG/Calidad reporte directamente a la gerencia.\n4. Guarde como PDF.",
+         "ejemplo_base": "[Gerencia General] -> [Dirección de Operaciones] -> [Equipo de {EMPRESA}]"},
         # EXPANSION V8.9
         {"doc": "Estados Financieros (Ultimo Trimestre)", "area": "Financiera", "ref": "Sostenibilidad", "norma": "CALIDAD", "desc": "Balance y P&G actualizado.", "justificacion": "ISO 9001:7.1.1 - Asegura que la organizacion cuenta con los recursos necesarios para el SGC.", "instrucciones": "Solicite al area contable el balance general y estado de resultados firmado por el contador."},
         {"doc": "Manual de Funciones y Perfiles", "area": "Talento Humano", "ref": "Competencia", "norma": "CALIDAD", "desc": "Responsabilidades por cargo.", "justificacion": "ISO 9001:7.2 - Base para evaluar la competencia del personal.", "instrucciones": "Adjunte el documento institucional que define los perfiles de cargo de la entidad."},
@@ -415,18 +423,28 @@ else:
         ]
     if "Seguridad" in str(normas_activas):
         norm_cartas += [
-            {"doc": "Politica de Seguridad", "area": "Ciberseguridad", "ref": "ISO 27001:5.2", "norma": "SEGURIDAD", "desc": "Directrices de proteccion.", "justificacion": "ISO 27001:5.2 - La direccion debe establecer una politica de seguridad que sea apropiada.", "instrucciones": "Contenido: 1. Objetivo, 2. Alcance, 3. Principios (CID: Confidencialidad, Integridad, Disponibilidad), 4. Compromiso Gerencial. Tip: Debe ser clara y estar comunicada a toda la empresa."},
-            {"doc": "Analisis de Riesgos", "area": "Ciberseguridad", "ref": "ISO 27001:6.1", "norma": "SEGURIDAD", "desc": "Mapa de vulnerabilidades.", "justificacion": "ISO 27001:6.1 - Base para el tratamiento planificado de los riesgos de seguridad de la informacion.", "instrucciones": "Metodología: 1. Identificación de Activos, 2. Amenazas y Vulnerabilidades, 3. Valoración del Riesgo (P x I), 4. Plan de Tratamiento. Tip: Use escalas de 1 a 5."},
-            {"doc": "Declaracion de Aplicabilidad (SoA)", "area": "Ciberseguridad", "ref": "ISO 27001:6.1.3", "norma": "SEGURIDAD", "desc": "Inventario de controles aplicables.", "justificacion": "ISO 27001:6.1.3 d) - Documento obligatorio que resume los controles de seguridad seleccionados.", "instrucciones": "Estructura: 1. Lista de los 93 controles ISO 27001:2022, 2. Justificación (Aplica/No Aplica), 3. Estado de implementación. Tip: Es el documento más importante de Seguridad."},
+            {"doc": "Politica de Seguridad", "area": "Ciberseguridad", "ref": "ISO 27001:5.2", "norma": "SEGURIDAD", "desc": "Directrices de proteccion.", "justificacion": "ISO 27001:5.2 - La direccion debe establecer una politica de seguridad que sea apropiada.", 
+             "como_crear": "1. Defina los principios de CID (Confidencialidad, Integridad, Disponibilidad).\n2. Establezca el alcance del SGSI.\n3. Declare el compromiso de la dirección con el cumplimiento legal.\n4. Firme y comunique a todo el personal.",
+             "ejemplo_base": "POLÍTICA DE SEGURIDAD - {EMPRESA}\n\nEn nuestra empresa, dedicada a {OBJETO}, nos comprometemos a proteger la confidencialidad de los datos de nuestros clientes mediante controles técnicos y organizativos avanzados..."},
+            {"doc": "Analisis de Riesgos", "area": "Ciberseguridad", "ref": "ISO 27001:6.1", "norma": "SEGURIDAD", "desc": "Mapa de vulnerabilidades.", "justificacion": "ISO 27001:6.1 - Base para el tratamiento planificado de los riesgos de seguridad de la informacion.", 
+             "como_crear": "1. Identifique los activos críticos.\n2. Valore probabilidad e impacto.\n3. Defina el riesgo inherente y residual.\n4. Establezca el plan de tratamiento (Evitar, Mitigar, Transferir, Aceptar).",
+             "ejemplo_base": "MATRIZ DE RIESGOS - {EMPRESA}\n\nACTIVO: Base de Datos de Clientes | AMENAZA: Acceso no autorizado | IMPACTO: Crítico | CONTROL: Cifrado AES-256."},
+            {"doc": "Declaracion de Aplicabilidad (SoA)", "area": "Ciberseguridad", "ref": "ISO 27001:6.1.3", "norma": "SEGURIDAD", "desc": "Inventario de controles aplicables.", "justificacion": "ISO 27001:6.1.3 d) - Documento obligatorio que resume los controles de seguridad seleccionados.", 
+             "como_crear": "1. Tome los 93 controles del Anexo A.\n2. Para cada uno, defina si aplica o no.\n3. Si no aplica, justifique detalladamente.\n4. Indique el estado actual de implementación.",
+             "ejemplo_base": "SOA V2022 - {EMPRESA}\n\nControl A.5.1: Políticas de Seguridad -> APLICA (Implementado mediante manual corporativo).\nControl A.7.1: Seguridad Física -> NO APLICA (Somos una empresa 100% remota)."},
             {"doc": "Inventario de Activos de Informacion", "area": "Ciberseguridad", "ref": "ISO 27001:A.5.9", "norma": "SEGURIDAD", "desc": "Activos criticos de la entidad.", "justificacion": "ISO 27001:A.5.9 - Los activos asociados con informacion deben ser identificados.", "instrucciones": "Columnas: ID, Activo, Tipo (Software/Hardware/Datos), Dueño, Clasificación (Público/Privado)."},
             {"doc": "Plan de Continuidad de Negocio (BCP)", "area": "Operaciones", "ref": "ISO 27001:A.5.30", "norma": "SEGURIDAD", "desc": "Capacidad de recuperacion.", "justificacion": "ISO 27001:A.5.30 - Asegura la disponibilidad de la informacion ante incidentes graves.", "instrucciones": "Fases: 1. Análisis de Impacto (BIA), 2. Estrategia de Recuperación, 3. Roles en Emergencia, 4. Plan de Pruebas. Tip: Debe responder ¿qué pasa si se cae el servidor?"},
             {"doc": "Politica de Control de Acceso", "area": "Ciberseguridad", "ref": "ISO 27001:A.8.1", "norma": "SEGURIDAD", "desc": "Restriccion de privilegios.", "justificacion": "ISO 27001:A.8.1 - Reglas y derechos de acceso al sistema.", "instrucciones": "Reglas: 1. Registro de usuarios, 2. Gestión de contraseñas, 3. Privilegios mínimos, 4. Revocación inmediata. Tip: Especifique que los accesos son personales e intransferibles."}
         ]
     if "Ambiental" in str(normas_activas):
         norm_cartas += [
-            {"doc": "Aspectos Ambientales", "area": "Gestion Ambiental", "ref": "ISO 14001:6.1.2", "norma": "AMBIENTAL", "desc": "Evaluacion de impactos.", "justificacion": "ISO 14001:6.1.2 - Determinacion de aspectos ambientales y sus impactos asociados.", "instrucciones": "Documente como sus actividades (residuos, ruido, agua) afectan el entorno."},
-            {"doc": "Objetivos Ambientales", "area": "Gestion Ambiental", "ref": "ISO 14001:6.2", "norma": "AMBIENTAL", "desc": "Metas de eco-eficiencia.", "justificacion": "ISO 14001:6.2 - La organizacion debe establecer objetivos ambientales en las funciones relevantes.", "instrucciones": "Defina metas medibles (ej. reduccion de papel al 20%) para el año en curso."},
-            {"doc": "Matriz de Requisitos Legales Ambientales", "area": "Juridico", "ref": "ISO 14001:6.1.3", "norma": "AMBIENTAL", "desc": "Cumplimiento normativo verde.", "justificacion": "ISO 14001:6.1.3 - Identificacion de obligaciones de cumplimiento ambiental.", "instrucciones": "Cuadro con leyes, decretos y resoluciones ambientales vigentes aplicables."},
+            {"doc": "Aspectos Ambientales", "area": "Gestion Ambiental", "ref": "ISO 14001:6.1.2", "norma": "AMBIENTAL", "desc": "Evaluacion de impactos.", "justificacion": "ISO 14001:6.1.2 - Determinacion de aspectos ambientales y sus impactos asociados.", 
+             "como_crear": "1. Identifique las actividades de {EMPRESA}.\n2. Categorice las salidas (Residuo, Emisión, Vertimiento).\n3. Califique la severidad del impacto ambiental.\n4. Priorice los impactos significativos.",
+             "ejemplo_base": "MATRIZ DE ASPECTOS - {EMPRESA}\n\nACTIVIDAD: Generación de residuos de oficina | ASPECTO: Papel y cartón | IMPACTO: Agotamiento de recursos naturales | SEVERIDAD: Baja."},
+            {"doc": "Objetivos Ambientales", "area": "Gestion Ambiental", "ref": "ISO 14001:6.2", "norma": "AMBIENTAL", "desc": "Metas de eco-eficiencia.", "justificacion": "ISO 14001:6.2 - La organizacion debe establecer objetivos ambientales en las funciones relevantes.", "instrucciones": "Defina metas medibles para el año en curso."},
+            {"doc": "Matriz de Requisitos Legales Ambientales", "area": "Juridico", "ref": "ISO 14001:6.1.3", "norma": "AMBIENTAL", "desc": "Cumplimiento normativo verde.", "justificacion": "ISO 14001:6.1.3 - Identificacion de obligaciones de cumplimiento ambiental.", 
+             "como_crear": "1. Liste las leyes ambientales nacionales.\n2. Cruce con las actividades de {EMPRESA}.\n3. Verifique el estado de cumplimiento (Cumple/No Cumple).\n4. Establezca planes de acción para brechas.",
+             "ejemplo_base": "REQUISITOS LEGALES - {EMPRESA}\n\nNORMA: Ley 99 de 1993 -> ARTÍCULO: Manejo de Residuos -> CUMPLIMIENTO: Sí (Certificado por gestor externo)."},
             {"doc": "Plan de Gestion de Residuos Solidos (PGIRS)", "area": "Gestion Ambiental", "ref": "Ley Ambiental", "norma": "AMBIENTAL", "desc": "Manejo de residuos.", "justificacion": "ISO 14001:8.1 - Control operacional del proceso de residuos.", "instrucciones": "Manual de separacion en la fuente y disposicion final de residuos."},
             {"doc": "Programa de Uso Eficiente de Agua y Energia", "area": "Operaciones", "ref": "Sostenibilidad", "norma": "AMBIENTAL", "desc": "Ahorro de recursos.", "justificacion": "ISO 14001:8.1 - Gestion del consumo de recursos naturales.", "instrucciones": "Plan de reduccion de consumos con indicadores mensuales."},
             {"doc": "Plan de Respuesta a Emergencias Ambientales", "area": "Operaciones", "ref": "ISO 14001:8.2", "norma": "AMBIENTAL", "desc": "Mitigacion de derrames.", "justificacion": "ISO 14001:8.2 - Preparacion y respuesta ante emergencias.", "instrucciones": "Procedimiento de actuacion ante posibles accidentes ambientales."}
@@ -501,6 +519,17 @@ else:
     
     count_exp = len([d for d in docs_validados if any(c['doc'] == d for c in cartas_todas)])
     
+    # --- PROGRESO SEGMENTADO POR NORMA V12.0 ---
+    normas_resumen = {}
+    for n in st.session_state['normas_activas']:
+        docs_n = [c for c in cartas_todas if c.get('norma') == n.upper() or (n == "ISO 9001:2015" and c.get('norma') == "CALIDAD")]
+        if not docs_n and n == "ISO 9001:2015": docs_n = [c for c in cartas_todas if c.get('norma') == "SIG"] # Fallback
+        
+        vitales_n = [c for c in docs_n if c['prioridad'] == "VITAL (Obligatorio)"]
+        count_vitales_n = len([d for d in docs_validados if any(c['doc'] == d and c in vitales_n for c in vitales_n)])
+        pct_n = int((count_vitales_n / len(vitales_n)) * 100) if vitales_n else 100
+        normas_resumen[n] = pct_n
+
     # En modo Startup, solo los vitales cuentan para el progreso del 100% de la fase
     if es_startup:
         vitales_en_cartas = [c for c in cartas_todas if c['prioridad'] == "VITAL (Obligatorio)"]
@@ -517,6 +546,23 @@ else:
     progreso_c = (count_exp / total_total) if total_total > 0 else 0
     fase_a_ready = (pct_fase_a == 100)
     fase_b_ready = (pct_fase_b == 100)
+
+    # --- MOTOR DE HALLAZGOS Y COHERENCIA V12.0 ---
+    if 'hallazgos_manuales' not in st.session_state: st.session_state['hallazgos_manuales'] = {}
+    todos_hallazgos = []
+    coherencias_vitales = []
+    for doc, data in st.session_state['expediente'].items():
+        if isinstance(data, dict):
+            # Coherencia para blindaje
+            if any(c['doc'] == doc and c['prioridad'] == "VITAL (Obligatorio)" for c in cartas_todas):
+                coherencias_vitales.append(data.get('coherencia', 0))
+            
+            # Hallazgos consolidado
+            for h in data.get('hallazgos', []):
+                todos_hallazgos.append({"doc": doc, "hallazgo": h})
+    
+    coherencia_media_vital = (sum(coherencias_vitales) / len(coherencias_vitales)) if coherencias_vitales else 0
+    es_rigor_ok = coherencia_media_vital >= 60
 
     # --- SIDEBAR MASTER (V4.5) ---
     st.sidebar.markdown(f"### 🏢 {company}")
@@ -720,6 +766,43 @@ else:
                 st.write(f"{estado} {prefijo} **{doc_name}**")
             st.markdown("</div>", unsafe_allow_html=True)
 
+        # --- PANEL DE HALLAZGOS CONSOLIDADO V12.0 ---
+        st.markdown("---")
+        st.markdown("### 🔍 Panel de Hallazgos y Resultados de Auditoría")
+        if not todos_hallazgos:
+            st.info("No se han detectado hallazgos aún. Valide documentos con IA en el Camino de Ingesta.")
+        else:
+            col_hall1, col_hall2 = st.columns([2, 1])
+            with col_hall1:
+                st.markdown("<div class='elite-card'><b>Consolidado de Evidencias</b>", unsafe_allow_html=True)
+                for h_item in todos_hallazgos:
+                    doc = h_item['doc']
+                    h_txt = h_item['hallazgo']
+                    h_key = f"{doc}_{h_txt}"[:50]
+                    
+                    c_h1, c_h2 = st.columns([3, 1])
+                    c_h1.write(f"**[{doc}]**: {h_txt}")
+                    cat = st.session_state['hallazgos_manuales'].get(h_key, "Detectado")
+                    
+                    # Selector de Categoría
+                    nueva_cat = c_h2.selectbox("-", ["Detectado", "No Conformidad", "Observación", "Fortaleza"], 
+                                             key=f"cat_{h_key}", label_visibility="collapsed", 
+                                             index=["Detectado", "No Conformidad", "Observación", "Fortaleza"].index(cat))
+                    if nueva_cat != cat:
+                        st.session_state['hallazgos_manuales'][h_key] = nueva_cat
+                st.markdown("</div>", unsafe_allow_html=True)
+            
+            with col_hall2:
+                st.markdown("<div class='elite-card'><b>Resumen Proporcional</b>", unsafe_allow_html=True)
+                ncs = sum(1 for v in st.session_state['hallazgos_manuales'].values() if v == "No Conformidad")
+                obs = sum(1 for v in st.session_state['hallazgos_manuales'].values() if v == "Observación")
+                fors = sum(1 for v in st.session_state['hallazgos_manuales'].values() if v == "Fortaleza")
+                
+                st.metric("🚫 No Conformidades", ncs)
+                st.metric("⚠️ Observaciones", obs)
+                st.metric("💎 Fortalezas", fors)
+                st.markdown("</div>", unsafe_allow_html=True)
+
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
         st.markdown("<h1 class='norm-header'>🏗️ Ingesta de Materia Prima por Fases</h1>", unsafe_allow_html=True)
@@ -773,11 +856,11 @@ else:
             c_mb1.metric("Fase B", f"{pct_b}%")
             with c_mb2: st.progress(pct_b / 100)
 
-            c1, c2, c3, c4 = st.columns(4)
+            c1, c2, c3 = st.columns(3)
             st.session_state['empresa_tamanio'] = c1.selectbox("* Tamaño:", ["Pyme (1-50 emp)", "Mediana (51-250 emp)", "Gran Empresa (+250 emp)"], index=0)
             st.session_state['empresa_personal'] = c2.number_input("* Personal:", value=st.session_state['empresa_personal'], min_value=1)
-            st.session_state['empresa_direccion'] = c3.text_input("* Dirección:", value=st.session_state['empresa_direccion'])
-            st.session_state['empresa_sector'] = c4.selectbox("Sector:", ["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"], index=0)
+            st.session_state['empresa_sector'] = c3.selectbox("Sector:", ["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"], index=0)
+            st.session_state['empresa_direccion'] = st.text_area("* Dirección completa:", value=st.session_state['empresa_direccion'], height=80, placeholder="Ej: Calle 123 # 45-67, Piso 3, Torre A, Parque Empresarial Norte, Bogotá D.C.")
             
             if st.button("💾 GUARDAR B"):
                 save_audit_state()
@@ -860,20 +943,42 @@ else:
                         """, unsafe_allow_html=True)
                         
                         if not es_completado:
-                            with st.expander("📋 GUÍA DE ELABORACIÓN (Materia Prima)", expanded=False):
-                                st.markdown(f"**📌 Justificación Normativa:** *{c.get('justificacion', 'Requisito normativo estándar.')}*")
-                                st.markdown(f"**📑 Estructura Sugerida:**")
-                                inst = c.get('instrucciones', 'No hay instrucciones específicas.')
-                                if "Estructura:" in inst or "Contenido:" in inst or "Fases:" in inst:
-                                    # Formatear si tiene estructura detectada
-                                    st.info(inst)
-                                else:
-                                    st.write(inst)
+                            with st.expander("📋 ASISTENCIA DE ELABORACIÓN ELITE (Hiper-Contextual)", expanded=False):
+                                st.markdown(f"**📌 Concepto y Justificación:** *{c.get('justificacion', 'Requisito normativo estándar.')}*")
+                                
+                                # Sub-tabs para limpieza visual V13.0
+                                tab_pasos, tab_ejemplo = st.tabs(["�️ Cómo se crea", "📖 Ejemplo Contextualizado"])
+                                
+                                with tab_pasos:
+                                    st.write("### Pasos para Crear y Generar:")
+                                    pasos = c.get('como_crear', 'Solicite el documento al área responsable y verifique que cumpla con los estándares institucionales.')
+                                    st.info(pasos)
+                                    inst = c.get('instrucciones', '')
+                                    if inst: st.caption(f"Nota técnica: {inst}")
+                                
+                                with tab_ejemplo:
+                                    st.write(f"### Ejemplo Referencial para {company}:")
+                                    metadata_ctx = {
+                                        "company_name": company,
+                                        "empresa_objeto": st.session_state.get('empresa_objeto', 'sus actividades'),
+                                        "auditor_name": st.session_state.get('auditor_name', 'Auditor Líder')
+                                    }
+                                    ejemplo_text = formatear_ejemplo(c, metadata_ctx)
+                                    st.code(ejemplo_text, language="text")
+                                    st.caption("Tip: Puede copiar este texto como base para su documento oficial.")
+
                                 st.caption(f"Ref: {c['ref']} | {c['desc']} | Prioridad: {c.get('prioridad', 'Estándar')}")
                                 
                                 # Botón de Descarga de Plantilla V10.0
-                                if st.button(f"📑 Descargara Plantilla (PDF) - {doc_id}", key=f"tpl_{idx}", use_container_width=True):
-                                    tpl_path = generate_document_template_pdf(doc_id, inst, st.session_state['base_path'])
+                                if st.button(f"📑 Descargar Plantilla PDF - {doc_id}", key=f"tpl_{idx}", use_container_width=True):
+                                    # Usar contenido combinado para la plantilla
+                                    full_inst = f"{pasos}\n\nEJEMPLO:\n{ejemplo_text}"
+                                    tpl_path = generate_document_template_pdf(
+                                        doc_id, full_inst, st.session_state['base_path'],
+                                        company=company,
+                                        norma=c.get('norma', 'SIG'),
+                                        ejemplo_base=ejemplo_text
+                                    )
                                     with open(tpl_path, "rb") as f:
                                         st.download_button(f"📂 Guardar Plantilla {doc_id}", f, file_name=os.path.basename(tpl_path), key=f"dl_{idx}")
                                 
@@ -998,8 +1103,17 @@ else:
             
             if 'revisado_plantillas' not in st.session_state: st.session_state['revisado_plantillas'] = False
             
-            if progreso_total < 1.0: # Requisito: Fase A, B y C al 100%
-                st.warning("⚠️ Ingesta Incompleta (Menor al 100%). No se puede proceder a la revisión de formatos.")
+            # --- CIERRE SELECTIVO V12.0 ---
+            norma_lista = any(pct >= 100 for pct in normas_resumen.values())
+            
+            # Blindaje de Rigor V12.0
+            if norma_lista and not es_rigor_ok:
+                st.error(f"🛑 **BLOQUEO DE RIGOR:** La coherencia media de los documentos vitales es de {coherencia_media_vital:.1f}%, inferior al mínimo de 60%. Revise la calidad de la materia prima.")
+            
+            if not (fase_a_ready and fase_b_ready) or not norma_lista or not es_rigor_ok:
+                st.warning("⚠️ Ingesta Incompleta o Insuficiente. Se requiere completar Fase A, B, los documentos VITALES de al menos una norma y cumplir con el rigor mínimo (60%).")
+                if not norma_lista:
+                    st.info("💡 **Estado de Normas:** " + " | ".join([f"{n}: {p}%" for n, p in normas_resumen.items()]))
             else:
                 st.success("🏆 Materia Prima completa y validada por el Experto.")
                 st.markdown("---")

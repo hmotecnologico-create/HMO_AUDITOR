@@ -125,35 +125,105 @@ def generate_preparation_guide_pdf(company_name, output_path, doc_requirements, 
     pdf.output(full_path)
     return full_path
 
-def generate_document_template_pdf(doc_name, instructions, output_path):
+def generate_document_template_pdf(doc_name, instructions, output_path, company="LA EMPRESA", norma="SIG", ejemplo_base=""):
     """
-    Genera una plantilla en blanco con la estructura sugerida para un documento especifico.
+    Genera una plantilla enriquecida con 5 secciones profesionales para el documento indicado.
     """
     pdf = HMO_PDF()
     pdf.add_page()
+
+    # =============================================
+    # SECCIÓN 1: PORTADA INSTITUCIONAL
+    # =============================================
+    pdf.set_fill_color(10, 30, 70)  # Azul Elite
+    pdf.rect(0, 25, 210, 30, 'F')
     pdf.set_font("helvetica", "B", 16)
-    pdf.cell(0, 10, f"PLANTILLA: {doc_name.upper()}", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-    pdf.ln(10)
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_y(30)
+    pdf.cell(0, 10, f"PLANTILLA ELITE: {doc_name.upper()}", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.set_font("helvetica", "I", 9)
+    pdf.cell(0, 8, f"Empresa: {company}  |  Marco Normativo: {norma}  |  Fecha: {datetime.date.today()}", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.set_text_color(0, 0, 0)
+    pdf.ln(15)
 
-    pdf.set_font("helvetica", "B", 12)
-    pdf.cell(0, 10, "ESTRUCTURA Y CONTENIDO SUGERIDO:", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    # =============================================
+    # SECCIÓN 2: PROPÓSITO Y JUSTIFICACIÓN NORMATIVA
+    # =============================================
+    pdf.set_font("helvetica", "B", 11)
+    pdf.set_fill_color(220, 230, 245)
+    pdf.cell(0, 8, "1. PROPÓSITO DEL DOCUMENTO", fill=True, border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.set_font("helvetica", "", 10)
-    
-    # Limpiar y formatear las instrucciones para el PDF
-    clean_inst = instructions.replace("Estructura:", "\nESTRUCTURA SUGERIDA:\n").replace("Tip:", "\nTIP PROFESIONAL:\n")
-    pdf.multi_cell(0, 7, clean_inst)
-    
-    pdf.ln(10)
-    pdf.set_font("helvetica", "B", 12)
-    pdf.cell(0, 10, "ESPACIO PARA DESARROLLO (BORRADOR):", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-    pdf.set_font("helvetica", "I", 8)
-    pdf.multi_cell(0, 5, "." * 500) # Espacios para rellenar visualmente
+    propósito = (
+        f"Este documento constituye la evidencia objetiva requerida para el requerimiento '{doc_name}' "
+        f"dentro del Sistema de Gestión de {company}. Su elaboración es obligatoria para satisfacer los "
+        f"criterios de auditoría bajo la norma de referencia: {norma}."
+    )
+    pdf.multi_cell(0, 6, propósito)
+    pdf.ln(5)
 
+    # =============================================
+    # SECCIÓN 3: PASOS DE ELABORACIÓN
+    # =============================================
+    pdf.set_font("helvetica", "B", 11)
+    pdf.set_fill_color(220, 245, 230)
+    pdf.cell(0, 8, "2. CÓMO SE CREA Y GENERA ESTE DOCUMENTO", fill=True, border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.set_font("helvetica", "", 10)
+
+    # Separar instrucciones por saltos de línea o punto-y-coma
+    clean_inst = instructions.replace("EJEMPLO:", "\n---EJEMPLO---\n")
+    for line in clean_inst.split("\n"):
+        stripped = line.strip()
+        if stripped and not stripped.startswith("---"):
+            pdf.multi_cell(0, 6, f"  {stripped}")
+    pdf.ln(5)
+
+    # =============================================
+    # SECCIÓN 4: EJEMPLO CONTEXTUALIZADO
+    # =============================================
+    if ejemplo_base:
+        pdf.set_font("helvetica", "B", 11)
+        pdf.set_fill_color(245, 235, 220)
+        pdf.cell(0, 8, f"3. EJEMPLO REFERENCIAL PARA {company.upper()}", fill=True, border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        pdf.set_font("courier", "", 9)
+        pdf.set_fill_color(250, 248, 240)
+        pdf.multi_cell(0, 6, ejemplo_base, fill=True)
+        pdf.ln(5)
+
+    # =============================================
+    # SECCIÓN 5: ESPACIO DE DESARROLLO Y FIRMAS
+    # =============================================
+    pdf.set_font("helvetica", "B", 11)
+    pdf.set_fill_color(240, 240, 240)
+    pdf.cell(0, 8, "4. CONTENIDO OFICIAL (COMPLETAR POR EL RESPONSABLE)", fill=True, border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.set_font("helvetica", "I", 9)
+    pdf.set_text_color(100, 100, 100)
+    
+    # Líneas para escribir
+    for _ in range(18):
+        pdf.cell(0, 8, "", border="B", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    
+    pdf.set_text_color(0, 0, 0)
+    pdf.ln(10)
+
+    # FIRMAS
+    pdf.set_font("helvetica", "B", 9)
+    pdf.line(20, pdf.get_y(), 80, pdf.get_y())
+    pdf.line(130, pdf.get_y(), 190, pdf.get_y())
+    pdf.ln(3)
+    pdf.cell(90, 5, "ELABORADO POR:", new_x=XPos.RIGHT, new_y=YPos.LAST)
+    pdf.cell(0, 5, "VALIDADO POR (AUDITOR):", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.set_font("helvetica", "", 8)
+    pdf.cell(90, 5, "Cargo: _________________________", new_x=XPos.RIGHT, new_y=YPos.LAST)
+    pdf.cell(0, 5, "Licencia / Nombre: _____________", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    # Guardar
     if not os.path.exists(output_path): os.makedirs(output_path)
-    file_name = f"PLANTILLA_{doc_name[:10].replace(' ', '_').upper()}.pdf"
+    safe_name = doc_name[:15].replace(' ', '_').replace('/', '-').upper()
+    file_name = f"PLANTILLA_ELITE_{safe_name}.pdf"
     full_path = os.path.join(output_path, file_name)
     pdf.output(full_path)
     return full_path
+
 
 if __name__ == "__main__":
     # Test session
