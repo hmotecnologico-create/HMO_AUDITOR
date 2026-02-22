@@ -296,7 +296,7 @@ else:
            menu_exec if menu_exec == "🗺️ Camino de Ingesta (HITL)" else \
            menu_prod
     
-    # Selector de Rol (Simulación de Colaboración)
+    # Selector de Rol
     st.sidebar.divider()
     roles_disponibles = ["Administrador (Global)", "⚖️ Jurídico", "🏦 Alta Dirección", "📊 Calidad / SIG", "🛡️ Ciberseguridad", "♻️ Gestión Ambiental", "🎓 Gestión Académica"]
     st.session_state['user_role'] = st.sidebar.selectbox("🔑 Rol de Sesión:", roles_disponibles)
@@ -306,75 +306,53 @@ else:
         st.session_state['env'] = None
         st.rerun()
 
-    # --- CONFIGURACIÓN DE PASOS DE INGESTA V1.6 (RIGOR LEGAL) ---
+    # --- CONFIGURACIÓN DE DOCUMENTACIÓN & ROLES (UNIFICADA V3.3) ---
     base_cartas = [
-        {"doc": "Cámara de Comercio (Existencia Legal)", "area": "⚖️ Jurídico", "ref": "Legalidad", "desc": "Certificado actualizado con objeto social y NIT.", "file_hint": "Camara_Comercio.pdf"},
-        {"doc": "RUT (Registro Único Tributario)", "area": "⚖️ Jurídico", "ref": "Fiscal", "desc": "Identificación tributaria y responsabilidades.", "file_hint": "RUT.pdf"},
-        {"doc": "Misión y Visión Corporativa", "area": "🏦 Alta Dirección", "ref": "Estratégico", "desc": "Propósito y rumbo organizacional.", "file_hint": "Mision_Vision.docx"},
-        {"doc": "Matriz de Responsables de Área", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Liderazgo nominal por procesos.", "file_hint": "Matriz_Responsables.docx"},
-        {"doc": "Organigrama Funcional", "area": "🏦 Alta Dirección", "ref": "Estructura", "desc": "Jerarquía y mandos medios.", "file_hint": "Organigrama.docx"}
+        {"doc": "Cámara de Comercio (Existencia Legal)", "area": "⚖️ Jurídico", "ref": "Legalidad", "desc": "Certificado actualizado con objeto social y NIT."},
+        {"doc": "RUT (Registro Único Tributario)", "area": "⚖️ Jurídico", "ref": "Fiscal", "desc": "Identificación tributaria y responsabilidades."},
+        {"doc": "Misión y Visión Corporativa", "area": "🏦 Alta Dirección", "ref": "Estratégico", "desc": "Propósito y rumbo organizacional."},
+        {"doc": "Matriz de Responsables de Área", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Liderazgo nominal por procesos."},
+        {"doc": "Organigrama Funcional", "area": "🏦 Alta Dirección", "ref": "Estructura", "desc": "Jerarquía y mandos medios."}
     ]
 
     if "Académico" in st.session_state['norma']:
         norm_cartas = [
-            {"doc": "PEI (Proyecto Educativo)", "area": "🎓 Gestión Académica", "ref": "Ley 115", "desc": "Columna vertebral académica.", "file_hint": "PEI_Innovatech.pdf"},
-            {"doc": "Registro Calificado", "area": "⚖️ Jurídico/Normativo", "ref": "Dec. 1330", "desc": "Autorización ministerial.", "file_hint": "Resolucion_MEN.pdf"},
-            {"doc": "Estatuto Docente", "area": "👥 Talento Humano", "ref": "Dec. 1278", "desc": "Reglamentación docente.", "file_hint": "Estatutos.pdf"}
+            {"doc": "PEI (Proyecto Educativo)", "area": "🎓 Gestión Académica", "ref": "Ley 115", "desc": "Columna vertebral académica."},
+            {"doc": "Registro Calificado", "area": "⚖️ Jurídico/Normativo", "ref": "Dec. 1330", "desc": "Autorización ministerial."},
+            {"doc": "Estatuto Docente", "area": "👥 Talento Humano", "ref": "Dec. 1278", "desc": "Reglamentación docente."}
         ]
     elif "Seguridad" in st.session_state['norma']:
         norm_cartas = [
-            {"doc": "Política de Seguridad", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:5.2", "desc": "Directrices de protección.", "file_hint": "Politica_Seguridad.pdf"},
-            {"doc": "Análisis de Riesgos", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:6.1", "desc": "Mapa de vulnerabilidades.", "file_hint": "Matriz_Riesgos.xlsx"}
+            {"doc": "Política de Seguridad", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:5.2", "desc": "Directrices de protección."},
+            {"doc": "Análisis de Riesgos", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:6.1", "desc": "Mapa de vulnerabilidades."}
         ]
     elif "Ambiental" in st.session_state['norma']:
         norm_cartas = [
-            {"doc": "Aspectos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.1.2", "desc": "Evaluación de impactos.", "file_hint": "Aspectos.pdf"},
-            {"doc": "Objetivos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.2", "desc": "Metas de eco-eficiencia.", "file_hint": "Metas.pdf"}
+            {"doc": "Aspectos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.1.2", "desc": "Evaluación de impactos."},
+            {"doc": "Objetivos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.2", "desc": "Metas de eco-eficiencia."}
         ]
     else: # ISO 9001
         norm_cartas = [
-            {"doc": "Contexto Organizacional", "area": "📊 Calidad", "ref": "ISO 9001:4.1", "desc": "Análisis de entorno (DOFA).", "file_hint": "Contexto.pdf"},
-            {"doc": "Mapa de Procesos", "area": "⚙️ Operaciones", "ref": "ISO 9001:4.4", "desc": "Interacción de procesos.", "file_hint": "Mapa_Procesos.pdf"}
+            {"doc": "Contexto Organizacional", "area": "📊 Calidad", "ref": "ISO 9001:4.1", "desc": "Análisis de entorno (DOFA)."},
+            {"doc": "Mapa de Procesos", "area": "⚙️ Operaciones", "ref": "ISO 9001:4.4", "desc": "Interacción de procesos."}
         ]
     
-    # Combinación de Fases: Cimientos + Norma
-    cartas_todas = base_cartas + norm_cartas
-    
-    # --- CÁLCULOS GLOBALES DE INTEGRIDAD (V3.1) ---
-    base_cartas = [
-        {"doc": "Cámara de Comercio (Existencia Legal)", "area": "⚖️ Jurídico", "ref": "Legalidad", "desc": "Certificado actualizado."},
-        {"doc": "RUT (Registro Único Tributario)", "area": "⚖️ Jurídico", "ref": "Fiscal", "desc": "Identificación tributaria."},
-        {"doc": "Misión y Visión Corporativa", "area": "🏦 Alta Dirección", "ref": "Estratégico", "desc": "Propósito."},
-        {"doc": "Matriz de Responsables de Área", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Liderazgo."},
-        {"doc": "Organigrama Funcional", "area": "🏦 Alta Dirección", "ref": "Estructura", "desc": "Jerarquía."}
-    ]
-    
-    if "Académico" in st.session_state['norma']:
-        norm_cartas = [
-            {"doc": "PEI (Proyecto Educativo)", "area": "🎓 Gestión Académica", "ref": "Ley 115"},
-            {"doc": "Registro Calificado", "area": "⚖️ Jurídico/Normativo", "ref": "Dec. 1330"},
-            {"doc": "Estatuto Docente", "area": "👥 Talento Humano", "ref": "Dec. 1278"}
-        ]
-    elif "Seguridad" in st.session_state['norma']:
-        norm_cartas = [
-            {"doc": "Política de Seguridad", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:5.2"},
-            {"doc": "Análisis de Riesgos", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:6.1"}
-        ]
-    elif "Ambiental" in st.session_state['norma']:
-        norm_cartas = [
-            {"doc": "Aspectos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.1.2"},
-            {"doc": "Objetivos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.2"}
-        ]
-    else: # ISO 9001
-        norm_cartas = [
-            {"doc": "Contexto Organizacional", "area": "📊 Calidad", "ref": "ISO 9001:4.1"},
-            {"doc": "Mapa de Procesos", "area": "⚙️ Operaciones", "ref": "ISO 9001:4.4"}
-        ]
-        
     cartas_todas = base_cartas + norm_cartas
     total_total = len(cartas_todas)
+    
+    # Filtrado por Rol
+    if st.session_state['user_role'] == "Administrador (Global)":
+        cartas = cartas_todas
+    else:
+        role_pure = st.session_state['user_role'].split(" ")[-1].strip()
+        cartas = [c for c in cartas_todas if role_pure in c['area']]
+        if not cartas: # Fallback
+            cartas = [c for c in cartas_todas if st.session_state['user_role'] in c['area']]
+        if not cartas: cartas = cartas_todas # Emergency Fallback
+
+    # --- CÁLCULOS GLOBALES DE PROGRESO ---
     fase_a_ready = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
-    fase_b_ready = st.session_state['empresa_tamanio'] != "Pyme" or st.session_state['env'] == "Simulacion"
+    fase_b_ready = st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)" or st.session_state['env'] == "Simulacion"
     progreso_c = (st.session_state['paso_ingesta'] / total_total) if total_total > 0 else 0
     progreso_total = ((1 if fase_a_ready else 0) + (1 if fase_b_ready else 0) + progreso_c) / 3
 
@@ -409,9 +387,9 @@ else:
         st.write("### 🏗️ Estatus de Materia Prima")
         
         # Calcular estados
-        fase_a_ok = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
-        fase_b_ok = st.session_state['empresa_tamanio'] != ""
-        progreso_c = (st.session_state['paso_ingesta'] / len(cartas)) * 100
+        fase_a_ok = fase_a_ready
+        fase_b_ok = fase_b_ready
+        progreso_c_val = progreso_c * 100
         
         # METRICS GAUGES (STILO REFERENCIA ELITE V2.0)
         def draw_donut(value, label, color):
@@ -437,7 +415,7 @@ else:
         c1, c2, c3 = st.columns(3)
         with c1: draw_donut(progreso_total*100, "CUMPLIMIENTO TOTAL", "#00C2FF")
         with c2: draw_donut(30 if not fase_a_ok else 12, "RIESGO OPERATIVO", "#F87171")
-        with c3: draw_donut(progreso_c, "CALIDAD DE DATOS", "#34D399")
+        with c3: draw_donut(progreso_c_val, "CALIDAD DE DATOS", "#34D399")
         
         st.divider()
         
@@ -458,6 +436,7 @@ else:
         st.divider()
         progreso_global = ((1 if fase_a_ok else 0) + (1 if fase_b_ok else 0) + (st.session_state['paso_ingesta'] / total_total)) / 3 * 100
         
+        col_m1, col_m2, col_m3 = st.columns(3)
         col_m1.metric("Cumplimiento Global", f"{progreso_global:.1f}%")
         col_m2.metric("Motor Experto", "BÚSQUEDA TÉCNICA ACTIVA", "V1.5.2 Elite")
         col_m3.metric("Seguridad", "SHA-256", "Inexpugnable")
