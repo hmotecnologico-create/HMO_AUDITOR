@@ -396,25 +396,55 @@ else:
     
     # --- CONFIGURACIÓN DE CARTAS Y PROGRESO (V3.9 PRE-RENDER) ---
     base_cartas = [
-        {"doc": "Camara de Comercio (Existencia Legal)", "area": "Juridico", "ref": "Legalidad", "norma": "SIG", "desc": "Certificado actualizado con objeto social y NIT.", "justificacion": "ISO 19011:6.3.1 - Necesario para verificar la base legal y representacion de la entidad auditada.", "instrucciones": "Solicite este documento directamente en la oficina de la Camara de Comercio o descarguelo de su portal web con una vigencia no mayor a 30 días."},
-        {"doc": "RUT (Registro Unico Tributario)", "area": "Juridico", "ref": "Fiscal", "norma": "SIG", "desc": "Identificacion tributaria y responsabilidades.", "justificacion": "Requisito legal/fiscal para la identificacion de la persona juridica segun normativa nacional.", "instrucciones": "Descargue el PDF actualizado desde el portal de la DIAN."},
-        {"doc": "Acta de Compromiso Directivo", "area": "Alta Direccion", "ref": "Gobierno", "norma": "SIG", "desc": "Acuerdo de preparacion, asignacion de recursos y roles.", "justificacion": "ISO 9001:5.1 e ISO 19011:6.2.2 - El compromiso de la direccion es vital para el exito de la auditoria.", "instrucciones": "Redacte un acta simple firmada por la gerencia donde se declare la voluntad de realizar la auditoria interna y se designen los responsables por area."},
-        {"doc": "Cronograma de Actividades de Preparacion", "area": "Alta Direccion", "ref": "Planeacion", "norma": "SIG", "desc": "Calendario con hitos de entrega de evidencias (Inicio-Fin).", "justificacion": "ISO 19011:6.3.2 - Base para la planificacion detallada de las actividades de auditoria de campo.", "instrucciones": "Diseñe un calendario (Excel o Gantt) que muestre las fechas limite en las que cada oficina debe entregar su documentacion al auditor."},
-        {"doc": "Mision y Vision Corporativa", "area": "Alta Direccion", "ref": "Estrategico", "norma": "SIG", "desc": "Proposito y rumbo organizacional.", "justificacion": "ISO 9001:4.1 - Fundamental para entender el contexto organizacional y los objetivos estrategicos.", 
+        {"doc": "Camara de Comercio (Existencia Legal)", "area": "Juridico", "ref": "Legalidad", "norma": "SIG", "prioridad": "VITAL (Obligatorio)", "desc": "Certificado actualizado con objeto social y NIT.", "justificacion": "ISO 19011:6.3.1 - Necesario para verificar la base legal y representacion de la entidad auditada.",
+         "instrucciones": "Solicite en la Camara de Comercio o descargue del portal con vigencia no mayor a 30 dias.",
+         "como_crear": "1. Ingrese al portal de la Camara de Comercio de su ciudad.\n2. Busque su empresa por NIT o Razon Social.\n3. Solicite el certificado de existencia y representacion legal.\n4. Asegurese de que tenga fecha reciente (max 30 dias).",
+         "ejemplo_base": "CERTIFICADO DE EXISTENCIA Y REPRESENTACION LEGAL\n\nEmpresa: {EMPRESA}\nNIT: 900.XXX.XXX-X\nObjeto Social: Prestacion de servicios de...\nRepresentante Legal: [Nombre y CC]\nVigente a: {HOY}"},
+
+        {"doc": "RUT (Registro Unico Tributario)", "area": "Juridico", "ref": "Fiscal", "norma": "SIG", "desc": "Identificacion tributaria y responsabilidades.", "justificacion": "Requisito legal/fiscal para la identificacion de la persona juridica segun normativa nacional.",
+         "instrucciones": "Descargue el PDF actualizado desde el portal de la DIAN.",
+         "como_crear": "1. Ingrese a www.dian.gov.co\n2. Seleccione 'Servicios en Linea'.\n3. Consulte o actualice el RUT de {EMPRESA}.\n4. Descargue el PDF oficial.",
+         "ejemplo_base": "RUT - {EMPRESA}\n\nNIT: 900.XXX.XXX-X\nRazon Social: {EMPRESA} S.A.S\nResponsabilidad: Regimen Comun / Gran Contribuyente\nActividad CIIU: XXXX - [Descripcion de la actividad]"},
+
+        {"doc": "Acta de Compromiso Directivo", "area": "Alta Direccion", "ref": "Gobierno", "norma": "SIG", "prioridad": "VITAL (Obligatorio)", "desc": "Acuerdo de preparacion, asignacion de recursos y roles.", "justificacion": "ISO 9001:5.1 e ISO 19011:6.2.2 - El compromiso de la direccion es vital.",
+         "instrucciones": "Redacte un acta firmada por la gerencia declarando la intencion de auditoria.",
+         "como_crear": "1. Convoque una reunion de alta direccion.\n2. Redacte el acta declarando el objetivo de la auditoria.\n3. Designe los responsables de cada area.\n4. El Gerente General y el Auditor firman el acta.",
+         "ejemplo_base": "ACTA DE COMPROMISO DIRECTIVO No. 001\n\nEn la ciudad de Bogota, siendo las 9:00am, reunidos los directivos de {EMPRESA}...\n\nCOMPROMISOS:\n- La gerencia provee los recursos necesarios para la auditoria.\n- El proceso de auditoria iniciara el [FECHA].\n\nFIRMAS: [Gerente] / [Auditor Lider: {AUDITOR}]"},
+
+        {"doc": "Cronograma de Actividades de Preparacion", "area": "Alta Direccion", "ref": "Planeacion", "norma": "SIG", "desc": "Calendario con hitos de entrega de evidencias (Inicio-Fin).", "justificacion": "ISO 19011:6.3.2 - Base para la planificacion detallada de las actividades de auditoria.",
+         "instrucciones": "Disene un calendario (Excel o Gantt) con fechas limite de entrega.",
+         "como_crear": "1. Liste todos los documentos requeridos.\n2. Asigne un responsable por cada documento.\n3. Defina fechas limite de entrega.\n4. Exporte como PDF o imagen.",
+         "ejemplo_base": "CRONOGRAMA - {EMPRESA}\n\nACTIVIDAD                    RESPONSABLE        FECHA LIMITE\nEntrega Camara de Comercio   [Juridico]         DD/MM/AAAA\nEntrega Estados Financieros  [Contabilidad]     DD/MM/AAAA\nRevision IA de Documentos    {AUDITOR}          DD/MM/AAAA"},
+
+        {"doc": "Mision y Vision Corporativa", "area": "Alta Direccion", "ref": "Estrategico", "norma": "SIG", "prioridad": "VITAL (Obligatorio)", "desc": "Proposito y rumbo organizacional.", "justificacion": "ISO 9001:4.1 - Fundamental para entender el contexto organizacional.",
          "instrucciones": "Extraiga los textos oficiales del manual estrategico o la pagina web de la empresa.",
-         "como_crear": "1. Reúna al comité directivo.\n2. Defina el 'Para qué existimos' (Misión).\n3. Defina el 'Hacia dónde vamos' (Visión).\n4. Plásmelo en un documento Word con membrete oficial.",
-         "ejemplo_base": "MISIÓN: En {EMPRESA}, nos dedicamos a {OBJETO} con los más altos estándares de calidad.\nVISIÓN: Para el 2030, seremos líderes regionales en el sector..."},
-        {"doc": "Matriz de Responsables de Area", "area": "Alta Direccion", "ref": "Gobierno", "norma": "SIG", "desc": "Liderazgo nominal por procesos.", "justificacion": "ISO 9001:5.3 - Define las responsabilidades y autoridades dentro de los procesos de la entidad.", 
+         "como_crear": "1. Reunase con el comite directivo.\n2. Defina el 'Para que existimos' (Mision).\n3. Defina el 'Hacia donde vamos' en 5 anos (Vision).\n4. Plasmelo en un documento Word con membrete oficial.",
+         "ejemplo_base": "MISION: En {EMPRESA}, nos dedicamos a prestar servicios de alta calidad a nuestros clientes, garantizando su satisfaccion plena.\n\nVISION: Para el 2030, {EMPRESA} sera reconocida como empresa lider en su sector en la region, destacando por la innovacion y compromiso con la calidad."},
+
+        {"doc": "Matriz de Responsables de Area", "area": "Alta Direccion", "ref": "Gobierno", "norma": "SIG", "desc": "Liderazgo nominal por procesos.", "justificacion": "ISO 9001:5.3 - Define las responsabilidades y autoridades dentro de los procesos.",
          "instrucciones": "Cree un cuadro que relacione cada proceso con su responsable.",
-         "como_crear": "1. Identifique los procesos del mapa.\n2. Asigne un líder nominal.\n3. Defina su rol principal en el SGC.\n4. Genere una tabla en Excel o Word.",
-         "ejemplo_base": "PROCESO: Compras | LÍDER: Juan Pérez | ROL: Asegurar el suministro de insumos para {EMPRESA}."},
-        {"doc": "Organigrama Funcional", "area": "Alta Direccion", "ref": "Estructura", "norma": "SIG", "desc": "Jerarquia y mandos medios.", "justificacion": "ISO 19011:6.3.1 - Requerido para mapear la cadena de mando.", 
-         "como_crear": "1. Dibuje los niveles jerárquicos.\n2. Use herramientas como Visio o LucidChart.\n3. Asegúrese de que el SIG/Calidad reporte directamente a la gerencia.\n4. Guarde como PDF.",
-         "ejemplo_base": "[Gerencia General] -> [Dirección de Operaciones] -> [Equipo de {EMPRESA}]"},
+         "como_crear": "1. Identifique todos los procesos del mapa.\n2. Asigne un lider nominal (nombre y cargo).\n3. Defina su rol en el SGC.\n4. Elabore una tabla en Excel o Word.",
+         "ejemplo_base": "MATRIZ DE RESPONSABLES - {EMPRESA}\n\nPROCESO           LIDER              CARGO          ROL EN SGC\nGestion Calidad   [Nombre]           Coord. SIG     Coordinar auditoria interna\nCompras           [Nombre]           Jefe Logist.   Validar proveedores calificados\nTalento Humano    [Nombre]           Dir. RRHH      Gestionar competencia del personal"},
+
+        {"doc": "Organigrama Funcional", "area": "Alta Direccion", "ref": "Estructura", "norma": "SIG", "desc": "Jerarquia y mandos medios.", "justificacion": "ISO 19011:6.3.1 - Requerido para mapear la cadena de mando.",
+         "como_crear": "1. Dibuje los niveles jerarquicos de arriba hacia abajo.\n2. Use herramientas como Visio, LucidChart o PowerPoint.\n3. Asegurese de que Calidad/SIG reporte a la Gerencia.\n4. Guarde como PDF con fecha de vigencia.",
+         "ejemplo_base": "ORGANIGRAMA - {EMPRESA}\n\n[GERENCIA GENERAL]\n    |\n    +--- [Direccion Comercial]\n    +--- [Direccion de Operaciones]\n    |        +--- [Equipo Tecnico]\n    +--- [SIG / Calidad] (Reporte directo a Gerencia)\n    +--- [Talento Humano]"},
+
         # EXPANSION V8.9
-        {"doc": "Estados Financieros (Ultimo Trimestre)", "area": "Financiera", "ref": "Sostenibilidad", "norma": "CALIDAD", "desc": "Balance y P&G actualizado.", "justificacion": "ISO 9001:7.1.1 - Asegura que la organizacion cuenta con los recursos necesarios para el SGC.", "instrucciones": "Solicite al area contable el balance general y estado de resultados firmado por el contador."},
-        {"doc": "Manual de Funciones y Perfiles", "area": "Talento Humano", "ref": "Competencia", "norma": "CALIDAD", "desc": "Responsabilidades por cargo.", "justificacion": "ISO 9001:7.2 - Base para evaluar la competencia del personal.", "instrucciones": "Adjunte el documento institucional que define los perfiles de cargo de la entidad."},
-        {"doc": "Manual de Procesos Institucional", "area": "Operaciones", "ref": "SGC", "norma": "CALIDAD", "desc": "Documentacion de la operacion.", "justificacion": "ISO 9001:4.4.2 - Informacion documentada para apoyar la operacion de los procesos.", "instrucciones": "Suba el manual maestro de procesos o el listado maestro de procedimientos."}
+        {"doc": "Estados Financieros (Ultimo Trimestre)", "area": "Financiera", "ref": "Sostenibilidad", "norma": "CALIDAD", "desc": "Balance y P&G actualizado.", "justificacion": "ISO 9001:7.1.1 - Asegura que la organizacion cuenta con los recursos necesarios para el SGC.",
+         "instrucciones": "Solicite al area contable el balance general y estado de resultados firmado.",
+         "como_crear": "1. Solicite al contador o area financiera los estados del ultimo trimestre.\n2. El documento debe estar firmado por el contador certificado.\n3. Adjunte Balance General y Estado de Resultados.",
+         "ejemplo_base": "ESTADOS FINANCIEROS - {EMPRESA} | Q: [Trimestre/Ano]\n\nACTIVO TOTAL: $XXX.XXX.XXX\nPASIVO TOTAL: $XXX.XXX.XXX\nPATRIMONIO: $XXX.XXX.XXX\nUTILIDAD NETA: $XX.XXX.XXX\n\nFirmado: [Contador] CC/TP: XXXXX"},
+
+        {"doc": "Manual de Funciones y Perfiles", "area": "Talento Humano", "ref": "Competencia", "norma": "CALIDAD", "desc": "Responsabilidades por cargo.", "justificacion": "ISO 9001:7.2 - Base para evaluar la competencia del personal.",
+         "instrucciones": "Adjunte el documento institucional que define los perfiles de cargo.",
+         "como_crear": "1. Liste todos los cargos de {EMPRESA}.\n2. Para cada cargo defina: Mision del cargo, Funciones, Perfil (educacion/experiencia).\n3. El jefe de RRHH y la Gerencia aprueban el documento.",
+         "ejemplo_base": "PERFIL DE CARGO - {EMPRESA}\n\nCARGO: Coordinador de Calidad\nMISION: Planificar y coordinar el SGC de {EMPRESA}.\nFUNCIONES:\n1. Mantener actualizado el sistema documental.\n2. Planificar y ejecutar auditorias internas.\nPERFIL: Profesional en Ingenieria Industrial o afines, 2 anos de experiencia en SGC."},
+
+        {"doc": "Manual de Procesos Institucional", "area": "Operaciones", "ref": "SGC", "norma": "CALIDAD", "desc": "Documentacion de la operacion.", "justificacion": "ISO 9001:4.4.2 - Informacion documentada para apoyar la operacion.",
+         "instrucciones": "Suba el manual maestro de procesos o listado maestro de procedimientos.",
+         "como_crear": "1. Levante los procesos existentes conversando con cada area.\n2. Documente el flujo (Inicio-Proceso-Fin) de cada proceso clave.\n3. Defina entradas, salidas, recursos y controles.\n4. El Gerente y el responsable de cada proceso firman.",
+         "ejemplo_base": "FICHA DE PROCESO - {EMPRESA}\n\nNOMBRE: Gestion de Compras\nOBJETIVO: Garantizar el suministro oportuno de bienes y servicios.\nENTRADAS: Solicitud de compra aprobada.\nSALIDAS: Bien/servicio entregado y verificado.\nRESPONSABLE: Jefe de Logistica.\nINDICADOR: Nivel de cumplimiento de proveedores > 90%"}
     ]
 
     norm_cartas = []

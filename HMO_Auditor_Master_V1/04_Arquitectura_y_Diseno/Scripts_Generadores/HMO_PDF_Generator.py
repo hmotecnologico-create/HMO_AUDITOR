@@ -129,100 +129,89 @@ def generate_document_template_pdf(doc_name, instructions, output_path, company=
     """
     Genera una plantilla enriquecida con 5 secciones profesionales para el documento indicado.
     """
+    # Limpiar caracteres especiales para FPDF
+    def safe(text):
+        return (text.encode('latin-1', 'replace').decode('latin-1') 
+                if isinstance(text, str) else str(text))
+
     pdf = HMO_PDF()
     pdf.add_page()
 
-    # =============================================
     # SECCIÓN 1: PORTADA INSTITUCIONAL
-    # =============================================
-    pdf.set_fill_color(10, 30, 70)  # Azul Elite
+    pdf.set_fill_color(10, 30, 70)
     pdf.rect(0, 25, 210, 30, 'F')
     pdf.set_font("helvetica", "B", 16)
     pdf.set_text_color(255, 255, 255)
     pdf.set_y(30)
-    pdf.cell(0, 10, f"PLANTILLA ELITE: {doc_name.upper()}", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 10, safe(f"PLANTILLA: {doc_name.upper()}"), align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.set_font("helvetica", "I", 9)
-    pdf.cell(0, 8, f"Empresa: {company}  |  Marco Normativo: {norma}  |  Fecha: {datetime.date.today()}", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 8, safe(f"Empresa: {company}  |  Norma: {norma}  |  Fecha: {datetime.date.today()}"), align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.set_text_color(0, 0, 0)
     pdf.ln(15)
 
-    # =============================================
-    # SECCIÓN 2: PROPÓSITO Y JUSTIFICACIÓN NORMATIVA
-    # =============================================
+    # SECCIÓN 2: PROPÓSITO
     pdf.set_font("helvetica", "B", 11)
     pdf.set_fill_color(220, 230, 245)
-    pdf.cell(0, 8, "1. PROPÓSITO DEL DOCUMENTO", fill=True, border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 8, "1. PROPOSITO DEL DOCUMENTO", fill=True, border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.set_font("helvetica", "", 10)
-    propósito = (
-        f"Este documento constituye la evidencia objetiva requerida para el requerimiento '{doc_name}' "
-        f"dentro del Sistema de Gestión de {company}. Su elaboración es obligatoria para satisfacer los "
-        f"criterios de auditoría bajo la norma de referencia: {norma}."
+    proposito = safe(
+        f"Este documento es la evidencia objetiva del requerimiento '{doc_name}' "
+        f"en el Sistema de Gestion de {company}. Requerido por la norma: {norma}."
     )
-    pdf.multi_cell(0, 6, propósito)
+    pdf.multi_cell(0, 6, proposito)
     pdf.ln(5)
 
-    # =============================================
     # SECCIÓN 3: PASOS DE ELABORACIÓN
-    # =============================================
     pdf.set_font("helvetica", "B", 11)
     pdf.set_fill_color(220, 245, 230)
-    pdf.cell(0, 8, "2. CÓMO SE CREA Y GENERA ESTE DOCUMENTO", fill=True, border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 8, "2. COMO SE CREA ESTE DOCUMENTO (PASO A PASO)", fill=True, border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.set_font("helvetica", "", 10)
-
-    # Separar instrucciones por saltos de línea o punto-y-coma
-    clean_inst = instructions.replace("EJEMPLO:", "\n---EJEMPLO---\n")
+    clean_inst = instructions.replace("EJEMPLO:", "\n---\n")
     for line in clean_inst.split("\n"):
         stripped = line.strip()
         if stripped and not stripped.startswith("---"):
-            pdf.multi_cell(0, 6, f"  {stripped}")
+            pdf.multi_cell(0, 6, safe(f"  {stripped}"))
     pdf.ln(5)
 
-    # =============================================
     # SECCIÓN 4: EJEMPLO CONTEXTUALIZADO
-    # =============================================
-    if ejemplo_base:
+    if ejemplo_base and ejemplo_base != "No hay ejemplo disponible para este documento.":
         pdf.set_font("helvetica", "B", 11)
         pdf.set_fill_color(245, 235, 220)
-        pdf.cell(0, 8, f"3. EJEMPLO REFERENCIAL PARA {company.upper()}", fill=True, border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        pdf.cell(0, 8, safe(f"3. EJEMPLO REFERENCIAL - {company.upper()}"), fill=True, border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         pdf.set_font("courier", "", 9)
         pdf.set_fill_color(250, 248, 240)
-        pdf.multi_cell(0, 6, ejemplo_base, fill=True)
+        pdf.multi_cell(0, 6, safe(ejemplo_base), fill=True)
         pdf.ln(5)
 
-    # =============================================
-    # SECCIÓN 5: ESPACIO DE DESARROLLO Y FIRMAS
-    # =============================================
+    # SECCIÓN 5: ESPACIO DE DESARROLLO
     pdf.set_font("helvetica", "B", 11)
     pdf.set_fill_color(240, 240, 240)
     pdf.cell(0, 8, "4. CONTENIDO OFICIAL (COMPLETAR POR EL RESPONSABLE)", fill=True, border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.set_font("helvetica", "I", 9)
-    pdf.set_text_color(100, 100, 100)
-    
-    # Líneas para escribir
-    for _ in range(18):
-        pdf.cell(0, 8, "", border="B", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-    
-    pdf.set_text_color(0, 0, 0)
-    pdf.ln(10)
+    pdf.set_text_color(150, 150, 150)
+    for _ in range(16):
+        y_pos = pdf.get_y() + 8
+        pdf.line(pdf.l_margin, y_pos, pdf.w - pdf.r_margin, y_pos)
+        pdf.ln(9)
 
     # FIRMAS
-    pdf.set_font("helvetica", "B", 9)
-    pdf.line(20, pdf.get_y(), 80, pdf.get_y())
-    pdf.line(130, pdf.get_y(), 190, pdf.get_y())
+    pdf.set_text_color(0, 0, 0)
+    pdf.ln(5)
+    y_firma = pdf.get_y()
+    pdf.line(pdf.l_margin, y_firma, 80, y_firma)
+    pdf.line(130, y_firma, pdf.w - pdf.r_margin, y_firma)
     pdf.ln(3)
+    pdf.set_font("helvetica", "B", 9)
     pdf.cell(90, 5, "ELABORADO POR:", new_x=XPos.RIGHT, new_y=YPos.LAST)
     pdf.cell(0, 5, "VALIDADO POR (AUDITOR):", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-    pdf.set_font("helvetica", "", 8)
-    pdf.cell(90, 5, "Cargo: _________________________", new_x=XPos.RIGHT, new_y=YPos.LAST)
-    pdf.cell(0, 5, "Licencia / Nombre: _____________", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
-    # Guardar
     if not os.path.exists(output_path): os.makedirs(output_path)
     safe_name = doc_name[:15].replace(' ', '_').replace('/', '-').upper()
-    file_name = f"PLANTILLA_ELITE_{safe_name}.pdf"
+    file_name = f"PLANTILLA_{safe_name}.pdf"
     full_path = os.path.join(output_path, file_name)
     pdf.output(full_path)
     return full_path
+
 
 
 if __name__ == "__main__":
