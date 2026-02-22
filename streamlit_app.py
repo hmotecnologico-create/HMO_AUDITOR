@@ -336,18 +336,34 @@ else:
     
     # --- CÁLCULOS GLOBALES DE INTEGRIDAD (V3.1) ---
     base_cartas = [
-        {"doc": "Cámara de Comercio (Existencia Legal)", "area": "⚖️ Jurídico", "ref": "Legalidad", "desc": "Certificado actualizado con objeto social y NIT."},
-        {"doc": "RUT (Registro Único Tributario)", "area": "⚖️ Jurídico", "ref": "Fiscal", "desc": "Identificación tributaria y responsabilidades."},
-        {"doc": "Misión y Visión Corporativa", "area": "🏦 Alta Dirección", "ref": "Estratégico", "desc": "Propósito y rumbo organizacional."},
-        {"doc": "Matriz de Responsables de Área", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Liderazgo nominal por procesos."},
-        {"doc": "Organigrama Funcional", "area": "🏦 Alta Dirección", "ref": "Estructura", "desc": "Jerarquía y mandos medios."}
+        {"doc": "Cámara de Comercio (Existencia Legal)", "area": "⚖️ Jurídico", "ref": "Legalidad", "desc": "Certificado actualizado."},
+        {"doc": "RUT (Registro Único Tributario)", "area": "⚖️ Jurídico", "ref": "Fiscal", "desc": "Identificación tributaria."},
+        {"doc": "Misión y Visión Corporativa", "area": "🏦 Alta Dirección", "ref": "Estratégico", "desc": "Propósito."},
+        {"doc": "Matriz de Responsables de Área", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Liderazgo."},
+        {"doc": "Organigrama Funcional", "area": "🏦 Alta Dirección", "ref": "Estructura", "desc": "Jerarquía."}
     ]
     
-    # [Norma specific cartas logic here, simplified for brevity in this call or move from below]
     if "Académico" in st.session_state['norma']:
-        norm_cartas = [{"doc": "PEI (Proyecto Educativo)", "area": "🎓 Gestión Académica"}] # Simplified
-    else:
-        norm_cartas = [{"doc": "Contexto Organizacional", "area": "📊 Calidad"}] # Simplified
+        norm_cartas = [
+            {"doc": "PEI (Proyecto Educativo)", "area": "🎓 Gestión Académica", "ref": "Ley 115"},
+            {"doc": "Registro Calificado", "area": "⚖️ Jurídico/Normativo", "ref": "Dec. 1330"},
+            {"doc": "Estatuto Docente", "area": "👥 Talento Humano", "ref": "Dec. 1278"}
+        ]
+    elif "Seguridad" in st.session_state['norma']:
+        norm_cartas = [
+            {"doc": "Política de Seguridad", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:5.2"},
+            {"doc": "Análisis de Riesgos", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:6.1"}
+        ]
+    elif "Ambiental" in st.session_state['norma']:
+        norm_cartas = [
+            {"doc": "Aspectos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.1.2"},
+            {"doc": "Objetivos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.2"}
+        ]
+    else: # ISO 9001
+        norm_cartas = [
+            {"doc": "Contexto Organizacional", "area": "📊 Calidad", "ref": "ISO 9001:4.1"},
+            {"doc": "Mapa de Procesos", "area": "⚙️ Operaciones", "ref": "ISO 9001:4.4"}
+        ]
         
     cartas_todas = base_cartas + norm_cartas
     total_total = len(cartas_todas)
