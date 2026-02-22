@@ -4,3 +4,6 @@ plotly
 openpyxl
 python-docx
 Pillow
+fpdf2
+requests
+tabulate
