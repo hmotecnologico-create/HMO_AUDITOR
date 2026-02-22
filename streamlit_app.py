@@ -360,7 +360,8 @@ if st.session_state['env'] is None:
         </div>
         """, unsafe_allow_html=True)
 
-        st.info("✅ 12 documentos base pre-cargados (SIG · Calidad · Seguridad · Ambiental)", icon="💡")
+        st.info("📋 El sistema define los tipos de documentos requeridos según las normas activas (SIG · Calidad · Seguridad · Ambiental). Cada documento se sube manualmente.", icon="💡")
+
 
         st.write("")  # espaciador uniforme
         if st.button("🚀 LANZAR V1.6 ELITE", use_container_width=True):
