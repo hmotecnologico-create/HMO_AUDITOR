@@ -521,12 +521,14 @@ else:
     
     # --- PROGRESO SEGMENTADO POR NORMA V12.0 ---
     normas_resumen = {}
-    for n in st.session_state['normas_activas']:
-        docs_n = [c for c in cartas_todas if c.get('norma') == n.upper() or (n == "ISO 9001:2015" and c.get('norma') == "CALIDAD")]
-        if not docs_n and n == "ISO 9001:2015": docs_n = [c for c in cartas_todas if c.get('norma') == "SIG"] # Fallback
+    _normas_iter = normas_activas if normas_activas else [st.session_state.get('norma', 'ISO 9001:2015')]
+    for n in _normas_iter:
+        n_tag = n.upper().replace("ISO 9001:2015", "CALIDAD").replace("ISO 27001", "SEGURIDAD").replace("ISO 14001", "AMBIENTAL")
+        docs_n = [c for c in cartas_todas if c.get('norma') == n_tag]
+        if not docs_n: docs_n = [c for c in cartas_todas if c.get('norma') == 'SIG']  # Fallback a base
         
-        vitales_n = [c for c in docs_n if c['prioridad'] == "VITAL (Obligatorio)"]
-        count_vitales_n = len([d for d in docs_validados if any(c['doc'] == d and c in vitales_n for c in vitales_n)])
+        vitales_n = [c for c in docs_n if c.get('prioridad') == "VITAL (Obligatorio)"]
+        count_vitales_n = len([d for d in docs_validados if any(c['doc'] == d for c in vitales_n)])
         pct_n = int((count_vitales_n / len(vitales_n)) * 100) if vitales_n else 100
         normas_resumen[n] = pct_n
 
