@@ -340,9 +340,17 @@ if st.session_state['env'] is None:
         if st.button("Lanzar V1.6 Elite", use_container_width=True):
             st.session_state['env'], st.session_state['company_name'] = "Simulacion", "Innovatech Solutions SAS"
             st.session_state['base_path'] = setup_company_folders("Innovatech Solutions SAS")
-            st.session_state['paso_ingesta'] = 3
+            st.session_state['paso_ingesta'] = 5
             st.session_state['auditor_name'] = "Juan Gabriel Ortiz"
             st.session_state['empresa_nit'] = "901.455.789-2"
+            # Pre-validar documentos para el Dashboard
+            st.session_state['expediente'] = {
+                "Cámara de Comercio (Existencia Legal)": "Verificado V5.0",
+                "RUT (Registro Único Tributario)": "Verificado V5.0",
+                "Misión y Visión Corporativa": "Verificado V5.0",
+                "Organigrama Funcional": "Estructura Jerárquica Verificada",
+                "Mapa de Procesos": "Interacción de procesos analizada"
+            }
             save_audit_state()
             st.rerun()
 
