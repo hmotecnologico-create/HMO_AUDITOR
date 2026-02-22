@@ -289,10 +289,10 @@ if AUTH_DISPONIBLE and st.session_state['auth'] is None:
             _user_options = ["admin", "auditor", "visitante"]
 
         _login_user = st.selectbox(
-            "👤 Selecciona tu usuario",
+            "👤 Selecciona tu ROL de Acceso",
             options=_user_options,
             key="login_user",
-            help="Elige tu usuario de la lista"
+            help="El nombre de usuario coincide con tu rol en el sistema."
         )
         _login_pass = st.text_input("🔑 Contraseña", type="password", placeholder="••••••••", key="login_pass")
 
@@ -433,152 +433,85 @@ if st.session_state['env'] is None:
     _lmode = st.session_state.get('landing_mode', None)
 
     # ══════════════════════════════════════════════════════════════════
-    #  NIVEL 0 — MENÚ PRINCIPAL (dos tarjetas grandes)
+    #  NIVEL 0 — MENÚ PRINCIPAL (Tres tarjetas Elite)
     # ══════════════════════════════════════════════════════════════════
     if _lmode is None:
-        _mc1, _mc2 = st.columns(2, gap="large")
+        _mc1, _mc2, _mc3 = st.columns(3, gap="medium")
 
         with _mc1:
             st.markdown("""
             <div style='background:rgba(0,194,255,0.06);border:1.5px solid rgba(0,194,255,0.3);
-                        border-radius:16px;padding:2rem 1.5rem;text-align:center;
-                        cursor:pointer;transition:all 0.2s;'>
-                <div style='font-size:2.5rem;margin-bottom:0.5rem;'>📁</div>
-                <div style='color:#00C2FF;font-family:Orbitron;font-size:1rem;
-                            font-weight:700;letter-spacing:2px;margin-bottom:0.5rem;'>
-                    PROYECTOS
+                        border-radius:16px;padding:1.5rem 1rem;text-align:center;height:180px;'>
+                <div style='font-size:2rem;margin-bottom:0.3rem;'>📂</div>
+                <div style='color:#00C2FF;font-family:Orbitron;font-size:0.85rem;
+                            font-weight:700;letter-spacing:1px;margin-bottom:0.4rem;'>
+                    REANUDAR
                 </div>
-                <div style='color:#94A3B8;font-size:0.78rem;line-height:1.4;'>
-                    Reanudar una auditoría existente<br>o lanzar el modo simulación
+                <div style='color:#94A3B8;font-size:0.7rem;line-height:1.3;'>
+                    Continúa un expediente<br>guardado en este PC
                 </div>
             </div>
             """, unsafe_allow_html=True)
             st.write("")
-            if st.button("📁 ENTRAR A PROYECTOS", use_container_width=True,
-                         type="primary", key="menu_sim"):
-                st.session_state['landing_mode'] = 'simulacion'
-                st.rerun()
+            base_audits_path = os.path.join(os.getcwd(), "Auditorias_HMO")
+            existing = [d for d in os.listdir(base_audits_path) if os.path.isdir(os.path.join(base_audits_path, d))] if os.path.exists(base_audits_path) else []
+            selected = st.selectbox("Expediente:", ["— Seleccionar —"] + existing, key="menu_resume_flat", label_visibility="collapsed")
+            if st.button("🚀 ABRIR", use_container_width=True, disabled=(selected == "— Seleccionar —"), type="primary"):
+                if load_audit_state(selected): st.rerun()
 
         with _mc2:
             st.markdown("""
+            <div style='background:rgba(168,85,247,0.06);border:1.5px solid rgba(168,85,247,0.3);
+                        border-radius:16px;padding:1.5rem 1rem;text-align:center;height:180px;'>
+                <div style='font-size:2rem;margin-bottom:0.3rem;'>🎓</div>
+                <div style='color:#A855F7;font-family:Orbitron;font-size:0.85rem;
+                            font-weight:700;letter-spacing:1px;margin-bottom:0.4rem;'>
+                    SIMULACIÓN
+                </div>
+                <div style='color:#94A3B8;font-size:0.7rem;line-height:1.3;'>
+                    Probar el sistema con datos<br>demo de Innovatech SAS
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            st.write("")
+            if st.button("🎓 LANZAR DEMO", use_container_width=True):
+                st.session_state.update({
+                    'env': "Simulacion", 'company_name': "Innovatech Solutions SAS",
+                    'base_path': setup_company_folders("Innovatech Solutions SAS"),
+                    'paso_ingesta': 5, 'auditor_name': "Juan Gabriel Ortiz",
+                    'empresa_nit': "901.455.789-2", 'norma': ["ISO 9001:2015", "ISO 27001:2022"],
+                    'expediente': {"Camara de Comercio": "Verificado V6.0", "RUT": "Verificado V6.0"}
+                })
+                save_audit_state(); st.rerun()
+
+        with _mc3:
+            st.markdown("""
             <div style='background:rgba(16,185,129,0.06);border:1.5px solid rgba(16,185,129,0.3);
-                        border-radius:16px;padding:2rem 1.5rem;text-align:center;
-                        cursor:pointer;transition:all 0.2s;'>
-                <div style='font-size:2.5rem;margin-bottom:0.5rem;'>🏗️</div>
-                <div style='color:#10B981;font-family:Orbitron;font-size:1rem;
-                            font-weight:700;letter-spacing:2px;margin-bottom:0.5rem;'>
+                        border-radius:16px;padding:1.5rem 1rem;text-align:center;height:180px;'>
+                <div style='font-size:2rem;margin-bottom:0.3rem;'>🏗️</div>
+                <div style='color:#10B981;font-family:Orbitron;font-size:0.85rem;
+                            font-weight:700;letter-spacing:1px;margin-bottom:0.4rem;'>
                     NUEVO PROYECTO
                 </div>
-                <div style='color:#94A3B8;font-size:0.78rem;line-height:1.4;'>
+                <div style='color:#94A3B8;font-size:0.7rem;line-height:1.3;'>
                     Crear una auditoría real<br>con rigor legal e ISO
                 </div>
             </div>
             """, unsafe_allow_html=True)
             st.write("")
-            if st.button("🏗️ CREAR NUEVO PROYECTO", use_container_width=True,
-                         key="menu_nuevo"):
+            if st.button("🏗️ CREAR NUEVO", use_container_width=True):
                 st.session_state['landing_mode'] = 'nuevo'
                 st.rerun()
 
         st.markdown("<p style='text-align:center;font-size:0.65rem;color:#1E293B;margin-top:2.5rem;'>"
-                    "HMO Auditor v2.0 Elite · Operación Local · ISO 9001 / 14001 / 27001</p>",
+                    "HMO Auditor v2.0 Elite Edition · Operación Local Privada</p>",
                     unsafe_allow_html=True)
 
     # ══════════════════════════════════════════════════════════════════
-    #  NIVEL 1A — PROYECTOS: REANUDAR | SIMULACIÓN
-    # ══════════════════════════════════════════════════════════════════
-    elif _lmode == 'simulacion':
-        if st.button("← Volver al menú", key="back_sim"):
-            st.session_state['landing_mode'] = None
-            st.rerun()
-
-        st.markdown("""
-        <div style='margin:1rem 0 1.5rem;display:flex;align-items:center;gap:1rem;'>
-            <div style='flex:1;height:1px;background:linear-gradient(to right,
-                transparent,rgba(0,194,255,0.4),transparent);'></div>
-            <span style='color:#00C2FF;font-family:Orbitron;font-size:0.75rem;
-                          letter-spacing:3px;white-space:nowrap;'>📁 PROYECTOS</span>
-            <div style='flex:1;height:1px;background:linear-gradient(to left,
-                transparent,rgba(0,194,255,0.4),transparent);'></div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        col_g1, col_g2 = st.columns(2, gap="large")
-
-        with col_g1:
-            st.markdown("""
-            <div style='background:rgba(0,194,255,0.06);border:1px solid rgba(0,194,255,0.25);
-                        border-radius:12px;padding:1rem 1.2rem 0.6rem;margin-bottom:0.8rem;'>
-                <span style='color:#00C2FF;font-family:Orbitron;font-size:0.95rem;font-weight:700;'>
-                    📂 REANUDAR AUDITORÍA
-                </span><br>
-                <span style='color:#94A3B8;font-size:0.75rem;'>
-                    Continúa un expediente existente desde donde lo dejaste.
-                </span>
-            </div>
-            """, unsafe_allow_html=True)
-
-            base_audits_path = os.path.join(os.getcwd(), "Auditorias_HMO")
-            existing = ([d for d in os.listdir(base_audits_path)
-                         if os.path.isdir(os.path.join(base_audits_path, d))]
-                        if os.path.exists(base_audits_path) else [])
-
-            if existing:
-                selected = st.selectbox("Seleccionar expediente:", existing, key="resume_hub")
-            else:
-                st.caption("⚠️ No hay auditorías previas en este equipo.")
-                selected = None
-
-            if st.button("🚀 RESTAURAR EXPEDIENTE", use_container_width=True,
-                         disabled=not selected, type="primary"):
-                if selected and load_audit_state(selected):
-                    st.session_state['landing_mode'] = None
-                    st.rerun()
-
-        with col_g2:
-            st.markdown("""
-            <div style='background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.25);
-                        border-radius:12px;padding:1rem 1.2rem 0.6rem;margin-bottom:0.8rem;'>
-                <span style='color:#10B981;font-family:Orbitron;font-size:0.95rem;font-weight:700;'>
-                    🎓 MODO SIMULACIÓN
-                </span><br>
-                <span style='color:#94A3B8;font-size:0.75rem;'>
-                    Expediente demo: <b>Innovatech Solutions SAS</b>.
-                </span>
-            </div>
-            """, unsafe_allow_html=True)
-
-            st.info("El sistema guía paso a paso. Cada documento se sube y valida individualmente.",
-                    icon="💡")
-
-            if st.button("🚀 LANZAR SIMULACIÓN ELITE", use_container_width=True):
-                st.session_state.update({
-                    'env': "Simulacion",
-                    'company_name': "Innovatech Solutions SAS",
-                    'base_path': setup_company_folders("Innovatech Solutions SAS"),
-                    'paso_ingesta': 5,
-                    'auditor_name': "Juan Gabriel Ortiz",
-                    'empresa_nit': "901.455.789-2",
-                    'norma': ["Calidad (ISO 9001:2015)", "Seguridad (ISO 27001:2022)"],
-                    'landing_mode': None,
-                    'expediente': {
-                        "Camara de Comercio (Existencia Legal)": "Verificado V6.0",
-                        "RUT (Registro Unico Tributario)": "Verificado V6.0",
-                        "Acta de Compromiso Directivo": "Compromiso de preparacion firmado.",
-                        "Cronograma de Actividades de Preparacion": "Hitos de auditoria programados.",
-                        "Mision y Vision Corporativa": "Verificado V6.0",
-                        "Organigrama Funcional": "Estructura Jerarquica Verificada",
-                        "Mapa de Procesos": "Interaccion de procesos analizada",
-                        "Politica de Seguridad": "Verificado V8.8 (SIG Integration)"
-                    }
-                })
-                save_audit_state()
-                st.rerun()
-
-    # ══════════════════════════════════════════════════════════════════
-    #  NIVEL 1B — NUEVO PROYECTO
+    #  NIVEL 1 — FLUJO DE NUEVO PROYECTO
     # ══════════════════════════════════════════════════════════════════
     elif _lmode == 'nuevo':
+
         if st.button("← Volver al menú", key="back_new"):
             st.session_state['landing_mode'] = None
             st.rerun()
