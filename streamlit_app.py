@@ -97,12 +97,23 @@ st.markdown("""
     }
 
     /* INPUTS Y FORMULARIOS HI-FI */
-    [data-baseweb="input"], [data-baseweb="select"] {
-        background: rgba(5, 7, 12, 0.9) !important;
-        border: 1px solid rgba(0, 194, 255, 0.4) !important;
+    [data-baseweb="input"], [data-baseweb="select"], [data-baseweb="popover"] {
+        background: rgba(5, 7, 12, 0.95) !important;
+        border: 1px solid rgba(0, 194, 255, 0.5) !important;
         border-radius: 14px !important;
     }
-    input { color: #FFFFFF !important; font-weight: 600 !important; }
+    input, [data-baseweb="select"] span, [data-baseweb="select"] div { 
+        color: #00C2FF !important; 
+        font-weight: 700 !important;
+        font-size: 0.85rem !important;
+    }
+    [data-testid="stSidebar"] label {
+        color: #94A3B8 !important;
+        font-weight: 700 !important;
+        font-size: 0.75rem !important;
+        text-transform: uppercase;
+        margin-bottom: 5px !important;
+    }
 
     /* BOTONES ELITE 3.0 */
     .stButton>button {
@@ -344,32 +355,7 @@ if st.session_state['env'] is None:
 else:
     company, base_path = st.session_state['company_name'], st.session_state['base_path']
     
-    # Sidebar Superior
-    st.sidebar.markdown(f"**🏢 {company}**")
-    st.sidebar.markdown(f"**💎 Marco:** {st.session_state['norma']}")
-    
-    # Selector de Rol (Prioridad V3.7)
-    roles_disponibles = ["Administrador (Global)", "⚖️ Jurídico", "🏦 Alta Dirección", "📊 Calidad / SIG", "🛡️ Ciberseguridad", "♻️ Gestión Ambiental", "🎓 Gestión Académica"]
-    st.session_state['user_role'] = st.sidebar.selectbox("🔑 Rol de Sesión:", roles_disponibles, key="role_selector_top")
-    
-    st.sidebar.divider()
-    
-    # Navegación Unificada
-    opciones = [
-        "📊 Dashboard Analítico",
-        "📋 Requerimientos Maestros",
-        "🗺️ Camino de Ingesta (HITL)",
-        "⚖️ Emisión de Títulos/Formatos",
-        "💎 Help Center Elite"
-    ]
-    menu = st.sidebar.radio("Navegación:", opciones, key="main_menu_elite")
-    
-    if st.sidebar.button("🔒 Cerrar Sesión Segura"):
-        save_audit_state()
-        st.session_state['env'] = None
-        st.rerun()
-
-    # --- CONFIGURACIÓN DE DOCUMENTACIÓN & ROLES (UNIFICADA V3.3) ---
+    # --- CONFIGURACIÓN DE CARTAS Y PROGRESO (V3.9 PRE-RENDER) ---
     base_cartas = [
         {"doc": "Cámara de Comercio (Existencia Legal)", "area": "⚖️ Jurídico", "ref": "Legalidad", "desc": "Certificado actualizado con objeto social y NIT."},
         {"doc": "RUT (Registro Único Tributario)", "area": "⚖️ Jurídico", "ref": "Fiscal", "desc": "Identificación tributaria y responsabilidades."},
@@ -402,7 +388,39 @@ else:
     
     cartas_todas = base_cartas + norm_cartas
     total_total = len(cartas_todas)
+    fase_a_ready = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
+
+    # --- SIDEBAR MASTER (V3.9) ---
+    st.sidebar.markdown(f"**🏢 {company}**")
+    st.sidebar.markdown(f"**💎 Marco:** {st.session_state['norma']}")
     
+    # Selector de Rol (Prioridad V3.9) - Contraste Mejorado
+    roles_disponibles = ["Administrador (Global)", "⚖️ Jurídico", "🏦 Alta Dirección", "📊 Calidad / SIG", "🛡️ Ciberseguridad", "♻️ Gestión Ambiental", "🎓 Gestión Académica"]
+    st.session_state['user_role'] = st.sidebar.selectbox("🔑 SELECCIONAR ROL DEL AUDITOR:", roles_disponibles, key="role_selector_top")
+    
+    st.sidebar.divider()
+    
+    # Cálculos de Progreso para Menú
+    count_exp = len(st.session_state['expediente'])
+    pct_ingesta = int((count_exp / total_total) * 100) if total_total > 0 else 0
+    pct_dashboard = int(((1 if fase_a_ready else 0) + (1 if st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)" else 0) + (count_exp / total_total)) / 3 * 100) if total_total > 0 else 0
+
+    # Navegación Unificada Reordenada (V3.9)
+    opciones = [
+        f"🗺️ Camino de Ingesta (HITL) [{pct_ingesta}%]",
+        f"📊 Dashboard Analítico [{pct_dashboard}%]",
+        "📋 Requerimientos Maestros",
+        "⚖️ Emisión de Títulos/Formatos",
+        "💎 Help Center Elite"
+    ]
+    menu_raw = st.sidebar.radio("Navegación:", opciones, key="main_menu_elite")
+    menu = menu_raw.split(" [")[0] # Limpiar para lógica interna
+    
+    if st.sidebar.button("🔒 Cerrar Sesión Segura"):
+        save_audit_state()
+        st.session_state['env'] = None
+        st.rerun()
+
     # Filtrado por Rol
     if st.session_state['user_role'] == "Administrador (Global)":
         cartas = cartas_todas
@@ -412,11 +430,10 @@ else:
         if not cartas: # Fallback
             cartas = [c for c in cartas_todas if st.session_state['user_role'] in c['area']]
         if not cartas: cartas = cartas_todas # Emergency Fallback
-
-    # --- CÁLCULOS GLOBALES DE PROGRESO ---
+    count_exp = len(st.session_state['expediente'])
     fase_a_ready = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
     fase_b_ready = st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)" or st.session_state['env'] == "Simulacion"
-    progreso_c = (st.session_state['paso_ingesta'] / total_total) if total_total > 0 else 0
+    progreso_c = (count_exp / total_total) if total_total > 0 else 0
     progreso_total = ((1 if fase_a_ready else 0) + (1 if fase_b_ready else 0) + progreso_c) / 3
 
     # --- SECCIÓN: REQUERIMIENTOS MAESTROS ---
