@@ -1,0 +1,20 @@
+{
+    "company_name": "Innovatech Solutions SAS",
+    "norma": "Calidad (ISO 9001:2015)",
+    "paso_ingesta": 5,
+    "logo_path": null,
+    "env": "Simulacion",
+    "expediente": {},
+    "autorizado_emision": true,
+    "auditor_name": "Juan Gabriel Ortiz",
+    "rep_legal": "Ing. Carlos Martínez Serna",
+    "rep_id": "C.C. 1.018.445.678",
+    "empresa_tamanio": "Gran Empresa (+250 emp)",
+    "empresa_sector": "Tecnología / Fabricación",
+    "empresa_nit": "901.455.789-2",
+    "empresa_direccion": "Calle 100 #7-33, Bogotá D.C.",
+    "empresa_web": "www.innovatechsolutions.com.co",
+    "empresa_objeto": "Desarrollo de Software y Fabricación de Hardware Disruptivo",
+    "empresa_personal": 350,
+    "last_update": "2026-02-21T19:15:00.000000"
+}
