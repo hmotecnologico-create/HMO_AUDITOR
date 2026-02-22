@@ -61,6 +61,10 @@ st.markdown("""
         color: #E2E8F0 !important;
         font-family: 'Inter', sans-serif !important;
     }
+    /* FIX EMOJI RENDERING */
+    .stExpander summary span {
+        display: inline-flex !important;
+    }
     
     /* ETIQUETAS DE WIDGETS (NEON BLUE) */
     [data-testid="stWidgetLabel"] p {
@@ -393,20 +397,22 @@ else:
         ]
     
     cartas_todas = base_cartas + norm_cartas
-    total_total = len(cartas_todas)
-    
-    # --- MOTOR DE CÁLCULO DE AUDITORÍA (SYNC V4.0) ---
+    # --- MOTOR DE CÁLCULO UNIFICADO V4.5 ---
     count_exp = len(st.session_state['expediente'])
     fase_a_ready = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
     fase_b_ready = st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)" or st.session_state['env'] == "Simulacion"
     
     pct_fase_a = 100 if fase_a_ready else 0
-    pct_fase_b = int(100 if st.session_state['empresa_tamanio'] != "Pyme" or st.session_state['env'] == "Simulacion" else 0)
+    pct_fase_b = 100 if fase_b_ready else 0
     pct_fase_c = int((count_exp / total_total) * 100) if total_total > 0 else 0
     pct_total = int((pct_fase_a + pct_fase_b + pct_fase_c) / 3)
 
-    # --- SIDEBAR MASTER (V4.3 Gold) ---
-    st.sidebar.markdown(f"## 🏢 {company}")
+    # Variables de compatibilidad para evitar discrepancias
+    progreso_c = (count_exp / total_total) if total_total > 0 else 0
+    progreso_total = pct_total / 100
+
+    # --- SIDEBAR MASTER (V4.5) ---
+    st.sidebar.markdown(f"### 🏢 {company}")
     st.sidebar.markdown(f"**Marco:** {st.session_state['norma']}")
     
     # Selector de Rol (V4.0 - Hi-Contrast)
@@ -473,7 +479,7 @@ else:
         phases = [
             ("Fase A: Identidad", 100 if st.session_state['auditor_name'] else 0, "Completo" if st.session_state['auditor_name'] else "Pendiente", "#10B981"),
             ("Fase B: Dimensión", 100 if st.session_state['empresa_tamanio'] != "Pyme" or st.session_state['env'] == "Simulacion" else 0, "Completo", "#00C2FF"),
-            ("Fase C: Cuerpo Normativo", int((st.session_state['paso_ingesta']/len(cartas_todas))*100) if len(cartas_todas)>0 else 0, "En Progreso", "#94A3B8")
+            ("Fase C: Cuerpo Normativo", int((count_exp/len(cartas_todas))*100) if len(cartas_todas)>0 else 0, "En Progreso", "#94A3B8")
         ]
         
         for i, (title, proc, status, color) in enumerate(phases):
@@ -573,20 +579,14 @@ else:
     elif menu == "🗺️ Camino de Ingesta":
         st.markdown("<h1 class='norm-header'>🏗️ Ingesta de Materia Prima por Fases</h1>", unsafe_allow_html=True)
         
-        # CÁLCULO DE PROGRESO GLOBAL DE INGESTA
-        fase_a_ready = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
-        fase_b_ready = st.session_state['empresa_tamanio'] != ""
-        progreso_c = (st.session_state['paso_ingesta'] / len(cartas)) if len(cartas) > 0 else 0
-        
-        progreso_total = ((1 if fase_a_ready else 0) + (1 if fase_b_ready else 0) + progreso_c) / 3
-        
-        st.markdown(f"### 📈 Avance Consolidado del Expediente: {progreso_total*100:.0f}%")
+        # CÁLCULO DE PROGRESO GLOBAL DE INGESTA (SYNC V4.5)
+        st.markdown(f"### 📈 Avance Consolidado del Expediente: {pct_total}%")
         st.progress(progreso_total)
         
         col_st1, col_st2, col_st3 = st.columns(3)
         col_st1.markdown(f"**Fase A:** {'✅' if fase_a_ready else '⏳'}")
         col_st2.markdown(f"**Fase B:** {'✅' if fase_b_ready else '⏳'}")
-        col_st3.markdown(f"**Fase C:** {progreso_c*100:.0f}%")
+        col_st3.markdown(f"**Fase C:** {pct_fase_c}%")
         st.divider()
 
         tab_a, tab_b, tab_c, tab_final = st.tabs(["🔒 Fase A: Identidad", "📊 Fase B: Dimensión", "📜 Fase C: Cuerpo Normativo", "🏁 Validación & Cierre"])
@@ -633,14 +633,14 @@ else:
                     st.write("### ⚙️ Carga de Anexos Técnicos")
                 with c_head2:
                     st.metric("📦 Materia Prima Inyectada", f"{pct_fase_c}%", f"{count_ready}/{total_total} Listos")
-                # Agrupación por Áreas (V4.1 Sincronización Real)
+                # Agrupación por Áreas (V4.5 Limpieza de Emojis)
                 areas = list(dict.fromkeys([c['area'] for c in cartas]))
                 for i, area in enumerate(areas):
                     docs_area = [c for c in cartas if c['area'] == area]
                     conteo_ready = sum(1 for c in docs_area if c['doc'] in st.session_state['expediente'])
                     porcentaje_area = int((conteo_ready / len(docs_area)) * 100) if docs_area else 0
                     
-                    with st.expander(f"➡️ {area} - Avance: {porcentaje_area}%"):
+                    with st.expander(f"📁 {area} - Avance: {porcentaje_area}%"):
                          for c in docs_area:
                             idx = cartas.index(c)
                             doc_id = c['doc']
@@ -662,7 +662,6 @@ else:
                                     if st.button(f"✅ VALIDAR {doc_id.upper()}", key=f"btn_{idx}"):
                                         # Guardar en el expediente meta-data real
                                         st.session_state['expediente'][doc_id] = manual_txt if manual_txt else raw_txt
-                                        st.session_state['paso_ingesta'] += 1
                                         save_audit_state()
                                         st.success(f"✅ {doc_id} cargado con éxito.")
                                         st.rerun()
@@ -678,7 +677,6 @@ else:
                                 st.success(f"Documento indexado: {len(st.session_state['expediente'][doc_id])} caracteres.")
                                 if st.button(f"🗑️ Eliminar y Re-cargar {doc_id}", key=f"del_{idx}"):
                                     del st.session_state['expediente'][doc_id]
-                                    st.session_state['paso_ingesta'] -= 1
                                     save_audit_state()
                                     st.rerun()
                                     
@@ -690,7 +688,7 @@ else:
         # --- VALIDACIÓN & CIERRE ---
         with tab_final:
             st.write("### 🏁 Cierre de Ingesta y Validación de Estructura")
-            progreso_c = (st.session_state['paso_ingesta'] / len(cartas)) if len(cartas) > 0 else 0
+            progreso_c = (len(st.session_state['expediente']) / len(cartas)) if len(cartas) > 0 else 0
             
             if 'revisado_plantillas' not in st.session_state: st.session_state['revisado_plantillas'] = False
             
