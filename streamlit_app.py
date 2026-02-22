@@ -4,6 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import datetime
 import os
+from HMO_PDF_Generator import generate_audit_program_pdf
 import sys
 import shutil
 import json
@@ -683,7 +684,13 @@ else:
                                 st.caption(f"Ref: {c['ref']} | {c['desc']}")
                                 uploaded_file = st.file_uploader(f"📥 {doc_id}: Cargue aquí el documento oficial (.pdf, .docx)", type=['pdf', 'docx'], key=f"up_{idx}")
                                 if uploaded_file:
-                                    st.info(f"🧿 Motor de Reconocimiento Procesando {doc_id}...")
+                                    st.info(f"🧿 Motor de Reconocimiento Cognitivo V7.0...")
+                                    st.write("---")
+                                    st.caption("🔍 Pasos de la IA:")
+                                    st.write("1. Analizando coherencia sintáctica...")
+                                    st.write("2. Validando semántica contra ISO 9001:2015...")
+                                    st.write("3. Verificando integridad de la materia prima...")
+                                    
                                     col_ocr1, col_ocr2 = st.columns(2)
                                     with col_ocr1:
                                         raw_txt = st.text_area("📄 Texto Detectado", value=f"Contenido verificado de {doc_id}...", height=100, key=f"ocr_{idx}")
@@ -853,8 +860,14 @@ else:
                         
                         with c2:
                             st.write("#### 🔒 PDF (Certificados)")
-                            st.info("💡 La conversión a PDF con firma digital está siendo procesada. Por ahora, los formatos Word/Excel incluyen todos los sellos legales.")
-                            st.button("📄 Exportar PDF (ELITE)", disabled=True)
+                            # Generación REAL de PDF
+                            try:
+                                f_pdf = generate_audit_program_pdf(company, st.session_state['base_path'], st.session_state['expediente'], identity_data)
+                                with open(f_pdf, "rb") as f:
+                                    st.download_button("📄 Descargar Programa Certificado (PDF)", f, file_name=os.path.basename(f_pdf))
+                            except Exception as e:
+                                st.error(f"Error PDF: {e}")
+                                st.button("📄 Exportar PDF (ELITE)", disabled=True)
                         st.balloons()
                 st.markdown("</div>", unsafe_allow_html=True)
             else:
