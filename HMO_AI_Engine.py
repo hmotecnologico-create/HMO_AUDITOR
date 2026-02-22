@@ -13,20 +13,22 @@ class HMO_AI_Engine:
         except:
             return False
 
-    def analyze_document(self, doc_name, text_content):
+    def analyze_document(self, doc_name, text_content, target_norm="ISO 9001:2015"):
         """
-        Análisis semántico real bajo ISO 9001/19011.
+        Análisis semántico dual: ISO 19011 (Metodología) + Norma Específica (Criterio).
         """
         prompt = f"""
-        Eres un Auditor Senior Certificado en ISO 9001:2015 e ISO 19011:2018.
-        Analiza el siguiente contenido del documento '{doc_name}' y responde en formato JSON:
-        1. Coherencia (0-100)
-        2. Hallazgos_Clave (Lista)
-        3. Riesgos_Detectados (Lista)
-        4. Resumen_Ejecutivo (Máximo 3 líneas)
+        Eres un Auditor Senior Certificado. Utiliza la ISO 19011:2018 como METODOLOGÍA de auditoría 
+        y la norma '{target_norm}' como CRITERIO de evaluación.
+        
+        Analiza el contenido del documento '{doc_name}' y responde estrictamente en JSON:
+        1. Coherencia (0-100) - Qué tanto cumple el documento con los requisitos de '{target_norm}'.
+        2. Hallazgos_Clave (Lista) - Hallazgos basados en evidencias objetivas (ISO 19011:6.4.7).
+        3. Riesgos_Detectados (Lista) - Riesgos asociados al proceso según el enfoque de '{target_norm}'.
+        4. Resumen_Ejecutivo (Máximo 3 líneas) - Conclusión del auditor sobre la madurez del documento.
 
-        Contenido:
-        {text_content[:2000]} # Limitamos por contexto local
+        Contenido del Documento:
+        {text_content[:2500]} 
         """
         
         try:

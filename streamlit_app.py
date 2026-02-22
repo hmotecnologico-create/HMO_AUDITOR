@@ -718,7 +718,7 @@ else:
                                                 if extracted_data:
                                                     analisis = ai_engine.analyze_risk_matrix(extracted_data)
                                                 else:
-                                                    analisis = ai_engine.analyze_document(doc_id, manual_txt if manual_txt else raw_txt)
+                                                    analisis = ai_engine.analyze_document(doc_id, manual_txt if manual_txt else raw_txt, target_norm=st.session_state['norma'])
                                                 
                                                 if "error" not in analisis:
                                                     st.session_state['expediente'][doc_id] = {
