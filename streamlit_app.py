@@ -61,7 +61,7 @@ st.markdown("""
     }
 
     /* TEXTO HI-FI (LEGIBILIDAD EXTREMA) */
-    .stApp, .stApp p, .stApp span, .stApp li {
+    .stApp, .stApp p, .stApp li {
         color: #E2E8F0 !important;
         font-family: 'Inter', sans-serif !important;
     }
