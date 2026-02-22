@@ -343,11 +343,13 @@ if st.session_state['env'] is None:
             st.session_state['paso_ingesta'] = 5
             st.session_state['auditor_name'] = "Juan Gabriel Ortiz"
             st.session_state['empresa_nit'] = "901.455.789-2"
-            # Pre-validar documentos para el Dashboard
+            # Pre-validar documentos para el Dashboard (Protocolo V6.0)
             st.session_state['expediente'] = {
-                "Cámara de Comercio (Existencia Legal)": "Verificado V5.0",
-                "RUT (Registro Único Tributario)": "Verificado V5.0",
-                "Misión y Visión Corporativa": "Verificado V5.0",
+                "Cámara de Comercio (Existencia Legal)": "Verificado V6.0",
+                "RUT (Registro Único Tributario)": "Verificado V6.0",
+                "Acta de Compromiso Directivo": "Compromiso de preparación firmado.",
+                "Cronograma de Actividades de Preparación": "Hitos de auditoría programados.",
+                "Misión y Visión Corporativa": "Verificado V6.0",
                 "Organigrama Funcional": "Estructura Jerárquica Verificada",
                 "Mapa de Procesos": "Interacción de procesos analizada"
             }
@@ -382,6 +384,8 @@ else:
     base_cartas = [
         {"doc": "Cámara de Comercio (Existencia Legal)", "area": "⚖️ Jurídico", "ref": "Legalidad", "desc": "Certificado actualizado con objeto social y NIT."},
         {"doc": "RUT (Registro Único Tributario)", "area": "⚖️ Jurídico", "ref": "Fiscal", "desc": "Identificación tributaria y responsabilidades."},
+        {"doc": "Acta de Compromiso Directivo", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Acuerdo de preparación, asignación de recursos y roles."},
+        {"doc": "Cronograma de Actividades de Preparación", "area": "🏦 Alta Dirección", "ref": "Planeación", "desc": "Calendario con hitos de entrega de evidencias (Inicio-Fin)."},
         {"doc": "Misión y Visión Corporativa", "area": "🏦 Alta Dirección", "ref": "Estratégico", "desc": "Propósito y rumbo organizacional."},
         {"doc": "Matriz de Responsables de Área", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Liderazgo nominal por procesos."},
         {"doc": "Organigrama Funcional", "area": "🏦 Alta Dirección", "ref": "Estructura", "desc": "Jerarquía y mandos medios."}
@@ -667,7 +671,7 @@ else:
                     conteo_ready = sum(1 for c in docs_area if c['doc'] in st.session_state['expediente'])
                     porcentaje_area = int((conteo_ready / len(docs_area)) * 100) if docs_area else 0
                     
-                    with st.expander(f"📁 {area} - Avance: {porcentaje_area}%"):
+                    with st.expander(f"🔹 PROCESO: {area} — Avance: {porcentaje_area}%"):
                          for c in docs_area:
                             idx = cartas.index(c)
                             doc_id = c['doc']
