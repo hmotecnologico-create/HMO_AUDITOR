@@ -393,6 +393,8 @@ else:
         ]
     
     cartas_todas = base_cartas + norm_cartas
+    total_total = len(cartas_todas)
+    
     # --- MOTOR DE CÁLCULO DE AUDITORÍA (SYNC V4.0) ---
     count_exp = len(st.session_state['expediente'])
     fase_a_ready = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
