@@ -181,6 +181,16 @@ st.markdown("""
     }
     [data-testid="stSidebar"] hr { margin: 0.5rem 0 !important; }
 
+    /* FIX SOLAPAMIENTOS V3.8 */
+    .norm-header {
+        margin-top: -1rem !important;
+        margin-bottom: 2rem !important;
+        z-index: 10;
+        position: relative;
+    }
+    body { overflow-x: hidden !important; }
+    .stApp { overflow-x: hidden !important; }
+
     @media (max-width: 768px) { .floating-help { display: none; } }
 </style>
 """, unsafe_allow_html=True)
@@ -412,7 +422,23 @@ else:
     # --- SECCIÓN: REQUERIMIENTOS MAESTROS ---
     if menu == "📋 Requerimientos Maestros":
         st.markdown(f"<h1 class='norm-header'>📋 Lista Maestra de Requerimientos</h1>", unsafe_allow_html=True)
-        # ... rest of the code ...
+        st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
+        st.write(f"### Requisitos del Marco: {st.session_state['norma']}")
+        st.info("Esta lista representa la materia prima necesaria para que el sistema genere los formatos oficiales.")
+        
+        df_req = pd.DataFrame(cartas_todas)
+        df_req.columns = ["📚 Documento Requerido", "🏢 Área Responsable", "🔗 Ref. Normativa", "📝 Descripción del Control"]
+        st.dataframe(df_req, use_container_width=True, hide_index=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+        st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
+        st.write("### 🔑 Guía de Acción Directa")
+        st.markdown("""
+        - **Paso 1**: Identifique el área responsable en su organización.
+        - **Paso 2**: Recupere el documento en formato PDF o Word.
+        - **Paso 3**: Diríjase al **Camino de Ingesta (HITL)** para cargar la evidencia.
+        """)
+        st.markdown("</div>", unsafe_allow_html=True)
     
     elif menu == "📊 Dashboard Analítico":
         st.markdown(f"<h1 class='norm-header'>📊 Dashboard Fase Analytics: {company}</h1>", unsafe_allow_html=True)
@@ -578,37 +604,46 @@ else:
                     completados_area = sum(1 for c in docs_area if cartas.index(c) < st.session_state['paso_ingesta'])
                     
                     with st.expander(f"{area} - Avance: {(completados_area/len(docs_area))*100:.0f}%"):
-                        for c in docs_area:
+                         for c in docs_area:
                             idx = cartas.index(c)
-                            es_completado = idx < st.session_state['paso_ingesta']
-                            es_actual = idx == st.session_state['paso_ingesta']
+                            doc_id = c['doc']
+                            es_completado = doc_id in st.session_state['expediente']
                             
-                            st.write(f"**{'✅' if es_completado else '⏳' if es_actual else '🔒'} {c['doc']}**")
+                            st.write(f"**{'✅' if es_completado else '⏳'} {doc_id}**")
                             
-                            if es_actual:
-                                uploaded_file = st.file_uploader(f"Cargar Evidencia: {c['doc']}", type=['pdf', 'docx'], key=f"up_{idx}")
+                            if not es_completado:
+                                st.caption(f"Ref: {c['ref']} | {c['desc']}")
+                                uploaded_file = st.file_uploader(f"Cargar Evidencia: {doc_id}", type=['pdf', 'docx'], key=f"up_{idx}")
                                 if uploaded_file:
-                                    st.info("🧿 Motor de Reconocimiento Procesando...")
-                                    col1, col2 = st.columns(2)
-                                    with col1:
-                                        raw_txt = st.text_area("📄 Texto Detectado por Reconocimiento", value=f"Contenido de {c['doc']}...", height=150, key=f"ocr_{idx}")
-                                    with col2:
-                                        manual_txt = st.text_area("✍️ Información Omitida / Ajuste Auditor", placeholder="Ingrese aquí lo que el motor no detectó...", key=f"val_{idx}")
+                                    st.info(f"🧿 Motor de Reconocimiento Procesando {doc_id}...")
+                                    col_ocr1, col_ocr2 = st.columns(2)
+                                    with col_ocr1:
+                                        raw_txt = st.text_area("📄 Texto Detectado", value=f"Contenido verificado de {doc_id}...", height=100, key=f"ocr_{idx}")
+                                    with col_ocr2:
+                                        manual_txt = st.text_area("✍️ Ajuste Auditor", placeholder="Añada observaciones...", key=f"val_{idx}")
                                     
-                                    # Evaluador Experto de Alineamiento (Influenciado por Fase B)
-                                    st.markdown("---")
-                                    st.markdown(f"#### 🕵️ Evaluación del Experto (Rigor: {st.session_state['empresa_tamanio']})")
-                                    check_txt = manual_txt if manual_txt else raw_txt
+                                    if st.button(f"✅ VALIDAR {doc_id.upper()}", key=f"btn_{idx}"):
+                                        # Guardar en el expediente meta-data real
+                                        st.session_state['expediente'][doc_id] = manual_txt if manual_txt else raw_txt
+                                        st.session_state['paso_ingesta'] += 1
+                                        save_audit_state()
+                                        st.success(f"✅ {doc_id} cargado con éxito.")
+                                        st.rerun()
                                     
-                                    # Lógica de Rigor por Tamaño
+                                    # Evaluador de Rigor
                                     es_grande = "Gran" in st.session_state['empresa_tamanio']
-                                    min_len = 150 if es_grande else 80
-                                    
-                                    if len(check_txt) < min_len:
-                                        msg = f"⚠️ **Alerta:** Para una {st.session_state['empresa_tamanio']}, se exige mayor profundidad técnica." if es_grande else "⚠️ **Alerta:** Información escueta para los estándares mínimos."
-                                        st.warning(msg)
+                                    check_content = manual_txt if manual_txt else raw_txt
+                                    if len(check_content) < (150 if es_grande else 80):
+                                        st.warning("⚠️ Contenido limitado para los estándares de rigor.")
                                     else:
-                                        st.success(f"✅ **Validación:** Contenido sólido para {st.session_state['empresa_tamanio']}.")
+                                        st.success("💎 Densidad informativa óptima.")
+                            else:
+                                st.success(f"Documento indexado: {len(st.session_state['expediente'][doc_id])} caracteres.")
+                                if st.button(f"🗑️ Eliminar y Re-cargar {doc_id}", key=f"del_{idx}"):
+                                    del st.session_state['expediente'][doc_id]
+                                    st.session_state['paso_ingesta'] -= 1
+                                    save_audit_state()
+                                    st.rerun()
                                     
                 # RESUMEN DE MATERIA PRIMA FALTANTE (FASE C)
                 st.markdown("---")
