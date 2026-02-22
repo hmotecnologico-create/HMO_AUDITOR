@@ -4,7 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import datetime
 import os
-from HMO_PDF_Generator import generate_audit_program_pdf
+from HMO_PDF_Generator import generate_audit_program_pdf, generate_preparation_guide_pdf
 from HMO_AI_Engine import HMO_AI_Engine
 import sys
 import pandas as pd
@@ -386,35 +386,35 @@ else:
     
     # --- CONFIGURACIÓN DE CARTAS Y PROGRESO (V3.9 PRE-RENDER) ---
     base_cartas = [
-        {"doc": "Cámara de Comercio (Existencia Legal)", "area": "⚖️ Jurídico", "ref": "Legalidad", "desc": "Certificado actualizado con objeto social y NIT.", "justificacion": "ISO 19011:6.3.1 - Necesario para verificar la base legal y representación de la entidad auditada."},
-        {"doc": "RUT (Registro Único Tributario)", "area": "⚖️ Jurídico", "ref": "Fiscal", "desc": "Identificación tributaria y responsabilidades.", "justificacion": "Requisito legal/fiscal para la identificación de la persona jurídica según normativa nacional."},
-        {"doc": "Acta de Compromiso Directivo", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Acuerdo de preparación, asignación de recursos y roles.", "justificacion": "ISO 9001:5.1 e ISO 19011:6.2.2 - El compromiso de la dirección es vital para el éxito de la auditoría."},
-        {"doc": "Cronograma de Actividades de Preparación", "area": "🏦 Alta Dirección", "ref": "Planeación", "desc": "Calendario con hitos de entrega de evidencias (Inicio-Fin).", "justificacion": "ISO 19011:6.3.2 - Base para la planificación detallada de las actividades de auditoría de campo."},
-        {"doc": "Misión y Visión Corporativa", "area": "🏦 Alta Dirección", "ref": "Estratégico", "desc": "Propósito y rumbo organizacional.", "justificacion": "ISO 9001:4.1 - Fundamental para entender el contexto organizacional y los objetivos estratégicos."},
-        {"doc": "Matriz de Responsables de Área", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Liderazgo nominal por procesos.", "justificacion": "ISO 9001:5.3 - Define las responsabilidades y autoridades dentro de los procesos de la entidad."},
-        {"doc": "Organigrama Funcional", "area": "🏦 Alta Dirección", "ref": "Estructura", "desc": "Jerarquía y mandos medios.", "justificacion": "ISO 19011:6.3.1 - Requerido para mapear la cadena de mando y los flujos de comunicación oficiales."}
+        {"doc": "Cámara de Comercio (Existencia Legal)", "area": "⚖️ Jurídico", "ref": "Legalidad", "desc": "Certificado actualizado con objeto social y NIT.", "justificacion": "ISO 19011:6.3.1 - Necesario para verificar la base legal y representación de la entidad auditada.", "instrucciones": "Solicite este documento directamente en la oficina de la Cámara de Comercio o descárguelo de su portal web con una vigencia no mayor a 30 días."},
+        {"doc": "RUT (Registro Único Tributario)", "area": "⚖️ Jurídico", "ref": "Fiscal", "desc": "Identificación tributaria y responsabilidades.", "justificacion": "Requisito legal/fiscal para la identificación de la persona jurídica según normativa nacional.", "instrucciones": "Descargue el PDF actualizado desde el portal de la DIAN."},
+        {"doc": "Acta de Compromiso Directivo", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Acuerdo de preparación, asignación de recursos y roles.", "justificacion": "ISO 9001:5.1 e ISO 19011:6.2.2 - El compromiso de la dirección es vital para el éxito de la auditoría.", "instrucciones": "Redacte un acta simple firmada por la gerencia donde se declare la voluntad de realizar la auditoría interna y se designen los responsables por área."},
+        {"doc": "Cronograma de Actividades de Preparación", "area": "🏦 Alta Dirección", "ref": "Planeación", "desc": "Calendario con hitos de entrega de evidencias (Inicio-Fin).", "justificacion": "ISO 19011:6.3.2 - Base para la planificación detallada de las actividades de auditoría de campo.", "instrucciones": "Diseñe un calendario (Excel o Gantt) que muestre las fechas límite en las que cada oficina debe entregar su documentación al auditor."},
+        {"doc": "Misión y Visión Corporativa", "area": "🏦 Alta Dirección", "ref": "Estratégico", "desc": "Propósito y rumbo organizacional.", "justificacion": "ISO 9001:4.1 - Fundamental para entender el contexto organizacional y los objetivos estratégicos.", "instrucciones": "Extraiga los textos oficiales del manual estratégico o la página web de la empresa y plásmelos en un documento PDF o Word con membrete oficial."},
+        {"doc": "Matriz de Responsables de Área", "area": "🏦 Alta Dirección", "ref": "Gobierno", "desc": "Liderazgo nominal por procesos.", "justificacion": "ISO 9001:5.3 - Define las responsabilidades y autoridades dentro de los procesos de la entidad.", "instrucciones": "Cree un cuadro que relacione cada proceso con su responsable (Cargo y Nombre completo)."},
+        {"doc": "Organigrama Funcional", "area": "🏦 Alta Dirección", "ref": "Estructura", "desc": "Jerarquía y mandos medios.", "justificacion": "ISO 19011:6.3.1 - Requerido para mapear la cadena de mando y los flujos de comunicación oficiales.", "instrucciones": "Utilice herramientas como Visio o PowerPoint para diagramar la estructura jerárquica actual de la empresa, desde la gerencia hasta los cargos operativos."}
     ]
 
     if "Académico" in st.session_state['norma']:
         norm_cartas = [
-            {"doc": "PEI (Proyecto Educativo)", "area": "🎓 Gestión Académica", "ref": "Ley 115", "desc": "Columna vertebral académica.", "justificacion": "Ley 115 de 1994 - Documento maestro que define la identidad y el modelo pedagógico de la institución."},
-            {"doc": "Registro Calificado", "area": "⚖️ Jurídico/Normativo", "ref": "Dec. 1330", "desc": "Autorización ministerial.", "justificacion": "Decreto 1330 de 2019 - Habilitación legal para la oferta y desarrollo de programas académicos."},
-            {"doc": "Estatuto Docente", "area": "👥 Talento Humano", "ref": "Dec. 1278", "desc": "Reglamentación docente.", "justificacion": "Decreto 1278/2277 - Marco normativo para la gestión del personal docente y su escalafón."}
+            {"doc": "PEI (Proyecto Educativo)", "area": "🎓 Gestión Académica", "ref": "Ley 115", "desc": "Columna vertebral académica.", "justificacion": "Ley 115 de 1994 - Documento maestro que define la identidad y el modelo pedagógico de la institución.", "instrucciones": "Recopile el documento PEI vigente del consejo directivo. Debe incluir el Horizonte Institucional y el Plan de Estudios."},
+            {"doc": "Registro Calificado", "area": "⚖️ Jurídico/Normativo", "ref": "Dec. 1330", "desc": "Autorización ministerial.", "justificacion": "Decreto 1330 de 2019 - Habilitación legal para la oferta y desarrollo de programas académicos.", "instrucciones": "Adjunte la resolución ministerial vigente que autoriza el programa."},
+            {"doc": "Estatuto Docente", "area": "👥 Talento Humano", "ref": "Dec. 1278", "desc": "Reglamentación docente.", "justificacion": "Decreto 1278/2277 - Marco normativo para la gestión del personal docente y su escalafón.", "instrucciones": "Extraiga el reglamento de escalafón y deberes docentes aprobado por la institución."}
         ]
     elif "Seguridad" in st.session_state['norma']:
         norm_cartas = [
-            {"doc": "Política de Seguridad", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:5.2", "desc": "Directrices de protección.", "justificacion": "ISO 27001:5.2 - La dirección debe establecer una política de seguridad que sea apropiada."},
-            {"doc": "Análisis de Riesgos", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:6.1", "desc": "Mapa de vulnerabilidades.", "justificacion": "ISO 27001:6.1 - Base para el tratamiento planificado de los riesgos de seguridad de la información."}
+            {"doc": "Política de Seguridad", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:5.2", "desc": "Directrices de protección.", "justificacion": "ISO 27001:5.2 - La dirección debe establecer una política de seguridad que sea apropiada.", "instrucciones": "Redacte la directriz de seguridad donde la gerencia se compromete con la protección de datos."},
+            {"doc": "Análisis de Riesgos", "area": "🛡️ Ciberseguridad", "ref": "ISO 27001:6.1", "desc": "Mapa de vulnerabilidades.", "justificacion": "ISO 27001:6.1 - Base para el tratamiento planificado de los riesgos de seguridad de la información.", "instrucciones": "Realice un levantamiento de activos de información y califique su probabilidad e impacto."}
         ]
     elif "Ambiental" in st.session_state['norma']:
         norm_cartas = [
-            {"doc": "Aspectos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.1.2", "desc": "Evaluación de impactos.", "justificacion": "ISO 14001:6.1.2 - Determinación de aspectos ambientales y sus impactos asociados."},
-            {"doc": "Objetivos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.2", "desc": "Metas de eco-eficiencia.", "justificacion": "ISO 14001:6.2 - La organización debe establecer objetivos ambientales en las funciones relevantes."}
+            {"doc": "Aspectos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.1.2", "desc": "Evaluación de impactos.", "justificacion": "ISO 14001:6.1.2 - Determinación de aspectos ambientales y sus impactos asociados.", "instrucciones": "Documente cómo sus actividades (residuos, ruido, agua) afectan el entorno."},
+            {"doc": "Objetivos Ambientales", "area": "♻️ Gestión Ambiental", "ref": "ISO 14001:6.2", "desc": "Metas de eco-eficiencia.", "justificacion": "ISO 14001:6.2 - La organización debe establecer objetivos ambientales en las funciones relevantes.", "instrucciones": "Defina metas medibles (ej. reducción de papel al 20%) para el año en curso."}
         ]
     else: # ISO 9001
         norm_cartas = [
-            {"doc": "Contexto Organizacional", "area": "📊 Calidad", "ref": "ISO 9001:4.1", "desc": "Análisis de entorno (DOFA).", "justificacion": "ISO 9001:4.1 - Requisito fundamental para entender las cuestiones externas e internas que afectan al SGC."},
-            {"doc": "Mapa de Procesos", "area": "⚙️ Operaciones", "ref": "ISO 9001:4.4", "desc": "Interacción de procesos.", "justificacion": "ISO 9001:4.4 - Exigido para demostrar el enfoque basado en procesos y su interacción."}
+            {"doc": "Contexto Organizacional", "area": "📊 Calidad", "ref": "ISO 9001:4.1", "desc": "Análisis de entorno (DOFA).", "justificacion": "ISO 9001:4.1 - Requisito fundamental para entender las cuestiones externas e internas que afectan al SGC.", "instrucciones": "Realice una matriz DOFA que analice Debilidades, Oportunidades, Fortalezas y Amenazas de la empresa."},
+            {"doc": "Mapa de Procesos", "area": "⚙️ Operaciones", "ref": "ISO 9001:4.4", "desc": "Interacción de procesos.", "justificacion": "ISO 9001:4.4 - Exigido para demostrar el enfoque basado en procesos y su interacción.", "instrucciones": "Grafique los procesos estratégicos, misionales y de soporte de la entidad."}
         ]
     
     cartas_todas = base_cartas + norm_cartas
@@ -667,6 +667,12 @@ else:
                 with c_head1:
                     st.write("### ⚖️ 6.3.1 Revisión de Información Documentada")
                 with c_head2:
+                    # BOTÓN DE GUÍA DE PREPARACIÓN (V8.4)
+                    if st.button("📄 Descargar Guía de Preparación (PDF)", use_container_width=True):
+                        guide_path = generate_preparation_guide_pdf(st.session_state['company_name'], st.session_state['base_path'], cartas_todas, norma=st.session_state['norma'])
+                        with open(guide_path, "rb") as f:
+                            st.download_button("📂 Haz clic para Guardar Guía", f, file_name=os.path.basename(guide_path))
+                    
                     st.metric("📦 Materia Prima Inyectada", f"{pct_fase_c}%", f"{count_ready}/{total_total} Listos")
                 # Agrupación por Áreas (V4.5 Limpieza de Emojis)
                 areas = list(dict.fromkeys([c['area'] for c in cartas]))

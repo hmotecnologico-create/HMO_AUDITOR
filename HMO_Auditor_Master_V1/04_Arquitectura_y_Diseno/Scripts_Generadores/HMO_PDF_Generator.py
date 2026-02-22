@@ -82,8 +82,53 @@ def generate_audit_program_pdf(company_name, output_path, kb=None, identity_data
     pdf.text(35, pdf.get_y() + 5, f"FIRMA AUDITOR: {identity_data.get('auditor')}")
     pdf.text(130, pdf.get_y() + 5, f"FIRMA REPRESENTANTE LEGAL")
 
+def generate_audit_program_pdf(company_name, output_path, kb=None, identity_data=None):
+    # ... (existing function content)
+    # ...
     if not os.path.exists(output_path): os.makedirs(output_path)
     full_path = os.path.join(output_path, f"GAD_PROG_01_CERT_{company_name[:5].upper()}.pdf")
+    pdf.output(full_path)
+    return full_path
+
+def generate_preparation_guide_pdf(company_name, output_path, doc_requirements, norma="ISO 9001:2015"):
+    """
+    Genera una guía de preparación para que el humano sepa qué y cómo crear los documentos.
+    """
+    pdf = HMO_PDF()
+    pdf.add_page()
+    pdf.set_font("helvetica", "B", 16)
+    pdf.cell(0, 10, "GUÍA DE PREPARACIÓN DOCUMENTAL", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.set_font("helvetica", "I", 10)
+    pdf.cell(0, 8, f"Norma de Referencia: {norma}", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.ln(5)
+
+    pdf.set_font("helvetica", "", 10)
+    intro = (f"Esta guía ha sido generada para {company_name} con el fin de facilitar la recolección "
+             "de evidencias necesarias para la fase de Revisión de Información Documentada (ISO 19011:6.3.1).")
+    pdf.multi_cell(0, 5, intro)
+    pdf.ln(10)
+
+    for doc_item in doc_requirements:
+        pdf.set_font("helvetica", "B", 12)
+        pdf.set_fill_color(220, 230, 241)
+        pdf.cell(0, 10, doc_item['doc'].upper(), fill=True, border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        
+        pdf.set_font("helvetica", "B", 10)
+        pdf.cell(0, 7, "📌 JUSTIFICACIÓN NORMATIVA:", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        pdf.set_font("helvetica", "", 9)
+        pdf.multi_cell(0, 5, doc_item.get('justificacion', 'Requisito estándar de auditoría.'))
+        
+        pdf.ln(2)
+        pdf.set_font("helvetica", "B", 10)
+        pdf.set_text_color(31, 78, 120)
+        pdf.cell(0, 7, "🛠️ CÓMO CREAR ESTE DOCUMENTO (EL HUMANO):", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        pdf.set_text_color(0, 0, 0)
+        pdf.set_font("helvetica", "I", 9)
+        pdf.multi_cell(0, 5, doc_item.get('instrucciones', 'Consulte el manual de calidad o el archivo maestro de la entidad.'))
+        pdf.ln(5)
+
+    if not os.path.exists(output_path): os.makedirs(output_path)
+    full_path = os.path.join(output_path, f"GUIA_PREPARACION_{company_name[:5].upper()}.pdf")
     pdf.output(full_path)
     return full_path
 
