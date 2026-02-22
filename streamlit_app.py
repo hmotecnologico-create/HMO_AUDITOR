@@ -101,20 +101,25 @@ st.markdown("""
     }
 
     /* INPUTS Y FORMULARIOS HI-FI */
-    /* INPUTS Y FORMULARIOS HI-FI V4.0 */
+    /* INPUTS Y FORMULARIOS HI-FI V4.6 (ACCESSIBILITY FIRST) */
     [data-baseweb="input"], [data-baseweb="select"], [data-baseweb="popover"] {
-        background: rgba(5, 7, 12, 0.98) !important;
-        border: 1.5px solid rgba(0, 194, 255, 0.6) !important;
+        background: #E2E8F0 !important; /* Fondo claro para contraste real */
+        border: 1.5px solid #00C2FF !important;
         border-radius: 12px !important;
     }
-    input { color: #00C2FF !important; font-weight: 700 !important; }
+    input { 
+        color: #000000 !important; 
+        font-weight: 700 !important; 
+    }
+    input::placeholder {
+        color: rgba(0, 0, 0, 0.5) !important;
+    }
     
-    /* SELECTOR DE ROL: MÁXIMA LEGIBILIDAD EXIGIDA POR AUDITORÍA */
+    /* SELECTOR DE ROL Y DROPDOWNS: NEGRO SOBRE CLARO */
     div[data-baseweb="select"] span, div[data-baseweb="select"] div { 
-        color: #FFFFFF !important; 
+        color: #000000 !important; 
         font-weight: 800 !important;
         font-size: 0.9rem !important;
-        text-shadow: 0 0 10px rgba(0, 194, 255, 0.4) !important;
     }
     [data-testid="stSidebar"] label {
         color: #00C2FF !important;
