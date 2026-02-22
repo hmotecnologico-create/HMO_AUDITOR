@@ -550,75 +550,52 @@ else:
                 </div>
                 """, unsafe_allow_html=True)
         
-        # --- TABLERO DE TRAZABILIDAD DE MATERIA PRIMA (V1.5.2) ---
-        st.write("### 🏗️ Estatus de Materia Prima")
+        # --- TABLERO DE TRAZABILIDAD COMPACTO (V9.3) ---
+        c_mtr1, c_mtr2, c_mtr3, c_mtr4, c_mtr5, c_mtr6 = st.columns(6)
         
-        # Calcular estados
-        fase_a_ok = fase_a_ready
-        fase_b_ok = fase_b_ready
-        progreso_c_val = progreso_c * 100
+        # Mezcla de Donas y Métricas en una sola fila (Cockpit)
+        with c_mtr1: draw_donut(progreso_total*100, "GLOBAL", "#00C2FF")
+        with c_mtr2: draw_donut(30 if not fase_a_ready else 12, "RIESGO", "#F87171")
+        with c_mtr3: draw_donut(pct_fase_c, "CALIDAD", "#34D399")
         
-        # METRICS GAUGES (STILO REFERENCIA ELITE V2.0)
-        def draw_donut(value, label, color):
-            fig = go.Figure(go.Pie(
-                values=[value, 100-value if value <= 100 else 0],
-                labels=["", ""],
-                hole=0.75,
-                marker_colors=[color, "rgba(255,255,255,0.05)"],
-                sort=False
-            ))
-            fig.update_traces(textinfo='none', hoverinfo='none')
-            fig.update_layout(
-                showlegend=False,
-                margin=dict(t=0, b=0, l=10, r=10),
-                height=180,
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)',
-                annotations=[dict(text=f"{int(value)}%", x=0.5, y=0.5, font_size=24, font_color="white", font_family="Orbitron", showarrow=False)]
-            )
-            st.plotly_chart(fig, use_container_width=True)
-            st.markdown(f"<p style='text-align: center; color: #00C2FF; font-family: Orbitron; font-size: 0.8rem; margin-top: -20px; text-shadow: 0 0 5px rgba(0,194,255,0.3);'>{label}</p>", unsafe_allow_html=True)
-
-        c1, c2, c3 = st.columns(3)
-        with c1: draw_donut(progreso_total*100, "CUMPLIMIENTO TOTAL", "#00C2FF")
-        with c2: draw_donut(30 if not fase_a_ok else 12, "RIESGO OPERATIVO", "#F87171")
-        with c3: draw_donut(progreso_c_val, "CALIDAD DE DATOS", "#34D399")
+        c_mtr4.metric("Avance SIG", f"{progreso_global:.1f}%")
+        c_mtr5.metric("Motor Experto", "BÚSQUEDA ACTIVA")
+        c_mtr6.metric("Seguridad", "SHA-256")
         
-        st.divider()
+        # --- FILA DE ANÁLISIS Y FICHA (SIDE-BY-SIDE) ---
+        col_g1, col_g2, col_g3 = st.columns([1.2, 1, 1])
         
-        # --- FICHA DE IDENTIDAD LEGAL (V1.6.0) ---
-        st.markdown(f"<div class='elite-card'>", unsafe_allow_html=True)
-        st.write("### 📜 Ficha de Identidad Legal & Tributaria")
-        cl1, cl2 = st.columns(2)
-        with cl1:
-            st.markdown(f"**NIT:** `{st.session_state['empresa_nit']}`")
-            st.markdown(f"**Dirección:** `{st.session_state['empresa_direccion']}`")
-            st.markdown(f"**Web:** [{st.session_state['empresa_web']}](https://{st.session_state['empresa_web']})")
-        with cl2:
-            st.markdown(f"**Sector:** {st.session_state['empresa_sector']}")
-            st.markdown(f"**Personal:** {st.session_state['empresa_personal']} colaboradores")
-            st.markdown(f"**Objeto Social:** *{st.session_state['empresa_objeto']}*")
-        st.markdown("</div>", unsafe_allow_html=True)
-        
-        st.divider()
-        progreso_global = ((1 if fase_a_ok else 0) + (1 if fase_b_ok else 0) + (st.session_state['paso_ingesta'] / total_total)) / 3 * 100
-        
-        col_m1, col_m2, col_m3 = st.columns(3)
-        col_m1.metric("Cumplimiento Global", f"{progreso_global:.1f}%")
-        col_m2.metric("Motor Experto", "BÚSQUEDA TÉCNICA ACTIVA", "V1.5.2 Elite")
-        col_m3.metric("Seguridad", "SHA-256", "Inexpugnable")
-        
-        st.divider()
-        
-        # Análisis Visual
-        col_g1, col_g2 = st.columns([2, 1])
         with col_g1:
-            st.markdown("<div class='elite-card'><b>Radar de Madurez Normativa (Kiviat)</b>", unsafe_allow_html=True)
+            st.markdown("<div class='elite-card' style='padding: 0.5rem;'><b>Radar de Madurez</b>", unsafe_allow_html=True)
             labels = ['Misión/Visión', 'Ética', 'Estructura', 'Norma Cl.4', 'Norma Cl.5', 'Norma Cl.6']
             values = [100 if label in st.session_state['expediente'] else (100 if i < 3 and st.session_state['env'] == "Simulacion" else 0) for i, label in enumerate(labels)]
             fig = go.Figure(data=go.Scatterpolar(r=values, theta=labels, fill='toself', line_color='#00C2FF'))
-            fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False, height=350, margin=dict(l=40, r=40, t=20, b=20), paper_bgcolor='rgba(0,0,0,0)')
+            fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False, height=250, margin=dict(l=20, r=20, t=20, b=20), paper_bgcolor='rgba(0,0,0,0)')
             st.plotly_chart(fig, use_container_width=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        with col_g2:
+            st.markdown("<div class='elite-card' style='padding: 0.5rem;'><b>Ficha de Identidad</b>", unsafe_allow_html=True)
+            st.markdown(f"<p style='font-size: 0.8rem; margin:0;'>**NIT:** `{st.session_state['empresa_nit']}`</p>", unsafe_allow_html=True)
+            st.markdown(f"<p style='font-size: 0.8rem; margin:0;'>**Sector:** {st.session_state['empresa_sector']}</p>", unsafe_allow_html=True)
+            st.markdown(f"<p style='font-size: 0.8rem; margin:0;'>**Personal:** {st.session_state['empresa_personal']}</p>", unsafe_allow_html=True)
+            st.markdown(f"<p style='font-size: 0.8rem; margin:0;'>**Dirección:** {st.session_state['empresa_direccion']}</p>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+            
+            if "Organigrama Funcional" in st.session_state['expediente']:
+                st.markdown("<div class='elite-card' style='padding: 0.5rem; margin-top: 5px;'><b>Organigrama</b>", unsafe_allow_html=True)
+                data_org = dict(character=["G.G", "Jur", "Ops", "TH", "SIG", "Prod", "Vnt"], parent=["", "G.G", "G.G", "G.G", "Ops", "Ops", "Ops"], value=[10, 5, 8, 4, 3, 6, 6])
+                fig_org = px.treemap(data_org, names='character', parents='parent', values='value', color_discrete_sequence=['#00C2FF', '#1e3a8a'])
+                fig_org.update_layout(margin=dict(t=5, l=5, r=5, b=5), height=120, paper_bgcolor='rgba(0,0,0,0)')
+                st.plotly_chart(fig_org, use_container_width=True)
+                st.markdown("</div>", unsafe_allow_html=True)
+            
+        with col_g3:
+            st.markdown("<div class='elite-card' style='padding: 0.5rem;'><b>Certificación</b>", unsafe_allow_html=True)
+            for i, c in enumerate(cartas[:8]): # Mostrar solo los 8 primeros para evitar scroll
+                doc_name = c['doc']
+                estado = "✅" if doc_name in st.session_state['expediente'] else ("⚖️" if doc_name in st.session_state.get('justificados', []) else "⏳")
+                st.markdown(f"<p style='font-size: 0.75rem; margin: 0;'>{estado} {doc_name[:25]}...</p>", unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
 
             # --- NUEVA VISUALIZACIÓN: ORGANIGRAMA JERÁRQUICO (V5.0) ---
@@ -666,87 +643,52 @@ else:
 
         tab_a, tab_b, tab_c, tab_final = st.tabs(["🔒 Fase A: Identidad", "📊 Fase B: Dimensión", "⚖️ 6.3.1 Revisión Documental", "🏁 Preparación Actividades"])
         
-        # --- FASE A: IDENTIDAD ---
         with tab_a:
-            st.write("### 🏦 Datos Maestros de Identidad")
-            
             # Métricas de Fase A
             fase_a_reqs = [st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']]
             fase_a_completados = sum(1 for r in fase_a_reqs if r)
             pct_a = int((fase_a_completados / 3) * 100)
             
-            st.progress(pct_a / 100)
-            c_m1, c_m2 = st.columns(2)
-            c_m1.metric("Cumplimiento Fase A", f"{pct_a}%")
+            c_m1, c_m2 = st.columns([1, 4])
+            c_m1.metric("Fase A", f"{pct_a}%")
+            with c_m2: st.progress(pct_a / 100)
             
             if pct_a < 100:
-                faltantes_a = []
-                if not st.session_state['auditor_name']: faltantes_a.append("Nombre del Auditor")
-                if not st.session_state['rep_legal']: faltantes_a.append("Representante Legal")
-                if not st.session_state['rep_id']: faltantes_a.append("ID del Representante")
-                st.warning(f"❌ **Falta por completar:** {', '.join(faltantes_a)}")
-            else:
-                st.success("✅ Fase A Completa y lista para registro.")
+                st.caption(f"⚠️ **Falta:** {', '.join([r for r, v in zip(['Auditor', 'Rep. Legal', 'ID'], fase_a_reqs) if not v])}")
 
-            st.divider()
-            c1, c2 = st.columns(2)
-            st.session_state['auditor_name'] = c1.text_input("* 👨‍💼 Nombre Completo del Auditor:", value=st.session_state['auditor_name'], placeholder="Ingrese su nombre (Ej: Juan Gabriel)")
-            st.session_state['rep_legal'] = c2.text_input("* ⚖️ Representante Legal de la Entidad:", value=st.session_state['rep_legal'], placeholder="Nombre del Representante")
-            st.session_state['rep_id'] = c1.text_input("* 🆔 Documento de Identidad (Representante):", value=st.session_state['rep_id'], placeholder="Cédula o ID Legal")
+            c1, c2, c3 = st.columns(3)
+            st.session_state['auditor_name'] = c1.text_input("* Auditor:", value=st.session_state['auditor_name'])
+            st.session_state['rep_legal'] = c2.text_input("* Representante:", value=st.session_state['rep_legal'])
+            st.session_state['rep_id'] = c3.text_input("* ID Rep:", value=st.session_state['rep_id'])
             
-            if st.button("💾 REGISTRAR IDENTIDAD"):
+            if st.button("💾 REGISTRAR"):
                 save_audit_state()
-                st.success("✅ Identidad Registrada.")
+                st.success("✅ Guardado.")
                 st.rerun()
-                # El bloqueo prohibitivo ha sido retirado por solicitud V9.1 (Rigor Consultivo)
 
         # --- FASE B: DIMENSIONAMIENTO ---
         with tab_b:
-            st.write("### 📊 Perfilamiento Organizacional")
-            
-            # Métricas de Fase B
-            # Consideramos 'empresa_tamanio', 'empresa_personal', 'empresa_direccion' como campos clave para el dimensionamiento.
-            # 'empresa_tamanio' tiene un valor por defecto, por lo que su "completitud" se evalúa si no es el valor inicial o si se ha cambiado.
-            # 'empresa_personal' y 'empresa_direccion' se evalúan si tienen un valor.
-            
-            # Check if 'empresa_personal' and 'empresa_direccion' are initialized, if not, set to empty string for evaluation
-            if 'empresa_personal' not in st.session_state: st.session_state['empresa_personal'] = 0
-            if 'empresa_direccion' not in st.session_state: st.session_state['empresa_direccion'] = ""
-            if 'empresa_web' not in st.session_state: st.session_state['empresa_web'] = ""
-
             fase_b_reqs_status = {
-                'tamanio': st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)", # True if changed from default
+                'tamanio': st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)", 
                 'personal': st.session_state['empresa_personal'] > 0,
                 'direccion': bool(st.session_state['empresa_direccion'])
             }
-            
             fase_b_completados = sum(1 for status in fase_b_reqs_status.values() if status)
-            total_reqs_b = len(fase_b_reqs_status)
-            pct_b = int((fase_b_completados / total_reqs_b) * 100) if total_reqs_b > 0 else 0
+            pct_b = int((fase_b_completados / 3) * 100)
             
-            st.progress(pct_b / 100)
-            st.metric("Cumplimiento Fase B", f"{pct_b}%")
+            c_mb1, c_mb2 = st.columns([1, 4])
+            c_mb1.metric("Fase B", f"{pct_b}%")
+            with c_mb2: st.progress(pct_b / 100)
 
-            if pct_b < 100:
-                faltantes_b = []
-                if not fase_b_reqs_status['tamanio']: faltantes_b.append("Tamaño de la Organización")
-                if not fase_b_reqs_status['personal']: faltantes_b.append("Total de Colaboradores")
-                if not fase_b_reqs_status['direccion']: faltantes_b.append("Dirección Principal")
-                st.warning(f"❌ **Falta por completar:** {', '.join(faltantes_b)} para una definición precisa del perfil.")
-            else:
-                st.success("✅ Fase B Dimensionada correctamente.")
-
-            st.divider()
-            c1, c2 = st.columns(2)
-            st.session_state['empresa_tamanio'] = c1.selectbox("* 🏢 Tamaño de la Organización:", ["Pyme (1-50 emp)", "Mediana (51-250 emp)", "Gran Empresa (+250 emp)"], index=["Pyme (1-50 emp)", "Mediana (51-250 emp)", "Gran Empresa (+250 emp)"].index(st.session_state['empresa_tamanio']) if st.session_state['empresa_tamanio'] in ["Pyme (1-50 emp)", "Mediana (51-250 emp)", "Gran Empresa (+250 emp)"] else 0)
-            st.session_state['empresa_personal'] = c2.number_input("* 👥 Total de Colaboradores:", value=st.session_state['empresa_personal'], min_value=1)
-            st.session_state['empresa_direccion'] = c1.text_input("* 📍 Dirección Principal:", value=st.session_state['empresa_direccion'])
-            st.session_state['empresa_web'] = c2.text_input("🌐 Sitio Web (Opcional):", value=st.session_state['empresa_web'])
-            st.session_state['empresa_sector'] = c2.selectbox("🏭 Sector Económico:", ["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"], index=["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"].index(st.session_state['empresa_sector']) if st.session_state['empresa_sector'] in ["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"] else 0)
+            c1, c2, c3, c4 = st.columns(4)
+            st.session_state['empresa_tamanio'] = c1.selectbox("* Tamaño:", ["Pyme (1-50 emp)", "Mediana (51-250 emp)", "Gran Empresa (+250 emp)"], index=0)
+            st.session_state['empresa_personal'] = c2.number_input("* Personal:", value=st.session_state['empresa_personal'], min_value=1)
+            st.session_state['empresa_direccion'] = c3.text_input("* Dirección:", value=st.session_state['empresa_direccion'])
+            st.session_state['empresa_sector'] = c4.selectbox("Sector:", ["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"], index=0)
             
-            if st.button("💾 GUARDAR PERFILADO Y CONTINUAR"):
+            if st.button("💾 GUARDAR B"):
                 save_audit_state()
-                st.success("✅ Perfilamiento guardado. Proceda al Cuerpo Normativo.")
+                st.success("✅ Perfilado.")
 
         # --- FASE C: CUERPO NORMATIVO ---
         with tab_c:
