@@ -696,11 +696,29 @@ if st.session_state['env'] is None:
         with _col_btn:
             if st.button("🏗️ CREAR Y COMENZAR AUDITORÍA", use_container_width=True, type="primary"):
                 if new_name:
+                    _base_path = setup_company_folders(new_name)
+                    
+                    # --- GENERACIÓN AUTOMÁTICA DE CHECKLIST PDF (v14.5) ---
+                    # Extraer requerimientos iniciales para el PDF basados en base_cartas (simplificado para el inicio)
+                    _docs_req = [
+                        {"doc": "Camara de Comercio (Existencia Legal)", "justificacion": "ISO 19011:6.3.1 - Verificación legal.", "instrucciones": "Solicite certificado vigente (max 30 días)."},
+                        {"doc": "RUT (Registro Unico Tributario)", "justificacion": "Identificación fiscal de la entidad.", "instrucciones": "Descargue PDF actualizado de la DIAN."},
+                        {"doc": "Mision y Vision Corporativa", "justificacion": "ISO 9001:5.2 - Base estratégica.", "instrucciones": "Documento con propósito y visión organizacional."},
+                        {"doc": "Organigrama Funcional", "justificacion": "ISO 9001:5.3 - Roles y autoridades.", "instrucciones": "Estructura jerárquica de la entidad."},
+                        {"doc": "Mapa de Procesos", "justificacion": "ISO 9001:4.4 - Enfoque a procesos.", "instrucciones": "Diagrama de interacción de procesos."},
+                    ]
+                    
+                    try:
+                        _pdf_output = os.path.join(_base_path, "01_Direccion_y_Estrategia")
+                        generate_preparation_guide_pdf(new_name, _pdf_output, _docs_req, norma=", ".join(new_norma))
+                    except Exception as _epdf:
+                        st.error(f"⚠️ Error al generar guía PDF: {_epdf}")
+
                     st.session_state.update({
                         'env': "Real",
                         'company_name': new_name,
                         'norma': new_norma,
-                        'base_path': setup_company_folders(new_name),
+                        'base_path': _base_path,
                         'landing_mode': None
                     })
                     save_audit_state()
