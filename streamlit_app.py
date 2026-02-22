@@ -19,115 +19,111 @@ from HMO_Checklist_Legal_Generator import create_legal_checklist
 # Configuración de página
 st.set_page_config(page_title="HMO Auditor Pro - V1.4 Elite", layout="wide", page_icon="🛡️")
 
-# --- SISTEMA DE DISEÑO ELITE V2.0 (FUTURISTA & GLASSMORPHIC) ---
+# --- SISTEMA DE DISEÑO ELITE V2.7 (ABSORCIÓN TOTAL - LIGHT MODE) ---
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap');
-    
-    html, body, [class*="css"] { 
-        font-family: 'Inter', sans-serif; 
-        color: #E2E8F0;
-    }
-    
-    .stApp {
-        background: #0B0E14;
-        background-image: 
-            radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.15) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, rgba(0, 194, 255, 0.05) 0px, transparent 50%);
-    }
-    
-    /* Panel de Navegación Glassmorphic */
-    [data-testid="stSidebar"] {
-        background-color: rgba(14, 17, 23, 0.85);
-        backdrop-filter: blur(10px);
-        border-right: 1px solid rgba(0, 194, 255, 0.2);
-    }
-    
-    [data-testid="stSidebar"] .stMarkdown h1 {
-        font-family: 'Orbitron', sans-serif;
-        color: #00C2FF;
-        text-shadow: 0 0 10px rgba(0, 194, 255, 0.5);
+    /* 1. ELIMINACIÓN DE FONDO OSCURO EN TODAS LAS CAPAS */
+    html, body, .stApp, 
+    [data-testid="stAppViewContainer"], 
+    [data-testid="stHeader"], 
+    [data-testid="stSidebar"],
+    [data-testid="stToolbar"],
+    .main {
+        background-color: #FFFFFF !important;
+        background-image: none !important;
+        color: #000000 !important;
     }
 
-    /* Botones Neon */
-    .stButton>button {
-        width: 100%;
-        border-radius: 8px;
-        height: 3.5em;
-        background: rgba(30, 58, 138, 0.3);
-        color: #00C2FF;
-        font-family: 'Orbitron', sans-serif;
-        font-weight: 700;
-        border: 1px solid #00C2FF;
-        box-shadow: 0 0 10px rgba(0, 194, 255, 0.2);
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+    /* 2. TEXTO NEGRO PURO (LEGIBILIDAD AUDITORÍA) */
+    p, span, label, li, div, h1, h2, h3, .stMarkdown {
+        color: #000000 !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
     }
-    .stButton>button:hover {
-        background: #00C2FF;
-        color: #0B0E14;
-        box-shadow: 0 0 20px rgba(0, 194, 255, 0.6);
-        transform: scale(1.02);
+
+    /* 3. ETIQUETAS DE WIDGETS (CRÍTICO) */
+    [data-testid="stWidgetLabel"] p, label p {
+        color: #000000 !important;
+        font-weight: 900 !important;
+        font-size: 1.15rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
     }
-    
-    /* Tarjetas Glass */
+
+    /* 4. TÍTULOS CORPORATIVOS */
+    h1, h2, h3 {
+        color: #004A99 !important; /* Azul Rey para contraste profesional */
+        font-weight: 800 !important;
+    }
+
+    /* 5. DISEÑO DE TARJETAS PARA FONDO CLARO */
     .elite-card {
-        background: rgba(30, 41, 59, 0.4);
-        backdrop-filter: blur(10px);
-        padding: 1.5rem;
+        background-color: #F8FAFC !important;
+        border: 2px solid #004A99 !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
         border-radius: 12px;
-        border: 1px solid rgba(0, 194, 255, 0.15);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        margin-bottom: 1rem;
-    }
-    
-    .norm-header {
-        font-family: 'Orbitron', sans-serif;
-        color: #00C2FF;
-        font-size: 1.8rem;
-        font-weight: 700;
-        text-shadow: 0 0 8px rgba(0, 194, 255, 0.4);
-        margin-bottom: 1rem;
-    }
-    
-    /* Tabs Neon */
-    .stTabs [data-baseweb="tab-list"] {
-        background: rgba(14, 17, 23, 0.5);
-        padding: 5px;
-        border-radius: 8px;
-    }
-    .stTabs [data-baseweb="tab"] {
-        color: #94A3B8;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 0.8rem;
-    }
-    .stTabs [aria-selected="true"] {
-        background: transparent !important;
-        color: #00C2FF !important;
-        border-bottom: 2px solid #00C2FF !important;
+        padding: 25px;
+        margin-bottom: 25px;
     }
 
-    /* Inputs Dark */
-    .stTextInput>div>div>input, .stSelectbox>div>div>div {
-        background-color: #1A1F2B !important;
-        color: white !important;
-        border: 1px solid rgba(0, 194, 255, 0.2) !important;
+    /* 6. INPUTS (BORDES MARCADOS) */
+    input, [data-baseweb="select"] {
+        background-color: #FFFFFF !important;
+        border: 2px solid #000000 !important;
+        color: #000000 !important;
+        font-weight: 600 !important;
+    }
+
+    /* 7. BOTÓN DE ACCIÓN (ALTA VISIBILIDAD) */
+    .stButton>button {
+        background-color: #004A99 !important;
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+        border-radius: 6px !important;
+        padding: 12px !important;
+        border: none !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+    }
+    .stButton>button:hover { background-color: #003366 !important; }
+
+    /* 8. ALERTAS (INFO BOXES) */
+    .stAlert {
+        background-color: #E0F2FE !important;
+        border: 1px solid #004A99 !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Lógica de Sesión
+# Lógica de Sesión (V1.8.0 Resiliente)
 for key, default in [('env', None), ('norma', "Calidad (ISO 9001)"), ('paso_ingesta', 0), ('logo_path', None), ('expediente', {}), ('autorizado_emision', False), 
                     ('auditor_name', ""), ('rep_legal', ""), ('rep_id', ""), ('empresa_tamanio', "Pyme"), ('empresa_sector', "Servicios"),
-                    ('empresa_nit', ""), ('empresa_direccion', ""), ('empresa_web', ""), ('empresa_objeto', ""), ('empresa_personal', 0)]:
+                    ('empresa_nit', ""), ('empresa_direccion', ""), ('empresa_web', ""), ('empresa_objeto', ""), ('empresa_personal', 0),
+                    ('user_role', "Administrador (Global)"), ('company_name', ""), ('base_path', ""), ('kb', {})]:
     if key not in st.session_state: st.session_state[key] = default
 
 # ... [Funciones de persistencia omitidas por brevedad] ...
 
+def setup_company_folders(company_name):
+    """Crea la estructura de carpetas para una nueva auditoría."""
+    safe_name = "".join([c if c.isalnum() else "_" for c in company_name])
+    base_path = os.path.join(os.getcwd(), "Auditorias_HMO", safe_name)
+    os.makedirs(base_path, exist_ok=True)
+    
+    # Estructura Estándar (V1.6.0 Rigor Legal)
+    folders = [
+        "01_Direccion_y_Estrategia", "02_Gestion_de_Calidad", 
+        "03_Operaciones", "04_Recursos_Humanos", 
+        "05_TI_y_Seguridad", "06_Anexos_Tecnicos",
+        "01_Templates_Vacios", "02_Auditoria_IA"
+    ]
+    for f in folders:
+        os.makedirs(os.path.join(base_path, f), exist_ok=True)
+    return base_path
+
 def save_audit_state():
     if st.session_state['env'] and st.session_state.get('company_name'):
         base_dir = st.session_state['base_path']
+        if not os.path.exists(base_dir): os.makedirs(base_dir, exist_ok=True)
+        
         state = {
             "company_name": st.session_state['company_name'], "norma": st.session_state['norma'],
             "paso_ingesta": st.session_state['paso_ingesta'], "logo_path": st.session_state['logo_path'],
@@ -144,14 +140,36 @@ def save_audit_state():
         with open(os.path.join(base_dir, "audit_state.json"), "w") as f: json.dump(state, f, indent=4)
 
 def load_audit_state(company_folder):
-    state_path = os.path.join(os.getcwd(), "Auditorias_HMO", company_folder, "audit_state.json")
+    # Intentar cargar desde la nueva ruta unificada
+    base_audits = os.path.join(os.getcwd(), "Auditorias_HMO")
+    state_path = os.path.join(base_audits, company_folder, "audit_state.json")
+    
     if os.path.exists(state_path):
         with open(state_path, "r") as f:
             state = json.load(f)
             for k, v in state.items(): st.session_state[k] = v
-            st.session_state['base_path'] = os.path.join(os.getcwd(), "Auditorias_HMO", company_folder)
+            st.session_state['base_path'] = os.path.join(base_audits, company_folder)
             return True
     return False
+
+# --- MIGRACIÓN DE LEGACY (V1.7.5) ---
+def migrate_legacy_audits():
+    base_audits = os.path.join(os.getcwd(), "Auditorias_HMO")
+    os.makedirs(base_audits, exist_ok=True)
+    
+    # Buscar carpetas sospechosas en la raíz (ej: Innovatech_Solutions)
+    for item in os.listdir(os.getcwd()):
+        if os.path.isdir(item) and item not in [".git", "HMO_Auditor_Master_V1", "Auditorias_HMO", "Formatos_Profesionales_HMO", ".streamlit"]:
+            # Si tiene estructura de auditoría, moverla
+            if os.path.exists(os.path.join(item, "01_Direccion_y_Estrategia")) or os.path.exists(os.path.join(item, "audit_state.json")):
+                try:
+                    dest = os.path.join(base_audits, item)
+                    if not os.path.exists(dest):
+                        shutil.move(item, dest)
+                        st.sidebar.success(f"📦 Auditoría '{item}' migrada a zona segura.")
+                except: pass
+
+migrate_legacy_audits()
 
 # --- PANTALLA DE BIENVENIDA ---
 if st.session_state['env'] is None:
@@ -238,12 +256,17 @@ else:
     
     menu = st.sidebar.radio("Navegación Estratégica", [
         "📊 Dashboard Analítico", 
+        "📋 Requerimientos Maestros",
         "🗺️ Camino de Ingesta (HITL)", 
         "⚖️ Emisión de Títulos/Formatos", 
         "💎 Help Center Elite"
     ])
     
+    # Selector de Rol (Simulación de Colaboración)
     st.sidebar.divider()
+    roles_disponibles = ["Administrador (Global)", "⚖️ Jurídico", "🏦 Alta Dirección", "📊 Calidad / SIG", "🛡️ Ciberseguridad", "♻️ Gestión Ambiental", "🎓 Gestión Académica"]
+    st.session_state['user_role'] = st.sidebar.selectbox("🔑 Rol de Sesión:", roles_disponibles)
+    
     if st.sidebar.button("🔒 Cerrar Sesión Segura"):
         save_audit_state()
         st.session_state['env'] = None
@@ -281,10 +304,43 @@ else:
         ]
     
     # Combinación de Fases: Cimientos + Norma
-    cartas = base_cartas + norm_cartas
+    cartas_todas = base_cartas + norm_cartas
+    
+    # Filtrado por Rol (HITL Colaborativo V1.7)
+    if st.session_state['user_role'] == "Administrador (Global)":
+        cartas = cartas_todas
+    else:
+        # Extraer el nombre del área sin emojis para comparar
+        role_pure = st.session_state['user_role'].split(" ")[-1].strip()
+        cartas = [c for c in cartas_todas if role_pure in c['area']]
+        if not cartas: # Backup si el emoji rompe la lógica simple
+            cartas = [c for c in cartas_todas if st.session_state['user_role'] in c['area']]
+        
+        # Si el responsable no tiene documentos asignados en esta norma
+        if not cartas:
+            st.sidebar.warning(f"⚠️ El rol {st.session_state['user_role']} no tiene tareas asignadas para la norma {st.session_state['norma']}.")
+            cartas = cartas_todas # Fallback a ver todo
+
+    # --- SECCIÓN: REQUERIMIENTOS MAESTROS (V1.7.0) ---
+    if menu == "📋 Requerimientos Maestros":
+        st.markdown(f"<h1 class='norm-header'>📋 Lista Maestra de Requerimientos</h1>", unsafe_allow_html=True)
+        st.write(f"### 🛡️ Marco Normativo: {st.session_state['norma']}")
+        st.info("💡 Esta lista representa el universo de documentos necesarios para la certificación. El Administrador puede usar esta vista para delegar la carga a los Responsables de Área.")
+        
+        # Consolidar documentos
+        df_req = pd.DataFrame(cartas)
+        areas = df_req['area'].unique()
+        
+        for area in areas:
+            with st.expander(f"📁 Área de Responsabilidad: {area}", expanded=True):
+                sub_df = df_req[df_req['area'] == area][['doc', 'ref', 'desc']]
+                sub_df.columns = ["Documento Requerido", "Referencia Normativa", "Descripción del Requisito"]
+                st.table(sub_df)
+                
+        st.success("✅ **Tip de Delegación:** En la siguiente fase 'Camino de Ingesta', cada responsable encontrará el buzón específico para su documentación.")
 
     # --- SECCIÓN: DASHBOARD ANALÍTICO ---
-    if menu == "📊 Dashboard Analítico":
+    elif menu == "📊 Dashboard Analítico":
         st.markdown(f"<h1 class='norm-header'>📊 Control de Mando: {company}</h1>", unsafe_allow_html=True)
         
         # --- TABLERO DE TRAZABILIDAD DE MATERIA PRIMA (V1.5.2) ---
@@ -626,20 +682,24 @@ else:
         help_tabs = st.tabs(["📖 Guía de Usuario", "🏛️ Base Normativa", "🤖 Asistente IA"])
         
         with help_tabs[0]:
+            st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
             st.write("### Cómo operar el HMO Auditor")
             st.markdown("""
-            1. **Ingesta**: Suba sus documentos en orden. La IA los procesará localmente.
-            2. **Dashboard**: Verifique el nivel de cumplimiento y madurez.
-            3. **Generación**: Use los datos indexados para crear sus reportes finales.
-            """)
+1. **Ingesta**: Suba sus documentos en orden. La IA los procesará localmente.
+2. **Dashboard**: Verifique el nivel de cumplimiento y madurez en la central de mando.
+3. **Generación**: Use los datos indexados para crear sus reportes finales certificados.
+            """, unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
         with help_tabs[1]:
+            st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
             st.write("### Referencias Legales Ancladas")
             st.table(pd.DataFrame({
                 "Norma": ["ISO 9001", "ISO 27001", "ISO 14001", "Dec. 1330"],
                 "Descripción": ["Calidad y Procesos", "Seguridad Informática", "Gestión Ambiental", "Aseguramiento Calidad Académica"],
                 "Validación": ["Anclado", "Anclado", "Anclado", "Anclado"]
             }))
+            st.markdown("</div>", unsafe_allow_html=True)
 
 # --- FOOTER ---
 st.divider()
-st.caption("HMO Auditor Pro v1.4.0 | 💎 Ecosistema Elite | 🔒 Operación Local Privada")
+st.markdown("<p style='text-align: center; color: #FFFFFF; font-family: Orbitron; font-size: 0.8rem;'>HMO Auditor Pro v2.0.0 | 💎 Ecosistema Elite | 🔒 Operación Local Privada</p>", unsafe_allow_html=True)
