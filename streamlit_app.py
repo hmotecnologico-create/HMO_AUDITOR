@@ -892,28 +892,44 @@ else:
             if pct_a < 100:
                 st.caption(f"⚠️ **Falta:** {', '.join([r for r, v in zip(['Auditor', 'Rep. Legal', 'ID'], fase_a_reqs) if not v])}")
 
-            # ── OCR INTELIGENTE V14.0 ───────────────────────────────────────────
+
+            # ── OCR INTELIGENTE V15.1 — DOS CARGADORES ─────────────────────────
             st.markdown("---")
-            st.markdown("#### 🤖 Carga Inteligente de Documentos")
-            st.caption("Sube la **Cámara de Comercio** o el **RUT** y el sistema extrae los datos automáticamente.")
+            st.markdown("#### 🤖 Carga Inteligente de Documentos Legales")
+            st.caption("Sube **ambos** documentos para extraer automáticamente todos los datos de la empresa.")
 
-            uploaded = st.file_uploader(
-                "📂 Arrastra aquí el PDF (Cámara de Comercio ó RUT)",
-                type=["pdf", "jpg", "jpeg", "png"],
-                key="ocr_uploader_fase_a"
-            )
+            col_cc, col_rut = st.columns(2)
 
-            if uploaded is not None:
-                with st.spinner("🔍 Analizando documento..."):
-                    file_bytes = uploaded.read()
-                    if OCR_DISPONIBLE:
-                        resultado = procesar_documento(file_bytes, uploaded.name)
-                    else:
-                        resultado = {"tipo_doc": "unknown", "confianza": 0,
-                                     "error": "OCR no disponible. Instala pdfplumber y pytesseract."}
+            # ─── CARGADOR 1: CÁMARA DE COMERCIO ────────────────────────────────
+            with col_cc:
+                st.markdown("**📋 Cámara de Comercio**")
+                st.caption("Certificado de Existencia y Representación Legal")
+                uploaded_cc = st.file_uploader(
+                    "Arrastra el PDF aquí",
+                    type=["pdf", "jpg", "jpeg", "png"],
+                    key="ocr_uploader_cc"
+                )
+
+            # ─── CARGADOR 2: RUT ────────────────────────────────────────────────
+            with col_rut:
+                st.markdown("**🧾 RUT (DIAN)**")
+                st.caption("Registro Único Tributario")
+                uploaded_rut = st.file_uploader(
+                    "Arrastra el PDF aquí",
+                    type=["pdf", "jpg", "jpeg", "png"],
+                    key="ocr_uploader_rut"
+                )
+
+            # ─── PROCESAR CC ────────────────────────────────────────────────────
+            if uploaded_cc is not None:
+                with st.spinner("🔍 Analizando Cámara de Comercio..."):
+                    file_bytes = uploaded_cc.read()
+                    resultado = procesar_documento(file_bytes, uploaded_cc.name) if OCR_DISPONIBLE else \
+                                {"tipo_doc": "unknown", "confianza": 0, "error": "OCR no disponible."}
 
                 tipo_detectado = resultado.get("tipo_doc", "unknown")
                 confianza = resultado.get("confianza", 0)
+
 
                 if tipo_detectado == "camara_comercio":
                     st.success(f"✅ **Cámara de Comercio detectada** — Confianza: {confianza}%")
@@ -983,67 +999,84 @@ else:
                         st.success(f"🎉 ¡{n_aplicados} campos inyectados automáticamente en el expediente!")
                         st.rerun()
 
-                elif tipo_detectado == "rut":
-                    st.success(f"✅ **RUT (DIAN) detectado** — Confianza: {confianza}%")
-                    with st.expander("📋 Todos los datos extraídos", expanded=True):
-                        # ── GRUPO 1: IDENTIDAD / TRIBUTARIO ─────────────────────
+
+
+
+                else:
+                    st.warning(f"⚠️ El documento no parece ser una Cámara de Comercio. {resultado.get('error', '')}")
+                    if resultado.get('texto_completo'):
+                        with st.expander("Ver texto extraído"):
+                            st.text(resultado['texto_completo'][:800])
+
+            # ─── PROCESAR RUT ────────────────────────────────────────────────────
+            if uploaded_rut is not None:
+                with st.spinner("🔍 Analizando RUT..."):
+                    file_bytes_rut = uploaded_rut.read()
+                    resultado_rut = procesar_documento(file_bytes_rut, uploaded_rut.name) if OCR_DISPONIBLE else \
+                                    {"tipo_doc": "unknown", "confianza": 0, "error": "OCR no disponible."}
+
+                tipo_rut = resultado_rut.get("tipo_doc", "unknown")
+                confianza_rut = resultado_rut.get("confianza", 0)
+
+                if tipo_rut == "rut":
+                    st.success(f"✅ **RUT (DIAN) detectado** — Confianza: {confianza_rut}%")
+                    with st.expander("📋 Todos los datos extraídos del RUT", expanded=True):
                         st.markdown("**🏢 IDENTIDAD Y RÉGIMEN TRIBUTARIO**")
                         ri1, ri2 = st.columns(2)
-                        ri1.write(f"🏢 **Razón Social:** {resultado.get('company_name', '—')}")
-                        ri1.write(f"🔢 **NIT:** {resultado.get('empresa_nit', '—')}")
-                        ri1.write(f"📑 **N° Formulario:** {resultado.get('numero_formulario', '—')}")
-                        ri2.write(f"👤 **Tipo Persona:** {resultado.get('tipo_persona', '—')}")
-                        ri2.write(f"🏷️ **Tipo Contribuyente:** {resultado.get('tipo_contribuyente', '—')}")
-                        ri2.write(f"⚖️ **Régimen IVA:** {resultado.get('regimen_iva', '—')}")
-                        ri2.write(f"📅 **Fecha RUT:** {resultado.get('fecha_rut', '—')}")
+                        ri1.write(f"🏢 **Razón Social:** {resultado_rut.get('company_name', '—')}")
+                        ri1.write(f"🔢 **NIT:** {resultado_rut.get('empresa_nit', '—')}")
+                        ri1.write(f"📑 **N° Formulario:** {resultado_rut.get('numero_formulario', '—')}")
+                        ri2.write(f"👤 **Tipo Persona:** {resultado_rut.get('tipo_persona', '—')}")
+                        ri2.write(f"🏷️ **Tipo Contribuyente:** {resultado_rut.get('tipo_contribuyente', '—')}")
+                        ri2.write(f"⚖️ **Régimen IVA:** {resultado_rut.get('regimen_iva', '—')}")
+                        ri2.write(f"📅 **Fecha RUT:** {resultado_rut.get('fecha_rut', '—')}")
 
                         st.markdown("---")
-                        # ── GRUPO 2: UBICACIÓN / CONTACTO ────────────────────────
                         st.markdown("**📍 UBICACIÓN Y CONTACTO**")
                         ru1, ru2 = st.columns(2)
-                        ru1.write(f"📍 **Dirección:** {resultado.get('empresa_direccion', '—')}")
-                        ru1.write(f"🏙️ **Municipio:** {resultado.get('empresa_municipio', '—')}")
-                        ru1.write(f"🌎 **Departamento:** {resultado.get('empresa_departamento', '—')}")
-                        ru2.write(f"🔍 **Código Postal:** {resultado.get('codigo_postal', '—')}")
-                        ru2.write(f"📧 **Email:** {resultado.get('empresa_email', '—')}")
-                        ru2.write(f"📞 **Teléfono 1:** {resultado.get('empresa_telefono', '—')}")
-                        if resultado.get('empresa_telefono2'):
-                            ru2.write(f"📞 **Teléfono 2:** {resultado.get('empresa_telefono2', '—')}")
+                        ru1.write(f"📍 **Dirección:** {resultado_rut.get('empresa_direccion', '—')}")
+                        ru1.write(f"🏙️ **Municipio:** {resultado_rut.get('empresa_municipio', '—')}")
+                        ru1.write(f"🌎 **Departamento:** {resultado_rut.get('empresa_departamento', '—')}")
+                        ru2.write(f"🔍 **Código Postal:** {resultado_rut.get('codigo_postal', '—')}")
+                        ru2.write(f"📧 **Email:** {resultado_rut.get('empresa_email', '—')}")
+                        ru2.write(f"📞 **Teléfono 1:** {resultado_rut.get('empresa_telefono', '—')}")
+                        if resultado_rut.get('empresa_telefono2'):
+                            ru2.write(f"📞 **Teléfono 2:** {resultado_rut.get('empresa_telefono2', '—')}")
 
                         st.markdown("---")
-                        # ── GRUPO 3: ACTIVIDAD / FISCAL ──────────────────────────
                         st.markdown("**🏭 ACTIVIDAD ECONÓMICA Y FISCAL**")
                         ra1, ra2 = st.columns(2)
-                        ra1.write(f"🏭 **CIIU:** {resultado.get('actividad_ciiu', '—')}")
-                        ra1.write(f"📝 **Actividad:** {resultado.get('descripcion_ciiu', '—')}")
-                        if resultado.get('responsabilidades'):
+                        ra1.write(f"🏭 **CIIU:** {resultado_rut.get('actividad_ciiu', '—')}")
+                        ra1.write(f"📝 **Actividad:** {resultado_rut.get('descripcion_ciiu', '—')}")
+                        if resultado_rut.get('responsabilidades'):
                             st.markdown("**⚖️ Responsabilidades Tributarias:**")
-                            for resp in resultado['responsabilidades']:
+                            for resp in resultado_rut['responsabilidades']:
                                 st.caption(f"• {resp}")
 
-                    if st.button("⚡ Aplicar TODOS los datos al expediente", key="ocr_apply_rut", use_container_width=True):
-                        updates = resultado_a_session_state(resultado)
+                    if st.button("⚡ Aplicar TODOS los datos del RUT al expediente", key="ocr_apply_rut", use_container_width=True):
+                        updates = resultado_a_session_state(resultado_rut)
                         for k, v in updates.items():
                             st.session_state[k] = v
                         n_aplicados = len(updates)
                         st.session_state['expediente']["RUT (Registro Unico Tributario)"] = {
-                            "nit": resultado.get('empresa_nit', ''),
-                            "razon_social": resultado.get('company_name', ''),
-                            "regimen_iva": resultado.get('regimen_iva', ''),
-                            "responsabilidades": resultado.get('responsabilidades', []),
-                            "confianza_ocr": confianza,
-                            "campos_extraidos": resultado.get('campos_encontrados', []),
+                            "nit": resultado_rut.get('empresa_nit', ''),
+                            "razon_social": resultado_rut.get('company_name', ''),
+                            "regimen_iva": resultado_rut.get('regimen_iva', ''),
+                            "responsabilidades": resultado_rut.get('responsabilidades', []),
+                            "confianza_ocr": confianza_rut,
+                            "campos_extraidos": resultado_rut.get('campos_encontrados', []),
                             "validado_v15": True
                         }
                         save_audit_state()
                         st.success(f"🎉 ¡{n_aplicados} campos del RUT inyectados en el expediente!")
                         st.rerun()
-
                 else:
-                    st.warning(f"⚠️ Documento no reconocido. {resultado.get('error', '')}")
-                    if resultado.get('texto_completo'):
+                    st.warning(f"⚠️ El documento no parece ser un RUT. {resultado_rut.get('error', '')}")
+                    if resultado_rut.get('texto_completo'):
                         with st.expander("Ver texto extraído"):
-                            st.text(resultado['texto_completo'][:800])
+                            st.text(resultado_rut['texto_completo'][:800])
+
+
 
             st.markdown("---")
             st.markdown("#### ✏️ Ingreso Manual")
