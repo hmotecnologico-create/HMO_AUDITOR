@@ -493,16 +493,19 @@ if st.session_state['env'] is None:
         if st.button("← Volver", key="back_resume_v15"):
             st.session_state['landing_mode'] = None; st.rerun()
         
-        st.markdown("### 📂 Seleccionar Expediente")
+        st.markdown("<h3 style='text-align:center;'>📂 Seleccionar Expediente</h3>", unsafe_allow_html=True)
         base_audits_path = os.path.join(os.getcwd(), "Auditorias_HMO")
         existing = [d for d in os.listdir(base_audits_path) if os.path.isdir(os.path.join(base_audits_path, d))] if os.path.exists(base_audits_path) else []
         
         if existing:
-            selected = st.selectbox("Expedientes en este equipo:", existing, key="sel_resume_v15")
-            if st.button("🚀 ABRIR AUDITORÍA", type="primary", use_container_width=True):
-                if load_audit_state(selected): 
-                    st.session_state['landing_mode'] = None
-                    st.rerun()
+            # COMPACTACIÓN DE INPUTS (V19.3)
+            _, col_sel, _ = st.columns([1, 2, 1])
+            with col_sel:
+                selected = st.selectbox("Expedientes en este equipo:", existing, key="sel_resume_v15")
+                if st.button("🚀 ABRIR AUDITORÍA", type="primary", use_container_width=True):
+                    if load_audit_state(selected): 
+                        st.session_state['landing_mode'] = None
+                        st.rerun()
         else:
             st.warning("No se encontraron auditorías guardadas.")
 
@@ -802,7 +805,8 @@ else:
     # --- SIDEBAR MASTER (V4.5 ELITE) ---
     with st.sidebar:
         # LOGO Y DATOS EMPRESA
-        logo_disp = logo_path if logo_path and os.path.exists(logo_path) else None
+        _logo = st.session_state.get('logo_path')
+        logo_disp = _logo if _logo and os.path.exists(_logo) else None
         if logo_disp: st.image(logo_disp, width=150)
         else: st.markdown(f"<h2 style='text-shadow: 0 0 10px #00C2FF;'>{company[:15]}</h2>", unsafe_allow_html=True)
         
