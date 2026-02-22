@@ -1626,43 +1626,43 @@ else:
         
         c_p1, c_p2 = st.columns([2, 1])
         with c_p1:
-        # Malla para Colaborador (V19.5 Unificada)
-        st.write("### Mis Pendientes de Entrega")
-        if not mis_docs:
-            st.info("No tienes requerimientos pendientes para tu área.")
-        else:
-            cols_colab = st.columns(4)
-            for i, d in enumerate(mis_docs):
-                with cols_colab[i % 4]:
-                    doc_ready = d['doc'] in st.session_state['expediente']
-                    status_icon = "✅" if doc_ready else "⏳"
-                    status_color = "#10B981" if doc_ready else "#00C2FF"
-                    
-                    st.markdown(f"""
-                    <div class="doc-card-mini" style="border-left: 4px solid {status_color};">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
-                            <span style="font-size:1.1rem; filter: drop-shadow(0 0 5px {status_color}80);">{status_icon}</span>
-                            <span class="status-badge">VITAL</span>
+            # Malla para Colaborador (V19.5 Unificada)
+            st.write("### Mis Pendientes de Entrega")
+            if not mis_docs:
+                st.info("No tienes requerimientos pendientes para tu área.")
+            else:
+                cols_colab = st.columns(4)
+                for i, d in enumerate(mis_docs):
+                    with cols_colab[i % 4]:
+                        doc_ready = d['doc'] in st.session_state['expediente']
+                        status_icon = "✅" if doc_ready else "⏳"
+                        status_color = "#10B981" if doc_ready else "#00C2FF"
+                        
+                        st.markdown(f"""
+                        <div class="doc-card-mini" style="border-left: 4px solid {status_color};">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+                                <span style="font-size:1.1rem; filter: drop-shadow(0 0 5px {status_color}80);">{status_icon}</span>
+                                <span class="status-badge">VITAL</span>
+                            </div>
+                            <p style="font-size:0.8rem; font-weight:700; color:#FFFFFF; margin:0; line-height:1.2; height: 2.4rem; overflow:hidden;">{d['doc']}</p>
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin: 0.5rem 0;">
                         </div>
-                        <p style="font-size:0.8rem; font-weight:700; color:#FFFFFF; margin:0; line-height:1.2; height: 2.4rem; overflow:hidden;">{d['doc']}</p>
-                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin: 0.5rem 0;">
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    st.markdown("<div style='margin-top:-3.8rem; padding: 0 0.5rem;'>", unsafe_allow_html=True)
-                    ca1, ca2 = st.columns(2)
-                    if not doc_ready:
-                        with ca1:
-                            _f = st.file_uploader("📥", key=f"up_colab_{i}", label_visibility="collapsed")
-                            if _f:
-                                st.session_state['expediente'][d['doc']] = {"validado": True, "hitl": True}
-                                save_audit_state(); st.rerun()
-                        with ca2:
-                            if st.button("🤖", key=f"ia_colab_{i}", help="Draft IA", use_container_width=True):
-                                ui_generar_borrador_ia(d['doc'], d['area'], d['justificacion'])
-                    else:
-                        st.markdown("<p style='font-size:0.6rem; color:#10B981; text-align:center;'>LISTO</p>", unsafe_allow_html=True)
-                    st.markdown("</div><br>", unsafe_allow_html=True)
+                        """, unsafe_allow_html=True)
+                        
+                        st.markdown("<div style='margin-top:-3.8rem; padding: 0 0.5rem;'>", unsafe_allow_html=True)
+                        ca1, ca2 = st.columns(2)
+                        if not doc_ready:
+                            with ca1:
+                                _f = st.file_uploader("📥", key=f"up_colab_{i}", label_visibility="collapsed")
+                                if _f:
+                                    st.session_state['expediente'][d['doc']] = {"validado": True, "hitl": True}
+                                    save_audit_state(); st.rerun()
+                            with ca2:
+                                if st.button("🤖", key=f"ia_colab_{i}", help="Draft IA", use_container_width=True):
+                                    ui_generar_borrador_ia(d['doc'], d['area'], d['justificacion'])
+                        else:
+                            st.markdown("<p style='font-size:0.6rem; color:#10B981; text-align:center;'>LISTO</p>", unsafe_allow_html=True)
+                        st.markdown("</div><br>", unsafe_allow_html=True)
         
         with c_p2:
             st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
