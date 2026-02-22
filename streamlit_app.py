@@ -281,7 +281,19 @@ if AUTH_DISPONIBLE and st.session_state['auth'] is None:
         </div>
         """, unsafe_allow_html=True)
 
-        _login_user = st.text_input("👤 Usuario", placeholder="Tu nombre de usuario", key="login_user")
+        # Cargar lista de usuarios activos para el selector
+        try:
+            _all_users = get_all_users()
+            _user_options = [u['user'] for u in _all_users if u.get('activo', True)]
+        except Exception:
+            _user_options = ["admin", "auditor", "visitante"]
+
+        _login_user = st.selectbox(
+            "👤 Selecciona tu usuario",
+            options=_user_options,
+            key="login_user",
+            help="Elige tu usuario de la lista"
+        )
         _login_pass = st.text_input("🔑 Contraseña", type="password", placeholder="••••••••", key="login_pass")
 
         if st.button("🚀 Ingresar al Sistema", use_container_width=True, type="primary"):
@@ -293,13 +305,14 @@ if AUTH_DISPONIBLE and st.session_state['auth'] is None:
                     st.session_state['auditor_name'] = _user_data.get('nombre', '')
                     st.rerun()
                 else:
-                    st.error("❌ Usuario o contraseña incorrectos.")
+                    st.error("❌ Contraseña incorrecta.")
             else:
-                st.warning("⚠️ Completa usuario y contraseña.")
+                st.warning("⚠️ Ingresa tu contraseña.")
 
         st.markdown("<p style='text-align:center;color:#334155;font-size:0.65rem;margin-top:1rem;'>"
                     "HMO v2.0 · Operación local privada</p>", unsafe_allow_html=True)
     st.stop()  # ← Nada más se ejecuta si no hay sesión
+
 
 # ── CAMBIO OBLIGATORIO DE CLAVE (primer login) ────────────────────────────
 if AUTH_DISPONIBLE and st.session_state.get('auth') and st.session_state['auth'].get('primer_login', False):
