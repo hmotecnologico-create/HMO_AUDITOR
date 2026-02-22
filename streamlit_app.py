@@ -38,11 +38,18 @@ st.markdown("""
         background: rgba(14, 20, 31, 0.75) !important;
         backdrop-filter: blur(25px) saturate(210%) !important;
         border: 1.5px solid rgba(0, 194, 255, 0.3) !important;
-        border-radius: 20px !important;
-        padding: 1.5rem !important; /* Reducido para compactar */
-        box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6) !important;
-        margin-bottom: 1rem !important;
+        border-radius: 16px !important;
+        padding: 1rem !important; /* Ultra-compacto */
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+        margin-bottom: 0.5rem !important;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    /* COMPACTACIÓN GLOBAL STREAMLIT */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 0rem !important;
+        max-width: 95% !important;
     }
     .elite-card:hover { 
         border-color: #00C2FF !important; 
@@ -208,17 +215,17 @@ def migrate_legacy_audits():
 
 migrate_legacy_audits()
 
-# --- PANTALLA DE BIENVENIDA (ONBOARDING GATEWAY V3.2) ---
+# --- PANTALLA DE BIENVENIDA (ONBOARDING GATEWAY V3.4) ---
 if st.session_state['env'] is None:
-    st.markdown("<h1 style='text-align: center; color: #FFFFFF; font-family: Orbitron; margin-bottom: 1.5rem;'>🛡️ HMO HUB <span style='font-size: 0.5em; vertical-align: middle; color: #00C2FF;'>ELITE EDITION</span></h1>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #FFFFFF; font-family: Orbitron; margin-bottom: 1rem;'>🛡️ HMO HUB <span style='font-size: 0.6em; vertical-align: middle; color: #00C2FF;'>ELITE EDITION</span></h2>", unsafe_allow_html=True)
     
     col_g1, col_g2, col_g3 = st.columns(3)
     
     with col_g1:
         st.markdown("""
         <div class='elite-card'>
-            <h3 style='color: #00C2FF; margin-bottom: 0.5rem;'>📂 REANUDAR</h3>
-            <p style='font-size: 0.85rem; color: #94A3B8;'>Acceda a expedientes previos almacenados en la zona segura.</p>
+            <h4 style='color: #00C2FF; margin-bottom: 0.2rem;'>📂 REANUDAR</h4>
+            <p style='font-size: 0.75rem; color: #94A3B8; margin-bottom: 0;'>Acceso a expedientes previos.</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -226,19 +233,19 @@ if st.session_state['env'] is None:
         if os.path.exists(base_audits_path):
             existing = [d for d in os.listdir(base_audits_path) if os.path.isdir(os.path.join(base_audits_path, d))]
             if existing:
-                selected = st.selectbox("Seleccionar Proceso:", existing, key="resume_onboarding")
+                selected = st.selectbox("Proceso:", existing, key="resume_hub", label_visibility="collapsed")
                 if st.button("🚀 Restaurar", use_container_width=True):
                     if load_audit_state(selected): st.rerun()
-            else: st.caption("No se detectaron auditorías previas.")
+            else: st.caption("No hay auditorías.")
 
     with col_g2:
         st.markdown("""
         <div class='elite-card'>
-            <h3 style='color: #10B981; margin-bottom: 0.5rem;'>🎓 SIMULACIÓN</h3>
-            <p style='font-size: 0.85rem; color: #94A3B8;'>Lanzar entorno demo con el expediente <b>Innovatech Solutions SAS</b>.</p>
+            <h4 style='color: #10B981; margin-bottom: 0.2rem;'>🎓 SIMULACIÓN</h4>
+            <p style='font-size: 0.75rem; color: #94A3B8; margin-bottom: 0;'>Expediente: <b>Innovatech Solutions</b>.</p>
         </div>
         """, unsafe_allow_html=True)
-        st.info("💡 Incluye Cámara de Comercio, RUT y Matriz pre-cargada.")
+        st.markdown("<p style='font-size: 0.7rem; color: #10B981;'>💡 Cámara, RUT y Matriz listos.</p>", unsafe_allow_html=True)
         if st.button("Lanzar V1.6 Elite", use_container_width=True):
             st.session_state['env'], st.session_state['company_name'] = "Simulacion", "Innovatech Solutions SAS"
             st.session_state['base_path'] = setup_company_folders("Innovatech Solutions SAS")
@@ -251,12 +258,12 @@ if st.session_state['env'] is None:
     with col_g3:
         st.markdown("""
         <div class='elite-card'>
-            <h3 style='color: #FFFFFF; margin-bottom: 0.5rem;'>🏗️ NUEVO PROYECTO</h3>
-            <p style='font-size: 0.85rem; color: #94A3B8;'>Iniciar una auditoría real desde cero con rigor legal.</p>
+            <h4 style='color: #FFFFFF; margin-bottom: 0.2rem;'>🏗️ NUEVO PROYECTO</h4>
+            <p style='font-size: 0.75rem; color: #94A3B8; margin-bottom: 0;'>Auditoría real con rigor legal.</p>
         </div>
         """, unsafe_allow_html=True)
-        new_name = st.text_input("Nombre Entidad:", placeholder="Ej: Universidad San José", key="new_proj_hub")
-        new_norma = st.selectbox("Marco:", ["ISO 9001:2015", "ISO 27001:2022", "Decreto 1330"], key="norma_hub")
+        new_name = st.text_input("Nombre Entidad:", placeholder="Ej: Universidad San José", key="nw_hub", label_visibility="collapsed")
+        new_norma = st.selectbox("Marco:", ["ISO 9001:2015", "ISO 27001:2022", "Decreto 1330"], key="nm_hub", label_visibility="collapsed")
         if st.button("Crear Proyecto", use_container_width=True):
             if new_name:
                 st.session_state['env'], st.session_state['company_name'] = "Real", new_name
@@ -264,9 +271,9 @@ if st.session_state['env'] is None:
                 st.session_state['base_path'] = setup_company_folders(new_name)
                 save_audit_state()
                 st.rerun()
-            else: st.warning("Ingrese nombre.")
+            else: st.warning("Nombre requerido.")
 
-    st.markdown("<br><p style='text-align: center; font-size: 0.75rem; color: #475569;'>HMO Auditor v2.0.0 Elite Edition | Operación Local Protegida</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-size: 0.65rem; color: #475569; margin-top: 1rem;'>HMO v2.0 Elite | Operación Local Privada</p>", unsafe_allow_html=True)
 
 # --- DASHBOARD PRINCIPAL ---
 else:
