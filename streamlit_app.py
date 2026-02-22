@@ -393,7 +393,11 @@ else:
         {"doc": "Cronograma de Actividades de Preparacion", "area": "Alta Direccion", "ref": "Planeacion", "desc": "Calendario con hitos de entrega de evidencias (Inicio-Fin).", "justificacion": "ISO 19011:6.3.2 - Base para la planificacion detallada de las actividades de auditoria de campo.", "instrucciones": "Diseñe un calendario (Excel o Gantt) que muestre las fechas limite en las que cada oficina debe entregar su documentacion al auditor."},
         {"doc": "Mision y Vision Corporativa", "area": "Alta Direccion", "ref": "Estrategico", "desc": "Proposito y rumbo organizacional.", "justificacion": "ISO 9001:4.1 - Fundamental para entender el contexto organizacional y los objetivos estrategicos.", "instrucciones": "Extraiga los textos oficiales del manual estrategico o la pagina web de la empresa y plasmelos en un documento PDF o Word con membrete oficial."},
         {"doc": "Matriz de Responsables de Area", "area": "Alta Direccion", "ref": "Gobierno", "desc": "Liderazgo nominal por procesos.", "justificacion": "ISO 9001:5.3 - Define las responsabilidades y autoridades dentro de los procesos de la entidad.", "instrucciones": "Cree un cuadro que relacione cada proceso con su responsable (Cargo y Nombre completo)."},
-        {"doc": "Organigrama Funcional", "area": "Alta Direccion", "ref": "Estructura", "desc": "Jerarquia y mandos medios.", "justificacion": "ISO 19011:6.3.1 - Requerido para mapear la cadena de mando y los flujos de comunicacion oficiales.", "instrucciones": "Utilice herramientas como Visio o PowerPoint para diagramar la estructura jerarquica actual de la empresa, desde la gerencia hasta los cargos operativos."}
+        {"doc": "Organigrama Funcional", "area": "Alta Direccion", "ref": "Estructura", "desc": "Jerarquia y mandos medios.", "justificacion": "ISO 19011:6.3.1 - Requerido para mapear la cadena de mando y los flujos de comunicacion oficiales.", "instrucciones": "Utilice herramientas como Visio o PowerPoint para diagramar la estructura jerarquica actual de la empresa, desde la gerencia hasta los cargos operativos."},
+        # EXPANSION V8.9
+        {"doc": "Estados Financieros (Ultimo Trimestre)", "area": "Financiera", "ref": "Sostenibilidad", "desc": "Balance y P&G actualizado.", "justificacion": "ISO 9001:7.1.1 - Asegura que la organizacion cuenta con los recursos necesarios para el SGC.", "instrucciones": "Solicite al area contable el balance general y estado de resultados firmado por el contador."},
+        {"doc": "Manual de Funciones y Perfiles", "area": "Talento Humano", "ref": "Competencia", "desc": "Responsabilidades por cargo.", "justificacion": "ISO 9001:7.2 - Base para evaluar la competencia del personal.", "instrucciones": "Adjunte el documento institucional que define los perfiles de cargo de la entidad."},
+        {"doc": "Manual de Procesos Institucional", "area": "Operaciones", "ref": "SGC", "desc": "Documentacion de la operacion.", "justificacion": "ISO 9001:4.4.2 - Informacion documentada para apoyar la operacion de los procesos.", "instrucciones": "Suba el manual maestro de procesos o el listado maestro de procedimientos."}
     ]
 
     norm_cartas = []
@@ -633,25 +637,82 @@ else:
         # --- FASE A: IDENTIDAD ---
         with tab_a:
             st.write("### 🏦 Datos Maestros de Identidad")
-            st.info("Información obligatoria para la validez legal de las firmas y encabezados.")
             
+            # Métricas de Fase A
+            fase_a_reqs = [st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']]
+            fase_a_completados = sum(1 for r in fase_a_reqs if r)
+            pct_a = int((fase_a_completados / 3) * 100)
+            
+            st.progress(pct_a / 100)
+            c_m1, c_m2 = st.columns(2)
+            c_m1.metric("Cumplimiento Fase A", f"{pct_a}%")
+            
+            if pct_a < 100:
+                faltantes_a = []
+                if not st.session_state['auditor_name']: faltantes_a.append("Nombre del Auditor")
+                if not st.session_state['rep_legal']: faltantes_a.append("Representante Legal")
+                if not st.session_state['rep_id']: faltantes_a.append("ID del Representante")
+                st.warning(f"❌ **Falta por completar:** {', '.join(faltantes_a)}")
+            else:
+                st.success("✅ Fase A Completa y lista para registro.")
+
+            st.divider()
             c1, c2 = st.columns(2)
-            st.session_state['auditor_name'] = c1.text_input("👨‍💼 Nombre Completo del Auditor:", value=st.session_state['auditor_name'], placeholder="Ingrese su nombre (Ej: Juan Gabriel)")
-            st.session_state['rep_legal'] = c2.text_input("⚖️ Representante Legal de la Entidad:", value=st.session_state['rep_legal'], placeholder="Nombre del Representante")
-            st.session_state['rep_id'] = c1.text_input("🆔 Documento de Identidad (Representante):", value=st.session_state['rep_id'], placeholder="Cédula o ID Legal")
+            st.session_state['auditor_name'] = c1.text_input("* 👨‍💼 Nombre Completo del Auditor:", value=st.session_state['auditor_name'], placeholder="Ingrese su nombre (Ej: Juan Gabriel)")
+            st.session_state['rep_legal'] = c2.text_input("* ⚖️ Representante Legal de la Entidad:", value=st.session_state['rep_legal'], placeholder="Nombre del Representante")
+            st.session_state['rep_id'] = c1.text_input("* 🆔 Documento de Identidad (Representante):", value=st.session_state['rep_id'], placeholder="Cédula o ID Legal")
             
             if st.button("💾 REGISTRAR IDENTIDAD"):
-                save_audit_state()
-                st.success("✅ Identidad Registrada.")
-                st.rerun()
+                if pct_a < 100:
+                    st.error("🔒 No puede registrar sin completar los campos obligatorios (*).")
+                else:
+                    save_audit_state()
+                    st.success("✅ Identidad Registrada.")
+                    st.rerun()
 
         # --- FASE B: DIMENSIONAMIENTO ---
         with tab_b:
             st.write("### 📊 Perfilamiento Organizacional")
-            st.info("El tamaño y sector de la empresa determinan de forma crítica el rigor de los controles a aplicar.")
             
-            st.session_state['empresa_tamanio'] = st.selectbox("📏 Tamaño de la Empresa:", ["Pyme (1-50 emp)", "Mediana (51-200 emp)", "Gran Empresa (>200 emp)"], index=["Pyme (1-50 emp)", "Mediana (51-200 emp)", "Gran Empresa (>200 emp)"].index(st.session_state['empresa_tamanio']) if st.session_state['empresa_tamanio'] in ["Pyme (1-50 emp)", "Mediana (51-200 emp)", "Gran Empresa (>200 emp)"] else 0)
-            st.session_state['empresa_sector'] = st.selectbox("🏭 Sector Económico:", ["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"], index=["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"].index(st.session_state['empresa_sector']) if st.session_state['empresa_sector'] in ["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"] else 0)
+            # Métricas de Fase B
+            # Consideramos 'empresa_tamanio', 'empresa_personal', 'empresa_direccion' como campos clave para el dimensionamiento.
+            # 'empresa_tamanio' tiene un valor por defecto, por lo que su "completitud" se evalúa si no es el valor inicial o si se ha cambiado.
+            # 'empresa_personal' y 'empresa_direccion' se evalúan si tienen un valor.
+            
+            # Check if 'empresa_personal' and 'empresa_direccion' are initialized, if not, set to empty string for evaluation
+            if 'empresa_personal' not in st.session_state: st.session_state['empresa_personal'] = 0
+            if 'empresa_direccion' not in st.session_state: st.session_state['empresa_direccion'] = ""
+            if 'empresa_web' not in st.session_state: st.session_state['empresa_web'] = ""
+
+            fase_b_reqs_status = {
+                'tamanio': st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)", # True if changed from default
+                'personal': st.session_state['empresa_personal'] > 0,
+                'direccion': bool(st.session_state['empresa_direccion'])
+            }
+            
+            fase_b_completados = sum(1 for status in fase_b_reqs_status.values() if status)
+            total_reqs_b = len(fase_b_reqs_status)
+            pct_b = int((fase_b_completados / total_reqs_b) * 100) if total_reqs_b > 0 else 0
+            
+            st.progress(pct_b / 100)
+            st.metric("Cumplimiento Fase B", f"{pct_b}%")
+
+            if pct_b < 100:
+                faltantes_b = []
+                if not fase_b_reqs_status['tamanio']: faltantes_b.append("Tamaño de la Organización")
+                if not fase_b_reqs_status['personal']: faltantes_b.append("Total de Colaboradores")
+                if not fase_b_reqs_status['direccion']: faltantes_b.append("Dirección Principal")
+                st.warning(f"❌ **Falta por completar:** {', '.join(faltantes_b)} para una definición precisa del perfil.")
+            else:
+                st.success("✅ Fase B Dimensionada correctamente.")
+
+            st.divider()
+            c1, c2 = st.columns(2)
+            st.session_state['empresa_tamanio'] = c1.selectbox("* 🏢 Tamaño de la Organización:", ["Pyme (1-50 emp)", "Mediana (51-250 emp)", "Gran Empresa (+250 emp)"], index=["Pyme (1-50 emp)", "Mediana (51-250 emp)", "Gran Empresa (+250 emp)"].index(st.session_state['empresa_tamanio']) if st.session_state['empresa_tamanio'] in ["Pyme (1-50 emp)", "Mediana (51-250 emp)", "Gran Empresa (+250 emp)"] else 0)
+            st.session_state['empresa_personal'] = c2.number_input("* 👥 Total de Colaboradores:", value=st.session_state['empresa_personal'], min_value=1)
+            st.session_state['empresa_direccion'] = c1.text_input("* 📍 Dirección Principal:", value=st.session_state['empresa_direccion'])
+            st.session_state['empresa_web'] = c2.text_input("🌐 Sitio Web (Opcional):", value=st.session_state['empresa_web'])
+            st.session_state['empresa_sector'] = c2.selectbox("🏭 Sector Económico:", ["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"], index=["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"].index(st.session_state['empresa_sector']) if st.session_state['empresa_sector'] in ["Servicios", "Industrial", "Educativo", "Salud", "Tecnología"] else 0)
             
             if st.button("💾 GUARDAR PERFILADO Y CONTINUAR"):
                 save_audit_state()
