@@ -337,9 +337,14 @@ else:
     # Sidebar Superior
     st.sidebar.markdown(f"**🏢 {company}**")
     st.sidebar.markdown(f"**💎 Marco:** {st.session_state['norma']}")
+    
+    # Selector de Rol (Prioridad V3.7)
+    roles_disponibles = ["Administrador (Global)", "⚖️ Jurídico", "🏦 Alta Dirección", "📊 Calidad / SIG", "🛡️ Ciberseguridad", "♻️ Gestión Ambiental", "🎓 Gestión Académica"]
+    st.session_state['user_role'] = st.sidebar.selectbox("🔑 Rol de Sesión:", roles_disponibles, key="role_selector_top")
+    
     st.sidebar.divider()
     
-    # Navegación Unificada (Fix Inactivo & Scroll)
+    # Navegación Unificada
     opciones = [
         "📊 Dashboard Analítico",
         "📋 Requerimientos Maestros",
@@ -348,11 +353,6 @@ else:
         "💎 Help Center Elite"
     ]
     menu = st.sidebar.radio("Navegación:", opciones, key="main_menu_elite")
-    
-    # Selector de Rol
-    st.sidebar.divider()
-    roles_disponibles = ["Administrador (Global)", "⚖️ Jurídico", "🏦 Alta Dirección", "📊 Calidad / SIG", "🛡️ Ciberseguridad", "♻️ Gestión Ambiental", "🎓 Gestión Académica"]
-    st.session_state['user_role'] = st.sidebar.selectbox("🔑 Rol de Sesión:", roles_disponibles)
     
     if st.sidebar.button("🔒 Cerrar Sesión Segura"):
         save_audit_state()
