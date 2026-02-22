@@ -8,14 +8,15 @@ import sys
 import io
 import shutil
 import json
-from HMO_PDF_Generator import generate_audit_program_pdf, generate_preparation_guide_pdf
-from HMO_AI_Engine import HMO_AI_Engine
 
-# --- CONFIGURACIÓN DE RUTAS ---
+# --- CONFIGURACIÓN DE RUTAS PARA DESPLIEGUE ---
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 GEN_PATH = os.path.join(SCRIPT_DIR, "HMO_Auditor_Master_V1", "04_Arquitectura_y_Diseno", "Scripts_Generadores")
-sys.path.append(GEN_PATH)
+if GEN_PATH not in sys.path:
+    sys.path.append(GEN_PATH)
 
+from HMO_PDF_Generator import generate_audit_program_pdf, generate_preparation_guide_pdf
+from HMO_AI_Engine import HMO_AI_Engine
 from HMO_Auditor_Master_V2_Generator import create_audit_program_v2
 from HMO_Checklist_Legal_Generator import create_legal_checklist
 
