@@ -681,7 +681,7 @@ else:
                     conteo_ready = sum(1 for c in docs_area if c['doc'] in st.session_state['expediente'])
                     porcentaje_area = int((conteo_ready / len(docs_area)) * 100) if docs_area else 0
                     
-                    with st.expander(f"🔹 PROCESO: {area} — Avance: {porcentaje_area}%"):
+                    with st.expander(f"PROCESO: {area} -- Avance: {porcentaje_area}%"):
                          for c in docs_area:
                             idx = cartas.index(c)
                             doc_id = c['doc']
@@ -760,7 +760,10 @@ else:
                                     st.rerun()
                                     
                 if doc_list_missing:
-                    st.warning(f"⚠️ **Pendientes de Carga ({len(doc_list_missing)}):** {', '.join(doc_list_missing[:3])}{'...' if len(doc_list_missing)>3 else ''}")
+                    st.warning(f"**Documentos Pendientes de Carga:**")
+                    cols_missing = st.columns(2)
+                    for i, doc_missing in enumerate(doc_list_missing):
+                        cols_missing[i % 2].markdown(f"- {doc_missing}")
                 if not doc_list_missing:
                     st.success("✅ ¡Cuerpo Normativo Completo!")
 

@@ -107,14 +107,14 @@ def generate_preparation_guide_pdf(company_name, output_path, doc_requirements, 
         pdf.cell(0, 10, doc_item['doc'].upper(), fill=True, border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         
         pdf.set_font("helvetica", "B", 10)
-        pdf.cell(0, 7, "📌 JUSTIFICACIÓN NORMATIVA:", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        pdf.cell(0, 7, "JUSTIFICACION NORMATIVA:", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         pdf.set_font("helvetica", "", 9)
-        pdf.multi_cell(0, 5, doc_item.get('justificacion', 'Requisito estándar de auditoría.'))
+        pdf.multi_cell(0, 5, doc_item.get('justificacion', 'Requisito estandar de auditoria.'))
         
         pdf.ln(2)
         pdf.set_font("helvetica", "B", 10)
         pdf.set_text_color(31, 78, 120)
-        pdf.cell(0, 7, "🛠️ CÓMO CREAR ESTE DOCUMENTO (EL HUMANO):", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        pdf.cell(0, 7, "COMO CREAR ESTE DOCUMENTO (EL HUMANO):", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         pdf.set_text_color(0, 0, 0)
         pdf.set_font("helvetica", "I", 9)
         pdf.multi_cell(0, 5, doc_item.get('instrucciones', 'Consulte el manual de calidad o el archivo maestro de la entidad.'))
