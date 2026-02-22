@@ -71,16 +71,16 @@ st.markdown("""
         font-family: 'Inter', sans-serif !important;
     }
     
-    /* ETIQUETAS DE WIDGETS (NEON BLUE) */
+    /* ETIQUETAS DE WIDGETS — BLANCO SUAVE (LEGIBLE) */
     [data-testid="stWidgetLabel"] p {
-        color: #00C2FF !important;
-        font-family: 'Orbitron', sans-serif !important;
-        font-weight: 700 !important;
+        color: #E2E8F0 !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 600 !important;
         text-transform: uppercase !important;
-        letter-spacing: 1.5px !important;
-        font-size: 0.85rem !important;
-        margin-bottom: 0.8rem !important;
-        text-shadow: 0 2px 10px rgba(0, 194, 255, 0.3);
+        letter-spacing: 1.2px !important;
+        font-size: 0.80rem !important;
+        margin-bottom: 0.6rem !important;
+        text-shadow: 0 1px 6px rgba(0, 194, 255, 0.2);
     }
 
     /* TITULOS NEON */
@@ -393,9 +393,56 @@ if st.session_state['env'] is None:
         </div>
         """, unsafe_allow_html=True)
 
-        new_name = st.text_input("Nombre Entidad:", placeholder="Ej: Universidad San José", key="nw_hub", label_visibility="collapsed")
+        # ── OCR de carga rápida ─────────────────────────────────────────
+        st.caption("⚡ Sube la CC o RUT para auto-rellenar todos los datos:")
+        _col_cc, _col_rut = st.columns(2)
+        with _col_cc:
+            _up_cc = st.file_uploader("📋 Cámara de Comercio", type=["pdf","jpg","jpeg","png"], key="new_proj_cc")
+        with _col_rut:
+            _up_rut = st.file_uploader("🧾 RUT (DIAN)", type=["pdf","jpg","jpeg","png"], key="new_proj_rut")
+
+        # Auto-fill inmediato al subir CC
+        if _up_cc is not None and OCR_DISPONIBLE:
+            with st.spinner("Leyendo CC..."):
+                _r = procesar_documento(_up_cc.read(), _up_cc.name)
+            if _r.get("tipo_doc") == "camara_comercio":
+                _upd = resultado_a_session_state(_r)
+                for _k, _v in _upd.items():
+                    st.session_state[_k] = _v
+                st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {
+                    "nit": _r.get('empresa_nit',''), "razon_social": _r.get('company_name',''),
+                    "campos_extraidos": _r.get('campos_encontrados',[]), "validado_v15": True
+                }
+                st.success(f"✅ CC leída: {_r.get('company_name','—')} | NIT {_r.get('empresa_nit','—')}")
+            else:
+                st.warning("⚠️ El archivo no parece ser una Cámara de Comercio.")
+
+        # Auto-fill inmediato al subir RUT
+        if _up_rut is not None and OCR_DISPONIBLE:
+            with st.spinner("Leyendo RUT..."):
+                _r2 = procesar_documento(_up_rut.read(), _up_rut.name)
+            if _r2.get("tipo_doc") == "rut":
+                _upd2 = resultado_a_session_state(_r2)
+                for _k, _v in _upd2.items():
+                    st.session_state[_k] = _v
+                st.session_state['expediente']["RUT (Registro Unico Tributario)"] = {
+                    "nit": _r2.get('empresa_nit',''), "razon_social": _r2.get('company_name',''),
+                    "regimen_iva": _r2.get('regimen_iva',''),
+                    "responsabilidades": _r2.get('responsabilidades',[]),
+                    "campos_extraidos": _r2.get('campos_encontrados',[]), "validado_v15": True
+                }
+                st.success(f"✅ RUT leído: {_r2.get('empresa_municipio','—')} | CIIU {_r2.get('actividad_ciiu','—')}")
+            else:
+                st.warning("⚠️ El archivo no parece ser un RUT.")
+
+        st.divider()
+        # Nombre puede venir del OCR o ingresarse manual
+        _nombre_ocr = st.session_state.get('company_name', '')
+        new_name = st.text_input("Nombre Entidad:", value=_nombre_ocr,
+                                  placeholder="Ej: Universidad San José", key="nw_hub")
         normas_disponibles = ["Calidad (ISO 9001:2015)", "Ambiental (ISO 14001:2015)", "Seguridad (ISO 27001:2022)", "Académico (Ley 115 / Dec. 1330)"]
-        new_norma = st.multiselect("Marcos:", normas_disponibles, default=["Calidad (ISO 9001:2015)"], key="nm_hub", label_visibility="collapsed")
+        new_norma = st.multiselect("Marcos normativos:", normas_disponibles,
+                                    default=["Calidad (ISO 9001:2015)"], key="nm_hub")
 
         if st.button("🏗️ CREAR PROYECTO", use_container_width=True):
             if new_name:
