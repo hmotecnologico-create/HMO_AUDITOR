@@ -15,7 +15,7 @@ GEN_PATH = os.path.join(SCRIPT_DIR, "HMO_Auditor_Master_V1", "04_Arquitectura_y_
 if GEN_PATH not in sys.path:
     sys.path.append(GEN_PATH)
 
-from HMO_PDF_Generator import generate_audit_program_pdf, generate_preparation_guide_pdf
+from HMO_PDF_Generator import generate_audit_program_pdf, generate_preparation_guide_pdf, generate_document_template_pdf
 from HMO_AI_Engine import HMO_AI_Engine
 from HMO_Auditor_Master_V2_Generator import create_audit_program_v2
 from HMO_Checklist_Legal_Generator import create_legal_checklist
@@ -387,17 +387,17 @@ else:
     
     # --- CONFIGURACIÓN DE CARTAS Y PROGRESO (V3.9 PRE-RENDER) ---
     base_cartas = [
-        {"doc": "Camara de Comercio (Existencia Legal)", "area": "Juridico", "ref": "Legalidad", "desc": "Certificado actualizado con objeto social y NIT.", "justificacion": "ISO 19011:6.3.1 - Necesario para verificar la base legal y representacion de la entidad auditada.", "instrucciones": "Solicite este documento directamente en la oficina de la Camara de Comercio o descarguelo de su portal web con una vigencia no mayor a 30 días."},
-        {"doc": "RUT (Registro Unico Tributario)", "area": "Juridico", "ref": "Fiscal", "desc": "Identificacion tributaria y responsabilidades.", "justificacion": "Requisito legal/fiscal para la identificacion de la persona juridica segun normativa nacional.", "instrucciones": "Descargue el PDF actualizado desde el portal de la DIAN."},
-        {"doc": "Acta de Compromiso Directivo", "area": "Alta Direccion", "ref": "Gobierno", "desc": "Acuerdo de preparacion, asignacion de recursos y roles.", "justificacion": "ISO 9001:5.1 e ISO 19011:6.2.2 - El compromiso de la direccion es vital para el exito de la auditoria.", "instrucciones": "Redacte un acta simple firmada por la gerencia donde se declare la voluntad de realizar la auditoria interna y se designen los responsables por area."},
-        {"doc": "Cronograma de Actividades de Preparacion", "area": "Alta Direccion", "ref": "Planeacion", "desc": "Calendario con hitos de entrega de evidencias (Inicio-Fin).", "justificacion": "ISO 19011:6.3.2 - Base para la planificacion detallada de las actividades de auditoria de campo.", "instrucciones": "Diseñe un calendario (Excel o Gantt) que muestre las fechas limite en las que cada oficina debe entregar su documentacion al auditor."},
-        {"doc": "Mision y Vision Corporativa", "area": "Alta Direccion", "ref": "Estrategico", "desc": "Proposito y rumbo organizacional.", "justificacion": "ISO 9001:4.1 - Fundamental para entender el contexto organizacional y los objetivos estrategicos.", "instrucciones": "Extraiga los textos oficiales del manual estrategico o la pagina web de la empresa y plasmelos en un documento PDF o Word con membrete oficial."},
-        {"doc": "Matriz de Responsables de Area", "area": "Alta Direccion", "ref": "Gobierno", "desc": "Liderazgo nominal por procesos.", "justificacion": "ISO 9001:5.3 - Define las responsabilidades y autoridades dentro de los procesos de la entidad.", "instrucciones": "Cree un cuadro que relacione cada proceso con su responsable (Cargo y Nombre completo)."},
-        {"doc": "Organigrama Funcional", "area": "Alta Direccion", "ref": "Estructura", "desc": "Jerarquia y mandos medios.", "justificacion": "ISO 19011:6.3.1 - Requerido para mapear la cadena de mando y los flujos de comunicacion oficiales.", "instrucciones": "Utilice herramientas como Visio o PowerPoint para diagramar la estructura jerarquica actual de la empresa, desde la gerencia hasta los cargos operativos."},
+        {"doc": "Camara de Comercio (Existencia Legal)", "area": "Juridico", "ref": "Legalidad", "norma": "SIG", "desc": "Certificado actualizado con objeto social y NIT.", "justificacion": "ISO 19011:6.3.1 - Necesario para verificar la base legal y representacion de la entidad auditada.", "instrucciones": "Solicite este documento directamente en la oficina de la Camara de Comercio o descarguelo de su portal web con una vigencia no mayor a 30 días."},
+        {"doc": "RUT (Registro Unico Tributario)", "area": "Juridico", "ref": "Fiscal", "norma": "SIG", "desc": "Identificacion tributaria y responsabilidades.", "justificacion": "Requisito legal/fiscal para la identificacion de la persona juridica segun normativa nacional.", "instrucciones": "Descargue el PDF actualizado desde el portal de la DIAN."},
+        {"doc": "Acta de Compromiso Directivo", "area": "Alta Direccion", "ref": "Gobierno", "norma": "SIG", "desc": "Acuerdo de preparacion, asignacion de recursos y roles.", "justificacion": "ISO 9001:5.1 e ISO 19011:6.2.2 - El compromiso de la direccion es vital para el exito de la auditoria.", "instrucciones": "Redacte un acta simple firmada por la gerencia donde se declare la voluntad de realizar la auditoria interna y se designen los responsables por area."},
+        {"doc": "Cronograma de Actividades de Preparacion", "area": "Alta Direccion", "ref": "Planeacion", "norma": "SIG", "desc": "Calendario con hitos de entrega de evidencias (Inicio-Fin).", "justificacion": "ISO 19011:6.3.2 - Base para la planificacion detallada de las actividades de auditoria de campo.", "instrucciones": "Diseñe un calendario (Excel o Gantt) que muestre las fechas limite en las que cada oficina debe entregar su documentacion al auditor."},
+        {"doc": "Mision y Vision Corporativa", "area": "Alta Direccion", "ref": "Estrategico", "norma": "SIG", "desc": "Proposito y rumbo organizacional.", "justificacion": "ISO 9001:4.1 - Fundamental para entender el contexto organizacional y los objetivos estrategicos.", "instrucciones": "Extraiga los textos oficiales del manual estrategico o la pagina web de la empresa y plasmelos en un documento PDF o Word con membrete oficial."},
+        {"doc": "Matriz de Responsables de Area", "area": "Alta Direccion", "ref": "Gobierno", "norma": "SIG", "desc": "Liderazgo nominal por procesos.", "justificacion": "ISO 9001:5.3 - Define las responsabilidades y autoridades dentro de los procesos de la entidad.", "instrucciones": "Cree un cuadro que relacione cada proceso con su responsable (Cargo y Nombre completo)."},
+        {"doc": "Organigrama Funcional", "area": "Alta Direccion", "ref": "Estructura", "norma": "SIG", "desc": "Jerarquia y mandos medios.", "justificacion": "ISO 19011:6.3.1 - Requerido para mapear la cadena de mando y los flujos de comunicacion oficiales.", "instrucciones": "Utilice herramientas como Visio o PowerPoint para diagramar la estructura jerarquica actual de la empresa, desde la gerencia hasta los cargos operativos."},
         # EXPANSION V8.9
-        {"doc": "Estados Financieros (Ultimo Trimestre)", "area": "Financiera", "ref": "Sostenibilidad", "desc": "Balance y P&G actualizado.", "justificacion": "ISO 9001:7.1.1 - Asegura que la organizacion cuenta con los recursos necesarios para el SGC.", "instrucciones": "Solicite al area contable el balance general y estado de resultados firmado por el contador."},
-        {"doc": "Manual de Funciones y Perfiles", "area": "Talento Humano", "ref": "Competencia", "desc": "Responsabilidades por cargo.", "justificacion": "ISO 9001:7.2 - Base para evaluar la competencia del personal.", "instrucciones": "Adjunte el documento institucional que define los perfiles de cargo de la entidad."},
-        {"doc": "Manual de Procesos Institucional", "area": "Operaciones", "ref": "SGC", "desc": "Documentacion de la operacion.", "justificacion": "ISO 9001:4.4.2 - Informacion documentada para apoyar la operacion de los procesos.", "instrucciones": "Suba el manual maestro de procesos o el listado maestro de procedimientos."}
+        {"doc": "Estados Financieros (Ultimo Trimestre)", "area": "Financiera", "ref": "Sostenibilidad", "norma": "CALIDAD", "desc": "Balance y P&G actualizado.", "justificacion": "ISO 9001:7.1.1 - Asegura que la organizacion cuenta con los recursos necesarios para el SGC.", "instrucciones": "Solicite al area contable el balance general y estado de resultados firmado por el contador."},
+        {"doc": "Manual de Funciones y Perfiles", "area": "Talento Humano", "ref": "Competencia", "norma": "CALIDAD", "desc": "Responsabilidades por cargo.", "justificacion": "ISO 9001:7.2 - Base para evaluar la competencia del personal.", "instrucciones": "Adjunte el documento institucional que define los perfiles de cargo de la entidad."},
+        {"doc": "Manual de Procesos Institucional", "area": "Operaciones", "ref": "SGC", "norma": "CALIDAD", "desc": "Documentacion de la operacion.", "justificacion": "ISO 9001:4.4.2 - Informacion documentada para apoyar la operacion de los procesos.", "instrucciones": "Suba el manual maestro de procesos o el listado maestro de procedimientos."}
     ]
 
     norm_cartas = []
@@ -405,36 +405,36 @@ else:
     
     if "Académico" in str(normas_activas):
         norm_cartas += [
-            {"doc": "PEI (Proyecto Educativo)", "area": "Gestion Academica", "ref": "Ley 115", "desc": "Columna vertebral academica.", "justificacion": "Ley 115 de 1994 - Documento maestro que define la identidad y el modelo pedagogico de la institucion.", "instrucciones": "Recopile el documento PEI vigente del consejo directivo. Debe incluir el Horizonte Institucional y el Plan de Estudios."},
-            {"doc": "Registro Calificado", "area": "Juridico", "ref": "Dec. 1330", "desc": "Autorizacion ministerial.", "justificacion": "Decreto 1330 de 2019 - Habilitacion legal para la oferta y desarrollo de programas academicos.", "instrucciones": "Adjunte la resolucion ministerial vigente que autoriza el programa."},
-            {"doc": "Estatuto Docente", "area": "Talento Humano", "ref": "Dec. 1278", "desc": "Reglamentacion docente.", "justificacion": "Decreto 1278/2277 - Marco normativo para la gestion del personal docente y su escalafon.", "instrucciones": "Extraiga el reglamento de escalafon y deberes docentes aprobado por la institucion."},
-            {"doc": "Manual de Convivencia", "area": "Gestion Academica", "ref": "Ley 115", "desc": "Acuerdos preventivos y correctivos.", "justificacion": "ISO 9001:S3 - Define las normas de interaccion y justicia escolar.", "instrucciones": "Manual vigente aprobado por el Consejo Directivo con fecha de actualizacion."},
-            {"doc": "Plan de Estudios por Competencias", "area": "Gestion Academica", "ref": "Dec. 1330", "desc": "Disenio curricular.", "justificacion": "Aseguramiento de la Calidad Academica s/ Dec. 1330.", "instrucciones": "Documento que detalle las competencias, contenidos y criterios de evaluacion."},
-            {"doc": "Informe de Autoevaluacion Institucional", "area": "Alta Direccion", "ref": "Calidad Academica", "desc": "Corte de madurez educativa.", "justificacion": "Requisito para renovacion de registros calificados.", "instrucciones": "Informe final del proceso de autoevaluacion con sustento en indicadores."},
-            {"doc": "Plan de Mejoramiento Institucional (PMI)", "area": "Calidad", "ref": "Estrategico", "desc": "Acciones de mejora continua.", "justificacion": "ISO 9001:10.3 - Asegura la evolucion constante de la institucion.", "instrucciones": "Plan de accion con presupuesto, responsables y cronograma de cumplimiento."}
+            {"doc": "PEI (Proyecto Educativo)", "area": "Gestion Academica", "ref": "Ley 115", "norma": "ACADÉMICO", "desc": "Columna vertebral academica.", "justificacion": "Ley 115 de 1994 - Documento maestro que define la identidad y el modelo pedagogico de la institucion.", "instrucciones": "Recopile el documento PEI vigente del consejo directivo. Debe incluir el Horizonte Institucional y el Plan de Estudios."},
+            {"doc": "Registro Calificado", "area": "Juridico", "ref": "Dec. 1330", "norma": "ACADÉMICO", "desc": "Autorizacion ministerial.", "justificacion": "Decreto 1330 de 2019 - Habilitacion legal para la oferta y desarrollo de programas academicos.", "instrucciones": "Adjunte la resolucion ministerial vigente que autoriza el programa."},
+            {"doc": "Estatuto Docente", "area": "Talento Humano", "ref": "Dec. 1278", "norma": "ACADÉMICO", "desc": "Reglamentacion docente.", "justificacion": "Decreto 1278/2277 - Marco normativo para la gestion del personal docente y su escalafon.", "instrucciones": "Extraiga el reglamento de escalafon y deberes docentes aprobado por la institucion."},
+            {"doc": "Manual de Convivencia", "area": "Gestion Academica", "ref": "Ley 115", "norma": "ACADÉMICO", "desc": "Acuerdos preventivos y correctivos.", "justificacion": "ISO 9001:S3 - Define las normas de interaccion y justicia escolar.", "instrucciones": "Estructura: 1. Horizonte (Misión/Visión), 2. Derechos y Deberes, 3. Debido Proceso (Escala de faltas), 4. Estímulos, 5. Ruta de Atención Integral. Tip: Debe estar firmado por el Consejo Directivo."},
+            {"doc": "Plan de Estudios por Competencias", "area": "Gestion Academica", "ref": "Dec. 1330", "norma": "ACADÉMICO", "desc": "Disenio curricular.", "justificacion": "Aseguramiento de la Calidad Academica s/ Dec. 1330.", "instrucciones": "Estructura: 1. Malla Curricular por Grados, 2. Estándares/DBA (Derechos Básicos), 3. Criterios de Evaluación, 4. Metodologías (Aulas), 5. Plan de Nivelación. Tip: Verifique que sea coherente con el PEI."},
+            {"doc": "Informe de Autoevaluacion Institucional", "area": "Alta Direccion", "ref": "Calidad Academica", "norma": "ACADÉMICO", "desc": "Corte de madurez educativa.", "justificacion": "Requisito para renovacion de registros calificados.", "instrucciones": "Estructura: 1. Gestión Directiva, 2. Gestión Académica, 3. Gestión Administrativa/Financiera, 4. Gestión de Comunidad, 5. Análisis de Indicadores (Deserción, Pruebas Saber)."},
+            {"doc": "Plan de Mejoramiento Institucional (PMI)", "area": "Calidad", "ref": "Estrategico", "norma": "ACADÉMICO", "desc": "Acciones de mejora continua.", "justificacion": "ISO 9001:10.3 - Asegura la evolucion constante de la institucion.", "instrucciones": "Estructura: 1. Objetivos, 2. Metas Anuales, 3. Responsables, 4. Presupuesto, 5. Cronograma (Gantt). Tip: Cada hallazgo de la autoevaluación debe tener una acción aquí."}
         ]
     if "Seguridad" in str(normas_activas):
         norm_cartas += [
-            {"doc": "Politica de Seguridad", "area": "Ciberseguridad", "ref": "ISO 27001:5.2", "desc": "Directrices de proteccion.", "justificacion": "ISO 27001:5.2 - La direccion debe establecer una politica de seguridad que sea apropiada.", "instrucciones": "Redacte la directriz de seguridad donde la gerencia se compromete con la proteccion de datos."},
-            {"doc": "Analisis de Riesgos", "area": "Ciberseguridad", "ref": "ISO 27001:6.1", "desc": "Mapa de vulnerabilidades.", "justificacion": "ISO 27001:6.1 - Base para el tratamiento planificado de los riesgos de seguridad de la informacion.", "instrucciones": "Realice un levantamiento de activos de informacion y califique su probabilidad e impacto."},
-            {"doc": "Declaracion de Aplicabilidad (SoA)", "area": "Ciberseguridad", "ref": "ISO 27001:6.1.3", "desc": "Inventario de controles aplicables.", "justificacion": "ISO 27001:6.1.3 d) - Documento obligatorio que resume los controles de seguridad seleccionados.", "instrucciones": "Listado de los 93 controles del Anexo A con justificacion de inclusion o exclusion."},
-            {"doc": "Inventario de Activos de Informacion", "area": "Ciberseguridad", "ref": "ISO 27001:A.5.9", "desc": "Activos criticos de la entidad.", "justificacion": "ISO 27001:A.5.9 - Los activos asociados con informacion deben ser identificados.", "instrucciones": "Matriz con activos (HW, SW, Datos), propietario y clasificacion de criticidad."},
-            {"doc": "Plan de Continuidad de Negocio (BCP)", "area": "Operaciones", "ref": "ISO 27001:A.5.30", "desc": "Capacidad de recuperacion.", "justificacion": "ISO 27001:A.5.30 - Asegura la disponibilidad de la informacion ante incidentes graves.", "instrucciones": "Procedimiento de recuperacion ante desastres y analisis de impacto."},
-            {"doc": "Politica de Control de Acceso", "area": "Ciberseguridad", "ref": "ISO 27001:A.8.1", "desc": "Restriccion de privilegios.", "justificacion": "ISO 27001:A.8.1 - Reglas y derechos de acceso al sistema.", "instrucciones": "Documento que define como se otorgan y revocan permisos de usuario."}
+            {"doc": "Politica de Seguridad", "area": "Ciberseguridad", "ref": "ISO 27001:5.2", "norma": "SEGURIDAD", "desc": "Directrices de proteccion.", "justificacion": "ISO 27001:5.2 - La direccion debe establecer una politica de seguridad que sea apropiada.", "instrucciones": "Contenido: 1. Objetivo, 2. Alcance, 3. Principios (CID: Confidencialidad, Integridad, Disponibilidad), 4. Compromiso Gerencial. Tip: Debe ser clara y estar comunicada a toda la empresa."},
+            {"doc": "Analisis de Riesgos", "area": "Ciberseguridad", "ref": "ISO 27001:6.1", "norma": "SEGURIDAD", "desc": "Mapa de vulnerabilidades.", "justificacion": "ISO 27001:6.1 - Base para el tratamiento planificado de los riesgos de seguridad de la informacion.", "instrucciones": "Metodología: 1. Identificación de Activos, 2. Amenazas y Vulnerabilidades, 3. Valoración del Riesgo (P x I), 4. Plan de Tratamiento. Tip: Use escalas de 1 a 5."},
+            {"doc": "Declaracion de Aplicabilidad (SoA)", "area": "Ciberseguridad", "ref": "ISO 27001:6.1.3", "norma": "SEGURIDAD", "desc": "Inventario de controles aplicables.", "justificacion": "ISO 27001:6.1.3 d) - Documento obligatorio que resume los controles de seguridad seleccionados.", "instrucciones": "Estructura: 1. Lista de los 93 controles ISO 27001:2022, 2. Justificación (Aplica/No Aplica), 3. Estado de implementación. Tip: Es el documento más importante de Seguridad."},
+            {"doc": "Inventario de Activos de Informacion", "area": "Ciberseguridad", "ref": "ISO 27001:A.5.9", "norma": "SEGURIDAD", "desc": "Activos criticos de la entidad.", "justificacion": "ISO 27001:A.5.9 - Los activos asociados con informacion deben ser identificados.", "instrucciones": "Columnas: ID, Activo, Tipo (Software/Hardware/Datos), Dueño, Clasificación (Público/Privado)."},
+            {"doc": "Plan de Continuidad de Negocio (BCP)", "area": "Operaciones", "ref": "ISO 27001:A.5.30", "norma": "SEGURIDAD", "desc": "Capacidad de recuperacion.", "justificacion": "ISO 27001:A.5.30 - Asegura la disponibilidad de la informacion ante incidentes graves.", "instrucciones": "Fases: 1. Análisis de Impacto (BIA), 2. Estrategia de Recuperación, 3. Roles en Emergencia, 4. Plan de Pruebas. Tip: Debe responder ¿qué pasa si se cae el servidor?"},
+            {"doc": "Politica de Control de Acceso", "area": "Ciberseguridad", "ref": "ISO 27001:A.8.1", "norma": "SEGURIDAD", "desc": "Restriccion de privilegios.", "justificacion": "ISO 27001:A.8.1 - Reglas y derechos de acceso al sistema.", "instrucciones": "Reglas: 1. Registro de usuarios, 2. Gestión de contraseñas, 3. Privilegios mínimos, 4. Revocación inmediata. Tip: Especifique que los accesos son personales e intransferibles."}
         ]
     if "Ambiental" in str(normas_activas):
         norm_cartas += [
-            {"doc": "Aspectos Ambientales", "area": "Gestion Ambiental", "ref": "ISO 14001:6.1.2", "desc": "Evaluacion de impactos.", "justificacion": "ISO 14001:6.1.2 - Determinacion de aspectos ambientales y sus impactos asociados.", "instrucciones": "Documente como sus actividades (residuos, ruido, agua) afectan el entorno."},
-            {"doc": "Objetivos Ambientales", "area": "Gestion Ambiental", "ref": "ISO 14001:6.2", "desc": "Metas de eco-eficiencia.", "justificacion": "ISO 14001:6.2 - La organizacion debe establecer objetivos ambientales en las funciones relevantes.", "instrucciones": "Defina metas medibles (ej. reduccion de papel al 20%) para el año en curso."},
-            {"doc": "Matriz de Requisitos Legales Ambientales", "area": "Juridico", "ref": "ISO 14001:6.1.3", "desc": "Cumplimiento normativo verde.", "justificacion": "ISO 14001:6.1.3 - Identificacion de obligaciones de cumplimiento ambiental.", "instrucciones": "Cuadro con leyes, decretos y resoluciones ambientales vigentes aplicables."},
-            {"doc": "Plan de Gestion de Residuos Solidos (PGIRS)", "area": "Gestion Ambiental", "ref": "Ley Ambiental", "desc": "Manejo de residuos.", "justificacion": "ISO 14001:8.1 - Control operacional del proceso de residuos.", "instrucciones": "Manual de separacion en la fuente y disposicion final de residuos."},
-            {"doc": "Programa de Uso Eficiente de Agua y Energia", "area": "Operaciones", "ref": "Sostenibilidad", "desc": "Ahorro de recursos.", "justificacion": "ISO 14001:8.1 - Gestion del consumo de recursos naturales.", "instrucciones": "Plan de reduccion de consumos con indicadores mensuales."},
-            {"doc": "Plan de Respuesta a Emergencias Ambientales", "area": "Operaciones", "ref": "ISO 14001:8.2", "desc": "Mitigacion de derrames.", "justificacion": "ISO 14001:8.2 - Preparacion y respuesta ante emergencias.", "instrucciones": "Procedimiento de actuacion ante posibles accidentes ambientales."}
+            {"doc": "Aspectos Ambientales", "area": "Gestion Ambiental", "ref": "ISO 14001:6.1.2", "norma": "AMBIENTAL", "desc": "Evaluacion de impactos.", "justificacion": "ISO 14001:6.1.2 - Determinacion de aspectos ambientales y sus impactos asociados.", "instrucciones": "Documente como sus actividades (residuos, ruido, agua) afectan el entorno."},
+            {"doc": "Objetivos Ambientales", "area": "Gestion Ambiental", "ref": "ISO 14001:6.2", "norma": "AMBIENTAL", "desc": "Metas de eco-eficiencia.", "justificacion": "ISO 14001:6.2 - La organizacion debe establecer objetivos ambientales en las funciones relevantes.", "instrucciones": "Defina metas medibles (ej. reduccion de papel al 20%) para el año en curso."},
+            {"doc": "Matriz de Requisitos Legales Ambientales", "area": "Juridico", "ref": "ISO 14001:6.1.3", "norma": "AMBIENTAL", "desc": "Cumplimiento normativo verde.", "justificacion": "ISO 14001:6.1.3 - Identificacion de obligaciones de cumplimiento ambiental.", "instrucciones": "Cuadro con leyes, decretos y resoluciones ambientales vigentes aplicables."},
+            {"doc": "Plan de Gestion de Residuos Solidos (PGIRS)", "area": "Gestion Ambiental", "ref": "Ley Ambiental", "norma": "AMBIENTAL", "desc": "Manejo de residuos.", "justificacion": "ISO 14001:8.1 - Control operacional del proceso de residuos.", "instrucciones": "Manual de separacion en la fuente y disposicion final de residuos."},
+            {"doc": "Programa de Uso Eficiente de Agua y Energia", "area": "Operaciones", "ref": "Sostenibilidad", "norma": "AMBIENTAL", "desc": "Ahorro de recursos.", "justificacion": "ISO 14001:8.1 - Gestion del consumo de recursos naturales.", "instrucciones": "Plan de reduccion de consumos con indicadores mensuales."},
+            {"doc": "Plan de Respuesta a Emergencias Ambientales", "area": "Operaciones", "ref": "ISO 14001:8.2", "norma": "AMBIENTAL", "desc": "Mitigacion de derrames.", "justificacion": "ISO 14001:8.2 - Preparacion y respuesta ante emergencias.", "instrucciones": "Procedimiento de actuacion ante posibles accidentes ambientales."}
         ]
     if "Calidad" in str(normas_activas):
         norm_cartas += [
-            {"doc": "Contexto Organizacional", "area": "Calidad", "ref": "ISO 9001:4.1", "desc": "Analisis de entorno (DOFA).", "justificacion": "ISO 9001:4.1 - Requisito fundamental para entender las cuestiones externas e internas que afectan al SGC.", "instrucciones": "Realice una matriz DOFA que analice Debilidades, Oportunidades, Fortalezas y Amenazas de la empresa."},
-            {"doc": "Mapa de Procesos", "area": "Operaciones", "ref": "ISO 9001:4.4", "desc": "Interaccion de procesos.", "justificacion": "ISO 9001:4.4 - Exigido para demostrar el enfoque basado en procesos y su interaccion.", "instrucciones": "Grafique los procesos estrategicos, misionales y de soporte de la entidad."}
+            {"doc": "Contexto Organizacional", "area": "Calidad", "ref": "ISO 9001:4.1", "norma": "CALIDAD", "desc": "Analisis de entorno (DOFA).", "justificacion": "ISO 9001:4.1 - Requisito fundamental para entender las cuestiones externas e internas que afectan al SGC.", "instrucciones": "Realice una matriz DOFA que analice Debilidades, Oportunidades, Fortalezas y Amenazas de la empresa."},
+            {"doc": "Mapa de Procesos", "area": "Operaciones", "ref": "ISO 9001:4.4", "norma": "CALIDAD", "desc": "Interaccion de procesos.", "justificacion": "ISO 9001:4.4 - Exigido para demostrar el enfoque basado en procesos y su interaccion.", "instrucciones": "Grafique los procesos estrategicos, misionales y de soporte de la entidad."}
         ]
     
     cartas_todas = base_cartas + norm_cartas
@@ -842,16 +842,46 @@ else:
                 porcentaje_area = int((conteo_ready / len(docs_area)) * 100) if docs_area else 0
                 
                 with st.expander(f"AREA: {area.upper()} (Avance: {porcentaje_area}%)"):
-                     for c in docs_area:
+                    for c in docs_area:
                         idx = cartas.index(c)
                         doc_id = c['doc']
+                        norma_tag = c.get('norma', 'SIG')
                         es_completado = doc_id in st.session_state['expediente']
                         
-                        st.write(f"**{'✅' if es_completado else '⏳'} {doc_id}**")
+                        # Badge Visual por Norma V9.8
+                        color_map = {"SEGURIDAD": "#F87171", "AMBIENTAL": "#34D399", "ACADÉMICO": "#A78BFA", "CALIDAD": "#60A5FA", "SIG": "#94A3B8"}
+                        badge_color = color_map.get(norma_tag, "#94A3B8")
+                        
+                        st.markdown(f"""
+                        <div style='display: flex; align-items: center; gap: 10px;'>
+                            <span style='background: {badge_color}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: bold;'>{norma_tag}</span>
+                            <b style='font-size: 1rem;'>{'✅' if es_completado else '⏳'} {doc_id}</b>
+                        </div>
+                        """, unsafe_allow_html=True)
                         
                         if not es_completado:
-                            st.markdown(f"**📌 Justificación:** *{c.get('justificacion', 'Requisito normativo estándar.')}*")
-                            st.caption(f"Ref: {c['ref']} | {c['desc']} | Prioridad: {c.get('prioridad', 'Estándar')}")
+                            with st.expander("📋 GUÍA DE ELABORACIÓN (Materia Prima)", expanded=False):
+                                st.markdown(f"**📌 Justificación Normativa:** *{c.get('justificacion', 'Requisito normativo estándar.')}*")
+                                st.markdown(f"**📑 Estructura Sugerida:**")
+                                inst = c.get('instrucciones', 'No hay instrucciones específicas.')
+                                if "Estructura:" in inst or "Contenido:" in inst or "Fases:" in inst:
+                                    # Formatear si tiene estructura detectada
+                                    st.info(inst)
+                                else:
+                                    st.write(inst)
+                                st.caption(f"Ref: {c['ref']} | {c['desc']} | Prioridad: {c.get('prioridad', 'Estándar')}")
+                                
+                                # Botón de Descarga de Plantilla V10.0
+                                if st.button(f"📑 Descargara Plantilla (PDF) - {doc_id}", key=f"tpl_{idx}", use_container_width=True):
+                                    tpl_path = generate_document_template_pdf(doc_id, inst, st.session_state['base_path'])
+                                    with open(tpl_path, "rb") as f:
+                                        st.download_button(f"📂 Guardar Plantilla {doc_id}", f, file_name=os.path.basename(tpl_path), key=f"dl_{idx}")
+                                
+                                # Ejemplo Visual para Politica de Seguridad (V10.0 Mockup)
+                                if "Politica de Seguridad" in doc_id:
+                                    img_path = os.path.join(SCRIPT_DIR, "politica_seguridad_perfecta_mockup.png")
+                                    if os.path.exists(img_path):
+                                        st.image(img_path, caption="Referencia Visual: Diagramación Profesional de Política ISO 27001", use_container_width=True)
                             
                             col_act1, col_act2 = st.columns([1, 1])
                             with col_act1:
@@ -923,6 +953,27 @@ else:
                                     
                                     save_audit_state()
                                     st.rerun()
+                                
+                                # Botón de Feedback Loop V11.0
+                                if doc_id in st.session_state['expediente'] and manual_txt:
+                                    if st.button("💡 Notificar Mejora a Central", key=f"feed_{idx}", use_container_width=True):
+                                        fb_data = {
+                                            "doc": doc_id,
+                                            "ai_raw": raw_txt,
+                                            "human_fix": manual_txt,
+                                            "norma": st.session_state['norma'],
+                                            "timestamp": str(datetime.datetime.now())
+                                        }
+                                        # Guardar localmente para sincronización futura
+                                        fb_path = os.path.join(SCRIPT_DIR, "feedback_loop.json")
+                                        feedbacks = []
+                                        if os.path.exists(fb_path):
+                                            try:
+                                                with open(fb_path, "r") as f: feedbacks = json.load(f)
+                                            except: pass
+                                        feedbacks.append(fb_data)
+                                        with open(fb_path, "w") as f: json.dump(feedbacks, f, indent=4)
+                                        st.success("✅ Gracias. Esta lección será enviada a Central para mejorar el cerebro IA.")
                                 
                                 # Evaluador de Rigor
                                 es_grande = "Gran" in st.session_state['empresa_tamanio']

@@ -125,6 +125,36 @@ def generate_preparation_guide_pdf(company_name, output_path, doc_requirements, 
     pdf.output(full_path)
     return full_path
 
+def generate_document_template_pdf(doc_name, instructions, output_path):
+    """
+    Genera una plantilla en blanco con la estructura sugerida para un documento especifico.
+    """
+    pdf = HMO_PDF()
+    pdf.add_page()
+    pdf.set_font("helvetica", "B", 16)
+    pdf.cell(0, 10, f"PLANTILLA: {doc_name.upper()}", align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.ln(10)
+
+    pdf.set_font("helvetica", "B", 12)
+    pdf.cell(0, 10, "ESTRUCTURA Y CONTENIDO SUGERIDO:", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.set_font("helvetica", "", 10)
+    
+    # Limpiar y formatear las instrucciones para el PDF
+    clean_inst = instructions.replace("Estructura:", "\nESTRUCTURA SUGERIDA:\n").replace("Tip:", "\nTIP PROFESIONAL:\n")
+    pdf.multi_cell(0, 7, clean_inst)
+    
+    pdf.ln(10)
+    pdf.set_font("helvetica", "B", 12)
+    pdf.cell(0, 10, "ESPACIO PARA DESARROLLO (BORRADOR):", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.set_font("helvetica", "I", 8)
+    pdf.multi_cell(0, 5, "." * 500) # Espacios para rellenar visualmente
+
+    if not os.path.exists(output_path): os.makedirs(output_path)
+    file_name = f"PLANTILLA_{doc_name[:10].replace(' ', '_').upper()}.pdf"
+    full_path = os.path.join(output_path, file_name)
+    pdf.output(full_path)
+    return full_path
+
 if __name__ == "__main__":
     # Test session
     generate_audit_program_pdf("Innovatech", ".", kb={"Misión": "Ser la mejor"}, identity_data={"auditor": "Juan Gabriel"})
