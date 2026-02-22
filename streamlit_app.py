@@ -916,48 +916,126 @@ else:
 
                 if tipo_detectado == "camara_comercio":
                     st.success(f"✅ **Cámara de Comercio detectada** — Confianza: {confianza}%")
-                    with st.expander("📋 Datos extraídos", expanded=True):
-                        col_o1, col_o2 = st.columns(2)
-                        col_o1.write(f"🏢 **Empresa:** {resultado.get('company_name', '—')}")
-                        col_o1.write(f"🔢 **NIT:** {resultado.get('empresa_nit', '—')}")
-                        col_o1.write(f"👤 **Rep. Legal:** {resultado.get('rep_legal', '—')}")
-                        col_o1.write(f"🪪 **C.C. Rep:** {resultado.get('rep_id', '—')}")
-                        col_o2.write(f"📍 **Dirección:** {resultado.get('empresa_direccion', '—')}")
-                        col_o2.write(f"🏙️ **Domicilio:** {resultado.get('domicilio', '—')}")
-                        col_o2.write(f"🏛️ **Capital Pagado:** {resultado.get('capital_pagado', '—')}")
-                        if resultado.get('empresa_objeto'):
-                            st.write(f"📌 **Objeto Social:** {resultado['empresa_objeto'][:300]}...")
+                    with st.expander("📋 Todos los datos extraídos", expanded=True):
+                        # ── GRUPO 1: IDENTIDAD ───────────────────────────────────
+                        st.markdown("**🏢 IDENTIDAD**")
+                        ci1, ci2, ci3 = st.columns(3)
+                        ci1.write(f"🏢 **Razón Social:** {resultado.get('company_name', '—')}")
+                        ci1.write(f"🔢 **NIT:** {resultado.get('empresa_nit', '—')}")
+                        ci2.write(f"📋 **Matrícula:** {resultado.get('matricula', '—')}")
+                        ci2.write(f"🏛️ **Tipo Sociedad:** {resultado.get('tipo_sociedad', '—')}")
+                        ci3.write(f"📅 **Fecha Matrícula:** {resultado.get('fecha_matricula', '—')}")
+                        ci3.write(f"🔄 **Fecha Renovación:** {resultado.get('fecha_renovacion', '—')}")
+                        if resultado.get('vigencia'):
+                            st.caption(f"📆 Vigencia del certificado: {resultado['vigencia']}")
 
-                    if st.button("⚡ Aplicar datos al expediente", key="ocr_apply_cc", use_container_width=True):
+                        st.markdown("---")
+                        # ── GRUPO 2: UBICACIÓN / CONTACTO ────────────────────────
+                        st.markdown("**📍 UBICACIÓN Y CONTACTO**")
+                        cu1, cu2 = st.columns(2)
+                        cu1.write(f"🏙️ **Domicilio/Ciudad:** {resultado.get('domicilio', '—')}")
+                        cu1.write(f"📍 **Dirección judicial:** {resultado.get('empresa_direccion', '—')}")
+                        cu1.write(f"🏬 **Dirección comercial:** {resultado.get('direccion_comercial', '—')}")
+                        cu2.write(f"🗺️ **Municipio:** {resultado.get('empresa_municipio', '—')}")
+                        cu2.write(f"🌎 **Departamento:** {resultado.get('empresa_departamento', '—')}")
+                        cu2.write(f"📞 **Teléfono:** {resultado.get('empresa_telefono', '—')}")
+                        cu2.write(f"📧 **Email:** {resultado.get('empresa_email', '—')}")
+
+                        st.markdown("---")
+                        # ── GRUPO 3: ACTIVIDAD / CAPITAL ─────────────────────────
+                        st.markdown("**💰 ACTIVIDAD Y CAPITAL**")
+                        ca1, ca2 = st.columns(2)
+                        ca1.write(f"🏭 **CIIU:** {resultado.get('actividad_ciiu', '—')}")
+                        ca1.write(f"📝 **Actividad:** {resultado.get('descripcion_ciiu', '—')}")
+                        ca1.write(f"👥 **Empleados:** {resultado.get('num_empleados', '—')}")
+                        ca2.write(f"💵 **Capital Autorizado:** {resultado.get('capital_autorizado', '—')}")
+                        ca2.write(f"💵 **Capital Suscrito:** {resultado.get('capital_suscrito', '—')}")
+                        ca2.write(f"💵 **Capital Pagado:** {resultado.get('capital_pagado', '—')}")
+                        if resultado.get('empresa_objeto'):
+                            st.write(f"📌 **Objeto Social:** {resultado['empresa_objeto'][:500]}")
+
+                        st.markdown("---")
+                        # ── GRUPO 4: REPRESENTACIÓN ─────────────────────────────
+                        st.markdown("**👤 REPRESENTACIÓN LEGAL**")
+                        cr1, cr2 = st.columns(2)
+                        cr1.write(f"👤 **Rep. Legal:** {resultado.get('rep_legal', '—')}")
+                        cr1.write(f"🪪 **C.C.:** {resultado.get('rep_id', '—')}")
+                        cr2.write(f"💼 **Cargo:** {resultado.get('rep_cargo', '—')}")
+                        if resultado.get('junta_directiva'):
+                            st.caption("🏛️ **Junta Directiva:** " + " | ".join(resultado['junta_directiva'][:6]))
+
+                    if st.button("⚡ Aplicar TODOS los datos al expediente", key="ocr_apply_cc", use_container_width=True):
                         updates = resultado_a_session_state(resultado)
                         for k, v in updates.items():
                             st.session_state[k] = v
-                        # Registrar en expediente
-                        st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = f"OCR V14.0 | NIT: {resultado.get('empresa_nit', '')} | Rep: {resultado.get('rep_legal', '')}"
+                        n_aplicados = len(updates)
+                        st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {
+                            "nit": resultado.get('empresa_nit', ''),
+                            "razon_social": resultado.get('company_name', ''),
+                            "rep_legal": resultado.get('rep_legal', ''),
+                            "matricula": resultado.get('matricula', ''),
+                            "confianza_ocr": confianza,
+                            "campos_extraidos": resultado.get('campos_encontrados', []),
+                            "validado_v15": True
+                        }
                         save_audit_state()
-                        st.success("🎉 ¡Datos inyectados automáticamente en el expediente!")
+                        st.success(f"🎉 ¡{n_aplicados} campos inyectados automáticamente en el expediente!")
                         st.rerun()
 
                 elif tipo_detectado == "rut":
                     st.success(f"✅ **RUT (DIAN) detectado** — Confianza: {confianza}%")
-                    with st.expander("📋 Datos extraídos", expanded=True):
-                        col_r1, col_r2 = st.columns(2)
-                        col_r1.write(f"🏢 **Razón Social:** {resultado.get('company_name', '—')}")
-                        col_r1.write(f"🔢 **NIT:** {resultado.get('empresa_nit', '—')}")
-                        col_r1.write(f"📍 **Dirección:** {resultado.get('empresa_direccion', '—')}")
-                        col_r2.write(f"📧 **Email:** {resultado.get('email', '—')}")
-                        col_r2.write(f"📞 **Teléfono:** {resultado.get('telefono', '—')}")
-                        col_r2.write(f"🏭 **CIIU:** {resultado.get('actividad_ciiu', '—')}")
-                        if resultado.get('responsabilidades'):
-                            st.write("⚖️ **Responsabilidades:** " + " · ".join(resultado['responsabilidades']))
+                    with st.expander("📋 Todos los datos extraídos", expanded=True):
+                        # ── GRUPO 1: IDENTIDAD / TRIBUTARIO ─────────────────────
+                        st.markdown("**🏢 IDENTIDAD Y RÉGIMEN TRIBUTARIO**")
+                        ri1, ri2 = st.columns(2)
+                        ri1.write(f"🏢 **Razón Social:** {resultado.get('company_name', '—')}")
+                        ri1.write(f"🔢 **NIT:** {resultado.get('empresa_nit', '—')}")
+                        ri1.write(f"📑 **N° Formulario:** {resultado.get('numero_formulario', '—')}")
+                        ri2.write(f"👤 **Tipo Persona:** {resultado.get('tipo_persona', '—')}")
+                        ri2.write(f"🏷️ **Tipo Contribuyente:** {resultado.get('tipo_contribuyente', '—')}")
+                        ri2.write(f"⚖️ **Régimen IVA:** {resultado.get('regimen_iva', '—')}")
+                        ri2.write(f"📅 **Fecha RUT:** {resultado.get('fecha_rut', '—')}")
 
-                    if st.button("⚡ Aplicar datos al expediente", key="ocr_apply_rut", use_container_width=True):
+                        st.markdown("---")
+                        # ── GRUPO 2: UBICACIÓN / CONTACTO ────────────────────────
+                        st.markdown("**📍 UBICACIÓN Y CONTACTO**")
+                        ru1, ru2 = st.columns(2)
+                        ru1.write(f"📍 **Dirección:** {resultado.get('empresa_direccion', '—')}")
+                        ru1.write(f"🏙️ **Municipio:** {resultado.get('empresa_municipio', '—')}")
+                        ru1.write(f"🌎 **Departamento:** {resultado.get('empresa_departamento', '—')}")
+                        ru2.write(f"🔍 **Código Postal:** {resultado.get('codigo_postal', '—')}")
+                        ru2.write(f"📧 **Email:** {resultado.get('empresa_email', '—')}")
+                        ru2.write(f"📞 **Teléfono 1:** {resultado.get('empresa_telefono', '—')}")
+                        if resultado.get('empresa_telefono2'):
+                            ru2.write(f"📞 **Teléfono 2:** {resultado.get('empresa_telefono2', '—')}")
+
+                        st.markdown("---")
+                        # ── GRUPO 3: ACTIVIDAD / FISCAL ──────────────────────────
+                        st.markdown("**🏭 ACTIVIDAD ECONÓMICA Y FISCAL**")
+                        ra1, ra2 = st.columns(2)
+                        ra1.write(f"🏭 **CIIU:** {resultado.get('actividad_ciiu', '—')}")
+                        ra1.write(f"📝 **Actividad:** {resultado.get('descripcion_ciiu', '—')}")
+                        if resultado.get('responsabilidades'):
+                            st.markdown("**⚖️ Responsabilidades Tributarias:**")
+                            for resp in resultado['responsabilidades']:
+                                st.caption(f"• {resp}")
+
+                    if st.button("⚡ Aplicar TODOS los datos al expediente", key="ocr_apply_rut", use_container_width=True):
                         updates = resultado_a_session_state(resultado)
                         for k, v in updates.items():
                             st.session_state[k] = v
-                        st.session_state['expediente']["RUT (Registro Unico Tributario)"] = f"OCR V14.0 | NIT: {resultado.get('empresa_nit', '')} | CIIU: {resultado.get('actividad_ciiu', '')}"
+                        n_aplicados = len(updates)
+                        st.session_state['expediente']["RUT (Registro Unico Tributario)"] = {
+                            "nit": resultado.get('empresa_nit', ''),
+                            "razon_social": resultado.get('company_name', ''),
+                            "regimen_iva": resultado.get('regimen_iva', ''),
+                            "responsabilidades": resultado.get('responsabilidades', []),
+                            "confianza_ocr": confianza,
+                            "campos_extraidos": resultado.get('campos_encontrados', []),
+                            "validado_v15": True
+                        }
                         save_audit_state()
-                        st.success("🎉 ¡Datos del RUT inyectados en el expediente!")
+                        st.success(f"🎉 ¡{n_aplicados} campos del RUT inyectados en el expediente!")
                         st.rerun()
 
                 else:
@@ -968,6 +1046,8 @@ else:
 
             st.markdown("---")
             st.markdown("#### ✏️ Ingreso Manual")
+
+
 
             c1, c2, c3 = st.columns(3)
             st.session_state['auditor_name'] = c1.text_input("* Auditor:", value=st.session_state['auditor_name'])
