@@ -629,7 +629,16 @@ else:
             if not fase_a_ready:
                 st.error("🔒 El Cuerpo Normativo está bloqueado. Complete primero la Fase A: Identidad.")
             else:
-                st.write("### ⚙️ Carga de Anexos Técnicos")
+                # CABECERA DE CARGA CON MÉTRICAS (V4.2)
+                total_req = len(cartas)
+                count_ready = len(st.session_state['expediente'])
+                doc_list_missing = [c['doc'] for c in cartas if c['doc'] not in st.session_state['expediente']]
+                
+                c_head1, c_head2 = st.columns([1.5, 1])
+                with c_head1:
+                    st.write("### ⚙️ Carga de Anexos Técnicos")
+                with c_head2:
+                    st.metric("📦 Materia Prima Inyectada", f"{pct_fase_c}%", f"{count_ready}/{total_total} Listos")
                 # Agrupación por Áreas (V4.1 Sincronización Real)
                 areas = list(dict.fromkeys([c['area'] for c in cartas]))
                 for i, area in enumerate(areas):
@@ -679,22 +688,10 @@ else:
                                     save_audit_state()
                                     st.rerun()
                                     
-                # RESUMEN DE MATERIA PRIMA FALTANTE (FASE C V4.1)
-                st.markdown("---")
-                total_req = len(cartas)
-                count_ready = len(st.session_state['expediente'])
-                doc_list_missing = [c['doc'] for c in cartas if c['doc'] not in st.session_state['expediente']]
-                
-                c_inf1, c_inf2 = st.columns(2)
-                c_inf1.metric("Materia Prima Carga Real", f"{pct_fase_c}%", f"{count_ready}/{total_total} Documentos")
-                
                 if doc_list_missing:
-                    with c_inf2:
-                        st.warning(f"⚠️ **Pendientes de Carga ({len(doc_list_missing)}):**")
-                        for d in doc_list_missing[:5]: st.write(f"- {d}")
-                        if len(doc_list_missing) > 5: st.write(f"... y {len(doc_list_missing)-5} más.")
+                    st.warning(f"⚠️ **Pendientes de Carga ({len(doc_list_missing)}):** {', '.join(doc_list_missing[:3])}{'...' if len(doc_list_missing)>3 else ''}")
                 if not doc_list_missing:
-                    c_inf2.success("✅ ¡Cuerpo Normativo Completo!")
+                    st.success("✅ ¡Cuerpo Normativo Completo!")
 
         # --- VALIDACIÓN & CIERRE ---
         with tab_final:
