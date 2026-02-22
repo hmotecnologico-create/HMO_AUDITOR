@@ -25,6 +25,14 @@ try:
 except Exception:
     OCR_DISPONIBLE = False
 
+try:
+    from HMO_Auth import check_login, can, get_rol_label, get_all_users, create_user, \
+                         toggle_user_active, delete_user, change_password, load_users
+    AUTH_DISPONIBLE = True
+except Exception as _ae:
+    AUTH_DISPONIBLE = False
+
+
 # Configuración de página
 st.set_page_config(page_title="HMO Auditor Pro - V1.4 Elite", layout="wide", page_icon="🛡️")
 
@@ -233,14 +241,87 @@ st.markdown("""
 </a>
 """, unsafe_allow_html=True)
 
-# Lógica de Sesión (V1.8.0 Resiliente)
+# Lógica de Sesión (V1.9.0 Auth)
 for key, default in [('env', None), ('norma', "Calidad (ISO 9001)"), ('paso_ingesta', 0), ('logo_path', None), ('expediente', {}), ('autorizado_emision', False), 
                     ('auditor_name', ""), ('rep_legal', ""), ('rep_id', ""), ('empresa_tamanio', "Pyme"), ('empresa_sector', "Servicios"),
                     ('empresa_nit', ""), ('empresa_direccion', ""), ('empresa_web', ""), ('empresa_objeto', ""), ('empresa_personal', 0),
-                    ('user_role', "Administrador (Global)"), ('company_name', ""), ('base_path', ""), ('kb', {})]:
+                    ('user_role', "Administrador (Global)"), ('company_name', ""), ('base_path', ""), ('kb', {}),
+                    ('landing_mode', None), ('auth', None)]:  # auth=None → no logueado
     if key not in st.session_state: st.session_state[key] = default
 
+
+
+
 # ... [Funciones de persistencia omitidas por brevedad] ...
+
+# ═════════════════════════════════════════════════════════════════
+# PANTALLA DE LOGIN (V1.0) — Bloquea el resto de la app si no hay sesión
+# ═════════════════════════════════════════════════════════════════
+if AUTH_DISPONIBLE and st.session_state['auth'] is None:
+    # — Cabecera login —
+    st.markdown("""
+    <div style='max-width:440px;margin:4rem auto 0;'>
+    <h2 style='text-align:center;color:#FFFFFF;font-family:Orbitron,sans-serif;
+               letter-spacing:3px;margin-bottom:0.2rem;'>
+        🛡️ HMO Auditor
+    </h2>
+    <p style='text-align:center;color:#475569;font-size:0.8rem;margin-bottom:2rem;'>
+        Sistema de Gestión de Auditorías Elite
+    </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    _lc, _lmid, _lc2 = st.columns([1, 2, 1])
+    with _lmid:
+        st.markdown("""
+        <div style='background:rgba(14,20,31,0.8);border:1px solid rgba(0,194,255,0.25);
+                    border-radius:16px;padding:2rem;'>
+            <p style='color:#94A3B8;font-size:0.75rem;letter-spacing:1px;
+                      margin-bottom:1.5rem;text-align:center;'>ACCESO AL SISTEMA</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        _login_user = st.text_input("👤 Usuario", placeholder="Tu nombre de usuario", key="login_user")
+        _login_pass = st.text_input("🔑 Contraseña", type="password", placeholder="••••••••", key="login_pass")
+
+        if st.button("🚀 Ingresar al Sistema", use_container_width=True, type="primary"):
+            if _login_user and _login_pass:
+                _user_data = check_login(_login_user, _login_pass)
+                if _user_data:
+                    st.session_state['auth'] = _user_data
+                    st.session_state['user_role'] = _user_data['rol']
+                    st.session_state['auditor_name'] = _user_data.get('nombre', '')
+                    st.rerun()
+                else:
+                    st.error("❌ Usuario o contraseña incorrectos.")
+            else:
+                st.warning("⚠️ Completa usuario y contraseña.")
+
+        st.markdown("<p style='text-align:center;color:#334155;font-size:0.65rem;margin-top:1rem;'>"
+                    "HMO v2.0 · Operación local privada</p>", unsafe_allow_html=True)
+    st.stop()  # ← Nada más se ejecuta si no hay sesión
+
+# ── CAMBIO OBLIGATORIO DE CLAVE (primer login) ────────────────────────────
+if AUTH_DISPONIBLE and st.session_state.get('auth') and st.session_state['auth'].get('primer_login', False):
+    _user = st.session_state['auth']['user']
+    st.warning("🔒 **Primer acceso detectado** — Debes cambiar la contraseña temporal antes de continuar.")
+    _c1, _cm, _c2 = st.columns([1, 2, 1])
+    with _cm:
+        _np1 = st.text_input("Nueva contraseña", type="password", key="cp_new1")
+        _np2 = st.text_input("Confirmar contraseña", type="password", key="cp_new2")
+        if st.button("💾 Guardar nueva contraseña", type="primary", use_container_width=True):
+            if _np1 and _np1 == _np2 and len(_np1) >= 6:
+                change_password(_user, _np1)
+                st.session_state['auth']['primer_login'] = False
+                st.success("✅ Contraseña actualizada. Continuando...")
+                st.rerun()
+            elif _np1 != _np2:
+                st.error("❌ Las contraseñas no coinciden.")
+            else:
+                st.error("❌ Mínimo 6 caracteres.")
+    st.stop()
+
+
 
 def setup_company_folders(company_name):
     """Crea la estructura de carpetas para una nueva auditoría."""
@@ -811,29 +892,63 @@ else:
     menu_raw = st.sidebar.radio("FLUJO DE TRABAJO:", opciones, key="main_menu_elite")
     menu = menu_raw.split(" [")[0]
     
+    # — Info del usuario logueado en sidebar —
+    _auth = st.session_state.get('auth', {})
+    if _auth and AUTH_DISPONIBLE:
+        _rol_lbl, _rol_color = get_rol_label(_auth.get('rol','visitante'))
+        st.sidebar.markdown(f"""
+        <div style='background:rgba(0,194,255,0.08);border:1px solid rgba(0,194,255,0.2);
+                    border-radius:8px;padding:0.5rem 0.75rem;margin-bottom:0.5rem;'>
+            <span style='color:#94A3B8;font-size:0.65rem;letter-spacing:1px;'>USUARIO ACTIVO</span><br>
+            <span style='color:#E2E8F0;font-weight:600;font-size:0.85rem;'>{_auth.get('nombre','')}</span><br>
+            <span style='color:{_rol_color};font-size:0.72rem;'>{_rol_lbl}</span>
+        </div>
+        """, unsafe_allow_html=True)
+
     if st.sidebar.button("🔒 Cierre Seguro"):
         save_audit_state()
         st.session_state['env'] = None
         st.rerun()
 
-    # --- BOTÓN DE SINCRONIZACIÓN GLOBAL V9.4 ---
+    if AUTH_DISPONIBLE and st.sidebar.button("🚪 Cerrar Sesión", use_container_width=True):
+        st.session_state['auth'] = None
+        st.session_state['env']  = None
+        st.rerun()
+
+    # --- BOTÓN ACTUALIZAR APP V10.0 ---
     st.sidebar.markdown("---")
-    if st.sidebar.button("📡 Sincronizar con Central", use_container_width=True, help="Actualiza el expediente con datos de otras terminales via Cloud."):
+    st.sidebar.markdown("""
+    <style>
+    /* Fuerza texto visible en botón sidebar siempre */
+    section[data-testid="stSidebar"] button {
+        color: #E2E8F0 !important;
+        font-weight: 600 !important;
+    }
+    section[data-testid="stSidebar"] button:hover {
+        background: rgba(0,194,255,0.15) !important;
+        border-color: rgba(0,194,255,0.5) !important;
+        color: #00C2FF !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    if st.sidebar.button("🔄 Actualizar App", use_container_width=True,
+                         help="Descarga la última versión desde el repositorio central."):
         with st.sidebar:
-            with st.spinner("Conectando con Servidor Maestro..."):
+            with st.spinner("Actualizando desde repositorio..."):
                 try:
                     import subprocess
-                    # Paso 1: Pull de cambios remotos
-                    subprocess.run(["git", "pull", "origin", "main"], capture_output=True, text=True)
-                    # Paso 2: Push de cambios locales (incluyendo el estado actual)
-                    save_audit_state()
-                    subprocess.run(["git", "add", "."], capture_output=True)
-                    subprocess.run(["git", "commit", "-m", "Sincronización automática de terminal"], capture_output=True)
-                    subprocess.run(["git", "push", "origin", "main"], capture_output=True)
-                    st.success("✅ Sincronización Exitosa.")
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"Error de enlace: {e}")
+                    _pull = subprocess.run(
+                        ["git", "pull", "origin", "main"],
+                        capture_output=True, text=True, cwd=os.path.dirname(os.path.abspath(__file__))
+                    )
+                    if "Already up to date" in _pull.stdout:
+                        st.success("✅ Ya tienes la última versión.")
+                    elif _pull.returncode == 0:
+                        st.success("✅ App actualizada. Recarga la página (F5).")
+                    else:
+                        st.warning(f"⚠️ Git: {_pull.stderr[:120]}")
+                except Exception as _ge:
+                    st.error(f"Error: {_ge}")
 
     # Filtrado Dinámico por Rol & Gobernanza V9.6
     ROLE_AREA_MAP = {
