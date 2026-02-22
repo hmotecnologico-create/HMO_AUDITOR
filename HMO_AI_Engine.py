@@ -22,10 +22,10 @@ class HMO_AI_Engine:
         y la norma '{target_norm}' como CRITERIO de evaluación.
         
         Analiza el contenido del documento '{doc_name}' y responde estrictamente en JSON:
-        1. Coherencia (0-100) - Qué tanto cumple el documento con los requisitos de '{target_norm}'.
+        1. Coherencia (0-100) - Que tanto cumple el documento con los requisitos integrales de: {target_norm}.
         2. Hallazgos_Clave (Lista) - Hallazgos basados en evidencias objetivas (ISO 19011:6.4.7).
-        3. Riesgos_Detectados (Lista) - Riesgos asociados al proceso según el enfoque de '{target_norm}'.
-        4. Resumen_Ejecutivo (Máximo 3 líneas) - Conclusión del auditor sobre la madurez del documento.
+        3. Riesgos_Detectados (Lista) - Riesgos asociados segun los marcos: {target_norm}.
+        4. Resumen_Ejecutivo (Maximo 3 lineas) - Conclusion del auditor sobre la madurez del documento respecto al SIG (Sistema de Gestion Integrado).
 
         Contenido del Documento:
         {text_content[:2500]} 

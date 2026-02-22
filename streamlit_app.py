@@ -343,15 +343,19 @@ if st.session_state['env'] is None:
             st.session_state['paso_ingesta'] = 5
             st.session_state['auditor_name'] = "Juan Gabriel Ortiz"
             st.session_state['empresa_nit'] = "901.455.789-2"
-            # Pre-validar documentos para el Dashboard (Protocolo V6.0)
+            # Modo Integrado por Defecto para Simulación (SIG)
+            st.session_state['norma'] = ["Calidad (ISO 9001:2015)", "Seguridad (ISO 27001:2022)"]
+            
+            # Pre-validar documentos para el Dashboard Integrado (Protocolo V8.8)
             st.session_state['expediente'] = {
-                "Cámara de Comercio (Existencia Legal)": "Verificado V6.0",
-                "RUT (Registro Único Tributario)": "Verificado V6.0",
-                "Acta de Compromiso Directivo": "Compromiso de preparación firmado.",
-                "Cronograma de Actividades de Preparación": "Hitos de auditoría programados.",
-                "Misión y Visión Corporativa": "Verificado V6.0",
-                "Organigrama Funcional": "Estructura Jerárquica Verificada",
-                "Mapa de Procesos": "Interacción de procesos analizada"
+                "Camara de Comercio (Existencia Legal)": "Verificado V6.0",
+                "RUT (Registro Unico Tributario)": "Verificado V6.0",
+                "Acta de Compromiso Directivo": "Compromiso de preparacion firmado.",
+                "Cronograma de Actividades de Preparacion": "Hitos de auditoria programados.",
+                "Mision y Vision Corporativa": "Verificado V6.0",
+                "Organigrama Funcional": "Estructura Jerarquica Verificada",
+                "Mapa de Procesos": "Interaccion de procesos analizada",
+                "Politica de Seguridad": "Verificado V8.8 (SIG Integration)" # Evidencia Cyber
             }
             save_audit_state()
             st.rerun()
@@ -364,7 +368,8 @@ if st.session_state['env'] is None:
         </div>
         """, unsafe_allow_html=True)
         new_name = st.text_input("Nombre Entidad:", placeholder="Ej: Universidad San José", key="nw_hub", label_visibility="collapsed")
-        new_norma = st.selectbox("Marco:", ["ISO 9001:2015", "ISO 27001:2022", "Decreto 1330"], key="nm_hub", label_visibility="collapsed")
+        normas_disponibles = ["Calidad (ISO 9001:2015)", "Ambiental (ISO 14001:2015)", "Seguridad (ISO 27001:2022)", "Académico (Ley 115 / Dec. 1330)"]
+        new_norma = st.multiselect("Marcos:", normas_disponibles, default=["Calidad (ISO 9001:2015)"], key="nm_hub", label_visibility="collapsed")
         if st.button("Crear Proyecto", use_container_width=True):
             if new_name:
                 st.session_state['env'], st.session_state['company_name'] = "Real", new_name
@@ -391,24 +396,27 @@ else:
         {"doc": "Organigrama Funcional", "area": "Alta Direccion", "ref": "Estructura", "desc": "Jerarquia y mandos medios.", "justificacion": "ISO 19011:6.3.1 - Requerido para mapear la cadena de mando y los flujos de comunicacion oficiales.", "instrucciones": "Utilice herramientas como Visio o PowerPoint para diagramar la estructura jerarquica actual de la empresa, desde la gerencia hasta los cargos operativos."}
     ]
 
-    if "Académico" in st.session_state['norma']:
-        norm_cartas = [
+    norm_cartas = []
+    normas_activas = st.session_state['norma'] if isinstance(st.session_state['norma'], list) else [st.session_state['norma']]
+    
+    if "Académico" in str(normas_activas):
+        norm_cartas += [
             {"doc": "PEI (Proyecto Educativo)", "area": "Gestion Academica", "ref": "Ley 115", "desc": "Columna vertebral academica.", "justificacion": "Ley 115 de 1994 - Documento maestro que define la identidad y el modelo pedagogico de la institucion.", "instrucciones": "Recopile el documento PEI vigente del consejo directivo. Debe incluir el Horizonte Institucional y el Plan de Estudios."},
             {"doc": "Registro Calificado", "area": "Juridico/Normativo", "ref": "Dec. 1330", "desc": "Autorizacion ministerial.", "justificacion": "Decreto 1330 de 2019 - Habilitacion legal para la oferta y desarrollo de programas academicos.", "instrucciones": "Adjunte la resolucion ministerial vigente que autoriza el programa."},
             {"doc": "Estatuto Docente", "area": "Talento Humano", "ref": "Dec. 1278", "desc": "Reglamentacion docente.", "justificacion": "Decreto 1278/2277 - Marco normativo para la gestion del personal docente y su escalafon.", "instrucciones": "Extraiga el reglamento de escalafon y deberes docentes aprobado por la institucion."}
         ]
-    elif "Seguridad" in st.session_state['norma']:
-        norm_cartas = [
+    if "Seguridad" in str(normas_activas):
+        norm_cartas += [
             {"doc": "Politica de Seguridad", "area": "Ciberseguridad", "ref": "ISO 27001:5.2", "desc": "Directrices de proteccion.", "justificacion": "ISO 27001:5.2 - La direccion debe establecer una politica de seguridad que sea apropiada.", "instrucciones": "Redacte la directriz de seguridad donde la gerencia se compromete con la proteccion de datos."},
             {"doc": "Analisis de Riesgos", "area": "Ciberseguridad", "ref": "ISO 27001:6.1", "desc": "Mapa de vulnerabilidades.", "justificacion": "ISO 27001:6.1 - Base para el tratamiento planificado de los riesgos de seguridad de la informacion.", "instrucciones": "Realice un levantamiento de activos de informacion y califique su probabilidad e impacto."}
         ]
-    elif "Ambiental" in st.session_state['norma']:
-        norm_cartas = [
+    if "Ambiental" in str(normas_activas):
+        norm_cartas += [
             {"doc": "Aspectos Ambientales", "area": "Gestion Ambiental", "ref": "ISO 14001:6.1.2", "desc": "Evaluacion de impactos.", "justificacion": "ISO 14001:6.1.2 - Determinacion de aspectos ambientales y sus impactos asociados.", "instrucciones": "Documente como sus actividades (residuos, ruido, agua) afectan el entorno."},
             {"doc": "Objetivos Ambientales", "area": "Gestion Ambiental", "ref": "ISO 14001:6.2", "desc": "Metas de eco-eficiencia.", "justificacion": "ISO 14001:6.2 - La organizacion debe establecer objetivos ambientales en las funciones relevantes.", "instrucciones": "Defina metas medibles (ej. reduccion de papel al 20%) para el año en curso."}
         ]
-    else: # ISO 9001
-        norm_cartas = [
+    if "Calidad" in str(normas_activas):
+        norm_cartas += [
             {"doc": "Contexto Organizacional", "area": "Calidad", "ref": "ISO 9001:4.1", "desc": "Analisis de entorno (DOFA).", "justificacion": "ISO 9001:4.1 - Requisito fundamental para entender las cuestiones externas e internas que afectan al SGC.", "instrucciones": "Realice una matriz DOFA que analice Debilidades, Oportunidades, Fortalezas y Amenazas de la empresa."},
             {"doc": "Mapa de Procesos", "area": "Operaciones", "ref": "ISO 9001:4.4", "desc": "Interaccion de procesos.", "justificacion": "ISO 9001:4.4 - Exigido para demostrar el enfoque basado en procesos y su interaccion.", "instrucciones": "Grafique los procesos estrategicos, misionales y de soporte de la entidad."}
         ]
