@@ -1303,13 +1303,15 @@ else:
                 st.session_state['rep_id'] = cm3.text_input("N° Identificación", value=st.session_state.get('rep_id',''), key="m_id_v19")
             st.markdown("</div>", unsafe_allow_html=True)
 
-            # Cargadores OCR Compactos
+            # Cargadores OCR con etiquetas visibles (V19.4)
             st.markdown("<div style='margin-top: -1rem;'>", unsafe_allow_html=True)
             col_cc, col_rut = st.columns(2)
             with col_cc:
-                uploaded_cc = st.file_uploader("📋 Cámara de Comercio (PDF/JPG)", type=["pdf", "jpg", "jpeg", "png"], key="ocr_v19_cc", label_visibility="collapsed")
+                st.markdown("<p style='font-size:0.7rem; color:#94A3B8; margin-bottom:0;'>📄 CÁMARA DE COMERCIO</p>", unsafe_allow_html=True)
+                uploaded_cc = st.file_uploader("CC", type=["pdf", "jpg", "jpeg", "png"], key="ocr_v19_cc", label_visibility="collapsed")
             with col_rut:
-                uploaded_rut = st.file_uploader("🧾 RUT (DIAN)", type=["pdf", "jpg", "jpeg", "png"], key="ocr_v19_rut", label_visibility="collapsed")
+                st.markdown("<p style='font-size:0.7rem; color:#94A3B8; margin-bottom:0;'>🧾 RUT (DIAN)</p>", unsafe_allow_html=True)
+                uploaded_rut = st.file_uploader("RUT", type=["pdf", "jpg", "jpeg", "png"], key="ocr_v19_rut", label_visibility="collapsed")
             st.markdown("</div>", unsafe_allow_html=True)
 
             # PROCESAMIENTO OCR CC
@@ -1330,7 +1332,12 @@ else:
                         cc4.write(f"**Rep:** {res.get('rep_legal','—')[:15]}")
                         cc4.write(f"**ID:** {res.get('rep_id','—')}")
                         if st.button("⚡ INYECTAR DATOS CC", key="apply_cc_v19", use_container_width=True):
-                            for k,v in resultado_a_session_state(res).items(): st.session_state[k] = v
+                            updates = resultado_a_session_state(res)
+                            for k,v in updates.items(): st.session_state[k] = v
+                            # Forzar inyección de representante legal si existe en el resultado
+                            if res.get('rep_legal'): st.session_state['rep_legal'] = res['rep_legal']
+                            if res.get('rep_id'): st.session_state['rep_id'] = res['rep_id']
+                            
                             st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {"validado":True, "confianza":res.get('confianza')}
                             save_audit_state(); st.rerun()
                         st.markdown("</div>", unsafe_allow_html=True)
