@@ -446,9 +446,42 @@ else:
             c['prioridad'] = "SOPORTE (Recomendado)" if not es_startup else "LEAN (Opcional)"
 
     total_total = len(cartas_todas)
+    
+    # --- FUNCIONES VISUALES DASHBOARD (V9.3) ---
+    def draw_donut(value, label, color):
+        fig = go.Figure(go.Pie(
+            values=[value, 100-value if value <= 100 else 0],
+            labels=["", ""],
+            hole=0.75,
+            marker_colors=[color, "rgba(255,255,255,0.05)"],
+            sort=False
+        ))
+        fig.update_traces(textinfo='none', hoverinfo='none')
+        fig.update_layout(
+            showlegend=False,
+            margin=dict(t=0, b=0, l=10, r=10),
+            height=120, # Compacto para Zero-Scroll
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            annotations=[dict(text=f"{int(value)}%", x=0.5, y=0.5, font_size=18, font_color="white", font_family="Orbitron", showarrow=False)]
+        )
+        st.plotly_chart(fig, use_container_width=True)
+        st.markdown(f"<p style='text-align: center; color: #94A3B8; font-family: Orbitron; font-size: 0.6rem; margin-top: -15px;'>{label}</p>", unsafe_allow_html=True)
+
     # --- MOTOR DE CÁLCULO UNIFICADO V9.0 (JUSTIFICACIONES N/A) ---
     if 'justificados' not in st.session_state: st.session_state['justificados'] = []
     
+    # Métricas Globales para Fase A y B
+    fase_a_reqs_g = [st.session_state.get('auditor_name'), st.session_state.get('rep_legal'), st.session_state.get('rep_id')]
+    pct_fase_a = int((sum(1 for r in fase_a_reqs_g if r) / 3) * 100)
+    
+    fase_b_reqs_g = [
+        st.session_state.get('empresa_tamanio') != "Pyme (1-50 emp)",
+        st.session_state.get('empresa_personal', 0) > 0,
+        bool(st.session_state.get('empresa_direccion', ""))
+    ]
+    pct_fase_b = int((sum(1 for r in fase_b_reqs_g if r) / 3) * 100)
+
     docs_en_expediente = list(st.session_state['expediente'].keys())
     docs_validados = list(set(docs_en_expediente + st.session_state['justificados']))
     
@@ -464,9 +497,12 @@ else:
         pct_fase_c = int((count_exp / total_total) * 100) if total_total > 0 else 0
     pct_total = int((pct_fase_a + pct_fase_b + pct_fase_c) / 3)
 
-    # Variables de compatibilidad para evitar discrepancias
-    progreso_c = (count_exp / total_total) if total_total > 0 else 0
+    # Variables de compatibilidad Unificadas (V9.3)
     progreso_total = pct_total / 100
+    progreso_global = float(pct_total)
+    progreso_c = (count_exp / total_total) if total_total > 0 else 0
+    fase_a_ready = (pct_fase_a == 100)
+    fase_b_ready = (pct_fase_b == 100)
 
     # --- SIDEBAR MASTER (V4.5) ---
     st.sidebar.markdown(f"### 🏢 {company}")
@@ -501,11 +537,7 @@ else:
         role_search = st.session_state['user_role'].split(" ")[-1].strip()
         cartas = [c for c in cartas_todas if role_search in c['area'] or st.session_state['user_role'] in c['area']]
         if not cartas: cartas = cartas_todas
-    count_exp = len(st.session_state['expediente'])
-    fase_a_ready = all([st.session_state['auditor_name'], st.session_state['rep_legal'], st.session_state['rep_id']])
-    fase_b_ready = st.session_state['empresa_tamanio'] != "Pyme (1-50 emp)" or st.session_state['env'] == "Simulacion"
-    progreso_c = (count_exp / total_total) if total_total > 0 else 0
-    progreso_total = ((1 if fase_a_ready else 0) + (1 if fase_b_ready else 0) + progreso_c) / 3
+    # Eliminación de redundancias de cálculo para evitar NameErrors (Corte V9.3)
 
     # --- SECCIÓN: REQUERIMIENTOS MAESTROS ---
     if menu == "📋 Requerimientos Maestros":
