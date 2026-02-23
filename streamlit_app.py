@@ -268,100 +268,105 @@ st.markdown("""
         display: none !important; /* Ocultar texto decorativo para ahorrar espacio */
     }
     
-    /* BLINDAJE TERMINAL FASE C V21.25 (ERADICACIÓN TOTAL) */
+    /* ARQUITECTURA VAULT-MONOLITH FASE C V21.26 (ENCAPSULAMIENTO ATÓMICO) */
     .cyber-capsule {
-        background: #0B0E14 !important; /* Fondo ultra oscuro sólido */
-        border: 2px solid var(--capsule-border, #334155) !important;
-        border-radius: 16px !important;
+        background: #0B0F17 !important; /* Fondo Monolítico Sólido */
+        border: 2.5px solid var(--capsule-border, #1E293B) !important;
+        border-radius: 20px !important;
         padding: 0 !important;
-        margin-bottom: 1.5rem !important;
+        margin-bottom: 1.8rem !important;
         overflow: hidden !important;
         display: flex !important;
         flex-direction: column !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.7) !important;
     }
 
     .capsule-header {
-        background: rgba(255, 255, 255, 0.03) !important;
-        padding: 12px 15px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        padding: 15px 20px !important;
         display: flex !important;
         align-items: center !important;
-        gap: 12px !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-        min-height: 60px !important;
+        gap: 15px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        min-height: 70px !important;
     }
 
     .capsule-body {
-        padding: 8px 15px 0 15px !important;
+        padding: 15px 20px 0 20px !important;
         flex-grow: 1 !important;
-        background: transparent !important;
+        background: #0B0F17 !important; /* Forzado de fondo */
     }
 
-    /* Fusión Total y Blindaje de Footer */
+    /* Fusión de Footer: Bloque Inferior Limpio */
     .capsule-footer {
-        padding: 2px 15px 15px 15px !important;
+        padding: 5px 20px 20px 20px !important;
         display: flex !important;
         justify-content: flex-start !important;
-        gap: 12px !important;
-        background: transparent !important;
+        gap: 15px !important;
+        background: #0B0F17 !important;
     }
 
     .capsule-footer button {
-        background: rgba(0, 194, 255, 0.05) !important;
-        border: 1.5px solid rgba(0, 194, 255, 0.3) !important;
+        background: rgba(0, 194, 255, 0.08) !important;
+        border: 2px solid rgba(0, 194, 255, 0.4) !important;
         color: #00C2FF !important;
-        width: 44px !important;
-        height: 44px !important;
+        width: 48px !important;
+        height: 48px !important;
         padding: 0 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        border-radius: 10px !important;
-        font-size: 1.4rem !important;
-        box-shadow: none !important;
+        border-radius: 12px !important;
+        font-size: 1.5rem !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
     }
     .capsule-footer button:hover {
-        background: rgba(0, 194, 255, 0.2) !important;
-        border-color: #00C2FF !important;
-        color: white !important;
-        transform: translateY(-2px) !important;
+        background: #00C2FF !important;
+        color: #000 !important;
+        transform: scale(1.1) rotate(5deg) !important;
+        box-shadow: 0 0 20px rgba(0, 194, 255, 0.5) !important;
     }
 
-    /* ERADICACIÓN DE FONDOS BLANCOS STREAMLIT (NIVEL TERMINAL) */
+    /* EXTERMINIO TOTAL DE FONDOS CLAROS (VAULT LEVEL) */
     [data-testid="stFileUploader"], 
     [data-testid="stFileUploader"] section, 
     [data-testid="stFileUploader"] div,
     [data-testid="stFileUploaderDropzone"],
-    section[data-testid="stFileUploaderSection"],
-    .stFileUploader div, .stFileUploader section {
+    section[data-testid="stFileUploaderSection"] {
         background-color: transparent !important;
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
-        color: white !important;
-    }
-
-    /* Forzar fondo oscuro en el dropzone interno */
-    [data-testid="stFileUploaderDropzone"] {
-        background: rgba(255,255,255,0.02) !important;
-        border: 1px dashed rgba(255,255,255,0.1) !important;
-        border-radius: 8px !important;
-    }
-
-    [data-testid="stFileUploader"] label {
-        display: none !important;
     }
     
+    /* El botón de 'Browse Files' ahora es un sable láser azul */
     [data-testid="stFileUploader"] button {
-        background: #00C2FF !important;
+        background: linear-gradient(90deg, #00C2FF, #0082FF) !important;
         color: white !important;
-        font-weight: 800 !important;
-        border-radius: 8px !important;
-        height: 42px !important;
-        font-size: 0.9rem !important;
+        font-weight: 900 !important;
+        border-radius: 10px !important;
+        height: 48px !important;
+        font-size: 1rem !important;
         width: 100% !important;
-        margin-top: 5px !important;
         border: none !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        box-shadow: 0 5px 15px rgba(0, 194, 255, 0.3) !important;
+    }
+
+    /* Estado VALIDADO: Bloque Esmeralda */
+    .capsule-validado {
+        text-align: center !important;
+        color: #10b981 !important;
+        font-weight: 800 !important;
+        font-size: 0.9rem !important;
+        padding: 20px !important;
+        border: 2px solid #10b981 !important;
+        border-radius: 12px !important;
+        background: rgba(16, 185, 129, 0.05) !important;
+        margin-top: 10px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
     }
     /* MISSIÓN CONTROL FASE D V21.21 (ELITE FINAL) */
     .fase-d-mission-control {
@@ -1490,7 +1495,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.25 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.26 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1621,7 +1626,7 @@ else:
             </div>
             """, unsafe_allow_html=True)
 
-            # Malla de Documentos 3 Columnas (Arquitectura Cyber-Capsule PRO V21.25)
+            # Malla de Documentos 3 Columnas (Arquitectura Vault-Monolith V21.26)
             cols = st.columns(3)
             for i, doc in enumerate(cartas_todas):
                 with cols[i % 3]:
@@ -1629,50 +1634,53 @@ else:
                     is_prio = doc.get('prioridad') == "VITAL (Obligatorio)"
                     
                     # Colores Dinámicos Estilo Referencia
-                    border_color = "#10b981" if doc_ready else ("#00c2ff" if is_prio else "#374151")
+                    border_color = "#10b981" if doc_ready else ("#00c2ff" if is_prio else "#2D3748")
                     status_icon = "✅" if doc_ready else ("⌛" if is_prio else "📁")
                     
-                    # CYBER-CAPSULE PRO V21.25
+                    # VAULT-MONOLITH CAPSULE
                     st.markdown(f"<div class='cyber-capsule' style='--capsule-border: {border_color};'>", unsafe_allow_html=True)
                     
-                    # 1. Capsule Header
+                    # 1. Monolith Header
                     st.markdown(f"""
                     <div class='capsule-header'>
-                        <span style='font-size:1.4rem;'>{status_icon}</span>
-                        <span style='font-size:0.85rem; font-weight:700; color:white; line-height:1.2; overflow-wrap:anywhere;'>{doc['doc']}</span>
+                        <span style='font-size:1.8rem;'>{status_icon}</span>
+                        <div style='display:flex; flex-direction:column;'>
+                            <span style='font-size:0.6rem; color:#64748b; font-weight:800; text-transform:uppercase;'>{doc.get('area','GENERAL')}</span>
+                            <span style='font-size:0.95rem; font-weight:800; color:white; line-height:1.2; overflow-wrap:anywhere;'>{doc['doc']}</span>
+                        </div>
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # 2. Capsule Body (Cargador Fusionado)
+                    # 2. Monolith Body
                     st.markdown("<div class='capsule-body'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        _f = st.file_uploader("UP", key=f"up_v21.25_{i}", label_visibility="collapsed")
+                        _f = st.file_uploader("UP", key=f"up_v21.26_{i}", label_visibility="collapsed")
                         if _f:
                             with st.spinner(""):
-                                st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
+                                st.session_state['expediente'][doc['doc']] = {"score": 100, "validado": True}
                                 save_audit_state(); st.rerun()
                     else:
-                        st.markdown("<div style='text-align:center; color:#10b981; font-weight:700; font-size:0.7rem; padding:10px; border:1px solid #10b981; border-radius:8px; background:rgba(16,185,129,0.03); margin-top:5px;'>SISTEMA VALIDADO</div>", unsafe_allow_html=True)
+                        st.markdown("<div class='capsule-validado'>SISTEMA PROTEGIDO POR HMO</div>", unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
                     
-                    # 3. Capsule Footer (Fusión Total)
+                    # 3. Monolith Footer (Fusión Atómica)
                     st.markdown("<div class='capsule-footer'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        st.button("🤖", key=f"ia_v21.25_{i}", help="IA Analysis")
-                        st.button("⚖️", key=f"jus_v21.25_{i}", help="Justificar")
+                        st.button("🤖", key=f"ia_v21.26_{i}", help="Analizar con HMO AI")
+                        st.button("⚖️", key=f"jus_v21.26_{i}", help="Generar Justificación")
                     else:
-                        st.button("🔍", key=f"view_v21.25_{i}", help="View File")
+                        st.button("🔍", key=f"view_v21.26_{i}")
                         is_jus = doc['doc'] in st.session_state['justificados']
-                        if st.button("⚖️" if is_jus else "📝", key=f"jus_st_v21.25_{i}"):
+                        if st.button("⚖️" if is_jus else "📝", key=f"jus_st_v21.26_{i}"):
                             if is_jus: st.session_state['justificados'].remove(doc['doc'])
                             else: st.session_state['justificados'].append(doc['doc'])
                             save_audit_state(); st.rerun()
-                        if st.button("🗑️", key=f"del_v21.25_{i}"):
+                        if st.button("🗑️", key=f"del_v21.26_{i}"):
                             del st.session_state['expediente'][doc['doc']]
                             save_audit_state(); st.rerun()
                     st.markdown("</div>", unsafe_allow_html=True)
                     
-                    st.markdown("</div>", unsafe_allow_html=True) # Cierre Capsule
+                    st.markdown("</div>", unsafe_allow_html=True) # Cierre Vault
 
         elif f == 'FINAL':
             st.markdown("<h3 style='text-align:center; color:#00C2FF; margin-bottom:20px;'>🏁 CONTROL DE MISIÓN: CIERRE & EMISIÓN</h3>", unsafe_allow_html=True)
