@@ -268,13 +268,30 @@ st.markdown("""
         display: none !important; /* Ocultar texto decorativo para ahorrar espacio */
     }
     
-    /* INTEGRACIÓN FASE C (V21.7 ULTRA-DENSE) */
+    /* INTEGRACIÓN ELITE FASE C (V21.11 UNIFIED) */
     .fase-c-card {
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(0, 194, 255, 0.2);
-        border-radius: 12px;
-        padding: 0.1rem;
-        margin-bottom: 0.5rem;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(0, 194, 255, 0.15);
+        border-radius: 10px;
+        margin-bottom: 0.8rem;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    .fase-c-card:hover {
+        border-color: rgba(0, 194, 255, 0.4);
+        background: rgba(255,255,255,0.04);
+        box-shadow: 0 4px 15px rgba(0, 194, 255, 0.1);
+    }
+    .fase-c-cabecera {
+        padding: 0.5rem;
+        background: rgba(0, 194, 255, 0.05);
+        border-bottom: 1px solid rgba(0, 194, 255, 0.1);
+        min-height: 3.5rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     .fase-c-card [data-testid="stFileUploader"] {
         padding: 0 !important;
@@ -1383,7 +1400,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.10 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.11 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1524,44 +1541,54 @@ else:
                     status_icon = "✅" if doc_ready else ("⏳" if is_vital else "📁")
                     status_color = "#10B981" if doc_ready else ("#00C2FF" if is_vital else "#475569")
                     
-                    # Bloque Integrado Fase C (V21.7)
+                    # Bloque Integrado Elite Fase C (V21.11)
                     st.markdown("<div class='fase-c-card'>", unsafe_allow_html=True)
                     
-                    # 1. Cabecera (Título + Icono)
+                    # 1. Cabecera Elite (Título Completo + Status)
                     st.markdown(f"""
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding: 0.4rem; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <span style="font-size:1rem;">{status_icon}</span>
-                        <span style="font-size:0.7rem; font-weight:700; color:#FFFFFF; overflow:hidden;">{doc['doc'][:20]}</span>
+                    <div class='fase-c-cabecera'>
+                        <span style='font-size:1.2rem; filter: drop-shadow(0 0 5px {status_color});'>{status_icon}</span>
+                        <div style='display:flex; flex-direction:column;'>
+                            <span style='font-size:0.6rem; color:#00C2FF; font-weight:800; text-transform:uppercase; letter-spacing:1px;'>{doc.get('area','GENERAL')}</span>
+                            <span style='font-size:0.75rem; font-weight:700; color:#FFFFFF; line-height:1.2;'>{doc['doc']}</span>
+                        </div>
                     </div>
                     """, unsafe_allow_html=True)
                     
                     if not doc_ready:
-                        # 2. Cargador Ultra-Compacto
-                        _f = st.file_uploader("UP", key=f"up_v21.10_{i}", label_visibility="collapsed")
+                        # 2. Zona de Carga Compacta
+                        st.markdown("<div style='padding:0.3rem;'>", unsafe_allow_html=True)
+                        _f = st.file_uploader("UP", key=f"up_v21.11_{i}", label_visibility="collapsed")
                         if _f:
                             with st.spinner(""):
                                 st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
                                 save_audit_state(); st.rerun()
+                        st.markdown("</div>", unsafe_allow_html=True)
                         
-                        # 3. Iconos pegados
+                        # 3. Toolbar de Herramientas (Integrada al Pie)
+                        st.markdown("<div style='background:rgba(0,194,255,0.05); border-top:1px solid rgba(0,194,255,0.1); padding:0.2rem;'>", unsafe_allow_html=True)
                         ca1, ca2, ca3 = st.columns(3)
-                        with ca1: st.button("🤖", key=f"ia_v19.9_{i}", use_container_width=True)
-                        with ca2: st.button("⚖️", key=f"jus_v19.9_{i}", use_container_width=True)
-                        with ca3: st.button("⏳", key=f"wait_v19.9_{i}", disabled=True, use_container_width=True)
+                        with ca1: st.button("🤖", key=f"ia_v19.9_{i}", help="IA Suggest: Generar borrador inteligente", use_container_width=True)
+                        with ca2: st.button("⚖️", key=f"jus_v19.9_{i}", help="Justificar: Carga narrativa/excepción", use_container_width=True)
+                        with ca3: st.button("⏳", key=f"wait_v19.9_{i}", help="Pendiente de carga", disabled=True, use_container_width=True)
+                        st.markdown("</div>", unsafe_allow_html=True)
                     else:
-                        st.markdown("<div style='height:45px; display:flex; align-items:center; justify-content:center; color:#10B981; font-weight:700;'>✅ LISTO</div>", unsafe_allow_html=True)
+                        # Estado Listo: Gestión Documental
+                        st.markdown("<div style='height:45px; display:flex; align-items:center; justify-content:center; color:#10B981; font-weight:800; font-size:0.8rem; background:rgba(16,185,129,0.05);'>✅ DOCUMENTO VALIDADO</div>", unsafe_allow_html=True)
+                        st.markdown("<div style='background:rgba(0,194,255,0.05); border-top:1px solid rgba(0,194,255,0.1); padding:0.2rem;'>", unsafe_allow_html=True)
                         ca1, ca2, ca3 = st.columns(3)
-                        with ca1: st.button("🔍", key=f"view_v19.9_{i}", use_container_width=True)
+                        with ca1: st.button("🔍", key=f"view_v19.9_{i}", help="Ver Evidencia", use_container_width=True)
                         with ca2:
                             is_jus = doc['doc'] in st.session_state['justificados']
-                            if st.button("⚖️" if is_jus else "📜", key=f"jus_st_v19.9_{i}", use_container_width=True):
+                            if st.button("⚖️" if is_jus else "📜", key=f"jus_st_v19.9_{i}", help="Cambiar estado de justificación", use_container_width=True):
                                 if is_jus: st.session_state['justificados'].remove(doc['doc'])
                                 else: st.session_state['justificados'].append(doc['doc'])
                                 save_audit_state(); st.rerun()
                         with ca3:
-                            if st.button("🗑️", key=f"del_v19.9_{i}", use_container_width=True):
+                            if st.button("🗑️", key=f"del_v19.9_{i}", help="Eliminar y re-cargar", use_container_width=True):
                                 del st.session_state['expediente'][doc['doc']]
                                 save_audit_state(); st.rerun()
+                        st.markdown("</div>", unsafe_allow_html=True)
                     
                     st.markdown("</div>", unsafe_allow_html=True)
 
