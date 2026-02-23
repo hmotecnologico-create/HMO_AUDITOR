@@ -37,408 +37,134 @@ except Exception as _ae:
 # Configuración de página
 st.set_page_config(page_title="HMO Auditor Pro - V1.4 Elite", layout="wide", page_icon="🛡️")
 
-# --- SISTEMA DE DISEÑO ELITE V3.0 (HI-FI PROFESSIONAL MOCKUP) ---
-st.markdown("""
+/* 
+   =================================================================
+   SISTEMA DE DISEÑO VAULT-MONOLITH V21.28 (NUCLEAR CLEANUP)
+   =================================================================
+*/
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
     
-    /* FONDO BASE PROFESIONAL */
     .stApp {
-        background: #0B0E14 !important;
-        background-image: 
-            radial-gradient(at 0% 0%, rgba(0, 194, 255, 0.12) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%) !important;
-        background-attachment: fixed !important;
+        background: #05070A !important;
+        background-image: radial-gradient(circle at 50% 50%, #0A0F1A 0%, #05070A 100%) !important;
     }
 
-    /* GLASSMORPHISM PROFUNDO (TARJETAS) */
-    .elite-card {
-        background: rgba(14, 20, 31, 0.75) !important;
-        backdrop-filter: blur(25px) saturate(210%) !important;
-        border: 1.5px solid rgba(0, 194, 255, 0.3) !important;
-        border-radius: 16px !important;
-        padding: 1rem !important; /* Ultra-compacto */
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
-        margin-bottom: 0.5rem !important;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    
-    /* COMPACTACIÓN GLOBAL STREAMLIT */
-    .block-container {
-        padding-top: 1rem !important;
-        padding-bottom: 0rem !important;
-        max-width: 95% !important;
-    }
-    .elite-card:hover { 
-        border-color: #00C2FF !important; 
-        box-shadow: 0 0 40px rgba(0, 194, 255, 0.25) !important; 
-    }
+    /* COMPACTACIÓN Y REGLAS GLOBALES */
+    .block-container { padding-top: 1.5rem !important; max-width: 96% !important; }
+    .stApp, p, li { color: #CBD5E1 !important; font-family: 'Inter', sans-serif !important; }
+    h1, h2, h3 { font-family: 'Orbitron', sans-serif !important; color: #FFFFFF !important; text-align: center; letter-spacing: 2px; }
 
-    /* MINI DOC CARD (V19.5 ELITE TECH) */
-    .doc-card-mini {
-        background: rgba(15, 23, 42, 0.4) !important;
-        backdrop-filter: blur(12px) saturate(180%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 14px !important;
-        padding: 0.7rem !important;
-        margin-bottom: 0.5rem !important;
-        height: 155px !important;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
-        transition: all 0.3s ease;
-    }
-    .doc-card-mini:hover { 
-        background: rgba(15, 23, 42, 0.6) !important;
-        border-color: rgba(0, 194, 255, 0.5) !important;
-        transform: translateY(-2px);
-    }
-    
-    .status-badge {
-        font-size: 0.55rem;
-        background: rgba(255, 255, 255, 0.08);
-        padding: 2px 6px;
-        border-radius: 5px;
-        text-transform: uppercase;
-        color: #94A3B8;
-    }
-
-    /* TEXTO HI-FI (LEGIBILIDAD EXTREMA) */
-    .stApp, .stApp p, .stApp li {
-        color: #E2E8F0 !important;
-        font-family: 'Inter', sans-serif !important;
-    }
-    
-    /* ETIQUETAS DE WIDGETS — BLANCO SUAVE (LEGIBLE) */
-    [data-testid="stWidgetLabel"] p {
-        color: #E2E8F0 !important;
-        font-family: 'Inter', sans-serif !important;
-        font-weight: 600 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 1.2px !important;
-        font-size: 0.80rem !important;
-        margin-bottom: 0.6rem !important;
-        text-shadow: 0 1px 6px rgba(0, 194, 255, 0.2);
-    }
-
-    /* TITULOS NEON — REFINADOS V16 */
-    h1 { font-size: 1.8rem !important; margin-bottom: 0.5rem !important; }
-    h2 { font-size: 1.4rem !important; }
-    h3 { font-size: 1.1rem !important; }
-    
-    h1, h2, h3, .neon-title {
-        color: #FFFFFF !important;
-        font-family: 'Orbitron', sans-serif !important;
-        text-shadow: 0 0 15px rgba(0, 194, 255, 0.4);
-        letter-spacing: 2px !important;
-        font-weight: 700 !important;
-        text-align: center;
-    }
-
-    /* INDICADORES CIRCULARES (PHASES) */
-    .phase-circle {
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-family: 'Orbitron';
-        border: 3px solid #00C2FF;
-        box-shadow: 0 0 10px rgba(0, 194, 255, 0.3);
-    }
-
-    /* INPUTS Y FORMULARIOS HI-FI */
-    /* INPUTS Y FORMULARIOS HI-FI V4.6 (ACCESSIBILITY FIRST) */
-    [data-baseweb="input"], [data-baseweb="select"], [data-baseweb="popover"] {
-        background: #F8FAFC !important; /* Más claro aún */
-        border: 1px solid rgba(0, 194, 255, 0.4) !important;
-        border-radius: 8px !important;
-    }
-    input { 
-        color: #0F172A !important; 
-        font-weight: 600 !important;
-        font-size: 0.85rem !important;
-    }
-    
-    /* BOTONES ELITE 3.0 — SOBRIOS V16 */
-    .stButton>button {
-        background: linear-gradient(135deg, #00C2FF 0%, #172554 100%) !important;
-        color: #FFFFFF !important;
-        font-family: 'Orbitron', sans-serif !important;
-        border: none !important;
-        padding: 0.5rem 1rem !important; /* Más compacto */
-        border-radius: 10px !important;
-        font-weight: 600 !important;
-        font-size: 0.75rem !important; /* Fuente más pequeña */
-        box-shadow: 0 4px 15px rgba(0, 194, 255, 0.3) !important;
-        text-transform: uppercase !important;
-        letter-spacing: 1px !important;
-        transition: all 0.2s ease !important;
-    }
-    .stButton>button:hover { 
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 194, 255, 0.5) !important;
-    }
-
-    /* SIDEBAR GLASS */
-    [data-testid="stSidebar"] {
-        background: rgba(14, 20, 31, 0.95) !important;
-        border-right: 1px solid rgba(0, 194, 255, 0.3) !important;
-    }
-
-    /* DASHBOARD GAUGES */
-    .stPlotlyChart {
-        background: transparent !important;
-        border-radius: 24px;
-    }
-    /* BOTÓN DE AYUDA FLOTANTE */
-    .floating-help {
-        position: fixed;
-        bottom: 25px;
-        right: 25px;
-        width: 60px;
-        height: 60px;
-        background: rgba(0, 194, 255, 0.2) !important;
-        backdrop-filter: blur(15px) !important;
-        border: 1px solid #00C2FF !important;
-        border-radius: 50% !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #00C2FF !important;
-        font-size: 24px !important;
-        z-index: 1001;
-        box-shadow: 0 0 20px rgba(0, 194, 255, 0.4);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none !important;
-    }
-    .floating-help:hover {
-        transform: scale(1.1) rotate(15deg);
-        background: rgba(0, 194, 255, 0.4) !important;
-        box-shadow: 0 0 30px rgba(0, 194, 255, 0.6);
-    }
-    
-    /* COMPACTACIÓN EXTREMA SIDEBAR */
-    [data-testid="stSidebarNav"] { display: none; }
-    [data-testid="stSidebar"] .block-container { padding-top: 1rem !important; }
-    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p, [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2, [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h3 {
-        font-size: 0.8rem !important;
-        margin-bottom: 2px !important;
-        margin-top: 5px !important;
-    }
-    [data-testid="stSidebar"] .stRadio > label { display: none !important; }
-    [data-testid="stSidebar"] [data-testid="stRadio"] label {
-        font-size: 0.75rem !important;
-        padding: 2px 0px !important;
-        min-height: 20px !important;
-    }
-    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] {
-        gap: 0px !important;
-    }
-    [data-testid="stSidebar"] hr { margin: 0.5rem 0 !important; }
-
-    /* COMPACTACIÓN QUIRÚRGICA V21.10 (ZERO-SCROLL) */
-    [data-testid="stFileUploader"] {
-        padding: 0.3rem !important;
-        background: rgba(0, 194, 255, 0.04) !important;
-        border: 1px solid rgba(0, 194, 255, 0.2) !important;
-        border-radius: 8px !important;
-        margin-bottom: 0.5rem !important;
-    }
-    [data-testid="stFileUploader"] section {
-        min-height: 60px !important;
-    }
-    [data-testid="stFileUploader"] button {
-        font-weight: 900 !important;
-        font-size: 0.85rem !important;
-        color: #FFFFFF !important;
-        background-color: #0080FF !important;
-        padding: 0.2rem 0.6rem !important;
-        text-transform: uppercase !important;
-    }
-    [data-testid="stFileUploader"] label {
-        color: #00C2FF !important;
-        font-weight: 700 !important;
-        font-size: 0.75rem !important;
-        margin-bottom: 4px !important;
-    }
-    [data-testid="stFileUploaderDropzone"] div {
-        display: none !important; /* Ocultar texto decorativo para ahorrar espacio */
-    }
-    
-    /* ARQUITECTURA VAULT-MONOLITH FASE C V21.26 (ENCAPSULAMIENTO ATÓMICO) */
+    /* VAULT-MONOLITH CAPSULE (ARQUITECTURA DE UNA SOLA PIEZA) */
     .cyber-capsule {
-        background: #0B0F17 !important; /* Fondo Monolítico Sólido */
-        border: 2.5px solid var(--capsule-border, #1E293B) !important;
-        border-radius: 20px !important;
+        background: #0D1117 !important;
+        border: 2px solid var(--capsule-border, #1E293B) !important;
+        border-radius: 12px !important;
         padding: 0 !important;
-        margin-bottom: 1.8rem !important;
+        margin-bottom: 2rem !important;
         overflow: hidden !important;
-        display: flex !important;
-        flex-direction: column !important;
-        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.7) !important;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8) !important;
+        transition: transform 0.3s ease;
     }
 
     .capsule-header {
-        background: rgba(255, 255, 255, 0.05) !important;
-        padding: 15px 20px !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+        padding: 18px !important;
         display: flex !important;
         align-items: center !important;
         gap: 15px !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-        min-height: 70px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
     }
 
     .capsule-body {
-        padding: 15px 20px 0 20px !important;
-        flex-grow: 1 !important;
-        background: #0B0F17 !important; /* Forzado de fondo */
+        padding: 20px !important;
+        background: #0D1117 !important;
     }
 
-    /* Fusión de Footer: Bloque Inferior Limpio */
-    .capsule-footer {
-        padding: 5px 20px 20px 20px !important;
-        display: flex !important;
-        justify-content: flex-start !important;
-        gap: 15px !important;
-        background: #0B0F17 !important;
-    }
-
-    .capsule-footer button {
-        background: rgba(0, 194, 255, 0.08) !important;
-        border: 2px solid rgba(0, 194, 255, 0.4) !important;
-        color: #00C2FF !important;
-        width: 48px !important;
-        height: 48px !important;
-        padding: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        border-radius: 12px !important;
-        font-size: 1.5rem !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-    }
-    .capsule-footer button:hover {
-        background: #00C2FF !important;
-        color: #000 !important;
-        transform: scale(1.1) rotate(5deg) !important;
-        box-shadow: 0 0 20px rgba(0, 194, 255, 0.5) !important;
-    }
-
-    /* EXTERMINIO TOTAL DE FONDOS CLAROS (VAULT LEVEL) */
+    /* EXTERMINIO DE WIDGETS DE STREAMLIT (FONDOS BLANCOS) */
     [data-testid="stFileUploader"], 
     [data-testid="stFileUploader"] section, 
     [data-testid="stFileUploader"] div,
-    [data-testid="stFileUploaderDropzone"],
-    section[data-testid="stFileUploaderSection"] {
-        background-color: transparent !important;
+    [data-testid="stFileUploaderDropzone"] {
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
+        color: #94A3B8 !important;
     }
-    
-    /* El botón de 'Browse Files' ahora es un sable láser azul */
+
+    /* EL BOTÓN "BROWSE FILES" ES AHORA UNA PIEZA DE HARDWARE */
     [data-testid="stFileUploader"] button {
-        background: linear-gradient(90deg, #00C2FF, #0082FF) !important;
-        color: white !important;
-        font-weight: 900 !important;
-        border-radius: 10px !important;
-        height: 48px !important;
-        font-size: 1rem !important;
-        width: 100% !important;
-        border: none !important;
-        text-transform: uppercase !important;
-        letter-spacing: 1px !important;
-        box-shadow: 0 5px 15px rgba(0, 194, 255, 0.3) !important;
-    }
-
-    /* Estado VALIDADO: Bloque Esmeralda */
-    .capsule-validado {
-        text-align: center !important;
-        color: #10b981 !important;
-        font-weight: 800 !important;
-        font-size: 0.9rem !important;
-        padding: 20px !important;
-        border: 2px solid #10b981 !important;
-        border-radius: 12px !important;
-        background: rgba(16, 185, 129, 0.05) !important;
-        margin-top: 10px !important;
-        text-transform: uppercase !important;
-        letter-spacing: 1px !important;
-    }
-    /* MISSIÓN CONTROL FASE D V21.27 (VAULT-MONOLITH FINAL) */
-    .fase-d-mission-control {
-        background: #0B0F17 !important;
-        border: 2.5px solid rgba(0, 194, 255, 0.6) !important;
-        border-radius: 20px !important;
-        padding: 2rem !important;
-        box-shadow: 0 0 60px rgba(0, 0, 0, 0.8) !important;
-        margin-top: 1rem !important;
-        overflow: hidden !important;
-    }
-    .fase-d-metric-capsule {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border: 1.5px solid rgba(0, 194, 255, 0.3) !important;
-        border-radius: 15px !important;
-        padding: 1.5rem !important;
-        text-align: center !important;
-        transition: all 0.3s ease !important;
-        box-shadow: inset 0 0 20px rgba(0, 194, 255, 0.05) !important;
-    }
-    .fase-d-metric-capsule:hover {
-        background: rgba(0, 194, 255, 0.08) !important;
-        border-color: #00C2FF !important;
-        transform: translateY(-3px) !important;
-    }
-
-    /* Botones de Emisión Estilo Vault-Monolith */
-    .fase-d-btn-vault {
-        background: rgba(0, 194, 255, 0.06) !important;
-        border: 2px solid rgba(0, 194, 255, 0.4) !important;
+        background: #1E293B !important;
+        border: 1px solid #334155 !important;
         color: #00C2FF !important;
         font-weight: 800 !important;
-        height: 55px !important;
-        border-radius: 12px !important;
-        font-size: 1rem !important;
-        transition: all 0.3s ease !important;
         text-transform: uppercase !important;
+        width: 100% !important;
+        height: 45px !important;
+        border-radius: 6px !important;
         letter-spacing: 1px !important;
     }
-    .fase-d-btn-vault:hover {
+    [data-testid="stFileUploader"] button:hover {
         background: #00C2FF !important;
         color: #000 !important;
-        box-shadow: 0 0 30px rgba(0, 194, 255, 0.5) !important;
+        border-color: #00C2FF !important;
     }
 
-    /* Botón de Sello Final */
-    .fase-d-btn-seal {
-        background: linear-gradient(90deg, #10b981, #059669) !important;
-        border: none !important;
-        color: white !important;
-        font-weight: 900 !important;
-        height: 60px !important;
-        border-radius: 15px !important;
-        font-size: 1.2rem !important;
-        box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3) !important;
-        text-transform: uppercase !important;
-        letter-spacing: 2px !important;
+    /* ICONOS DE ACCIÓN FUSIONADOS (BOTONES TRANSPARENTES) */
+    .capsule-footer {
+        padding: 10px 20px 20px 20px !important;
+        display: flex !important;
+        gap: 15px !important;
+        background: #0D1117 !important;
     }
-    
-    [data-testid="stExpander"] {
-        background: #0B0F17 !important;
-        border: 1.5px solid rgba(0, 194, 255, 0.2) !important;
-        border-radius: 15px !important;
-        margin-bottom: 1rem !important;
-        padding: 0.5rem !important;
-    }
-    [data-testid="stExpander"] summary {
+
+    /* ESTILO DE BOTONES DE ACCIÓN PARA QUE NO PAREZCAN "PIEZAS SUELTAS" */
+    .stButton > button[key*="v21.28"] {
+        background: transparent !important;
+        border: 1.5px solid rgba(0, 194, 255, 0.3) !important;
         color: #00C2FF !important;
-        font-weight: 700 !important;
+        width: 44px !important;
+        height: 44px !important;
+        border-radius: 8px !important;
+        font-size: 1.4rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+    }
+    .stButton > button[key*="v21.28"]:hover {
+        border-color: #00C2FF !important;
+        background: rgba(0, 194, 255, 0.1) !important;
+        transform: translateY(-2px) !important;
     }
 
-    @media (max-width: 768px) { .floating-help { display: none; } }
+    /* ESTADO VALIDADO (MODO VAULT) */
+    .capsule-validado {
+        padding: 15px !important;
+        border: 1.5px solid #10B981 !important;
+        border-radius: 8px !important;
+        background: rgba(16, 185, 129, 0.05) !important;
+        color: #10B981 !important;
+        text-align: center !important;
+        font-weight: 800 !important;
+        font-size: 0.8rem !important;
+        text-transform: uppercase !important;
+    }
+
+    /* SIDEBAR COMPACTO */
+    [data-testid="stSidebar"] {
+        background: #05070A !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+    [data-testid="stSidebarNav"] { display: none; }
+    
+    .floating-help {
+        position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+        background: #0D1117 !important; border: 1px solid #1E293B !important;
+        border-radius: 50% !important; display: flex; align-items: center;
+        justify-content: center; color: #00C2FF !important; font-size: 24px !important;
+        z-index: 1001; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-decoration: none !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -1514,7 +1240,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.27 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.28 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1645,7 +1371,7 @@ else:
             </div>
             """, unsafe_allow_html=True)
 
-            # Malla de Documentos 3 Columnas (Arquitectura Vault-Monolith V21.26)
+            # Malla de Documentos 3 Columnas (Arquitectura Vault-Monolith V21.28)
             cols = st.columns(3)
             for i, doc in enumerate(cartas_todas):
                 with cols[i % 3]:
@@ -1653,7 +1379,7 @@ else:
                     is_prio = doc.get('prioridad') == "VITAL (Obligatorio)"
                     
                     # Colores Dinámicos Estilo Referencia
-                    border_color = "#10b981" if doc_ready else ("#00c2ff" if is_prio else "#2D3748")
+                    border_color = "#10b981" if doc_ready else ("#00c2ff" if is_prio else "#1E293B")
                     status_icon = "✅" if doc_ready else ("⌛" if is_prio else "📁")
                     
                     # VAULT-MONOLITH CAPSULE
@@ -1662,10 +1388,10 @@ else:
                     # 1. Monolith Header
                     st.markdown(f"""
                     <div class='capsule-header'>
-                        <span style='font-size:1.8rem;'>{status_icon}</span>
+                        <span style='font-size:1.6rem;'>{status_icon}</span>
                         <div style='display:flex; flex-direction:column;'>
                             <span style='font-size:0.6rem; color:#64748b; font-weight:800; text-transform:uppercase;'>{doc.get('area','GENERAL')}</span>
-                            <span style='font-size:0.95rem; font-weight:800; color:white; line-height:1.2; overflow-wrap:anywhere;'>{doc['doc']}</span>
+                            <span style='font-size:0.9rem; font-weight:800; color:white; line-height:1.2;'>{doc['doc']}</span>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -1673,30 +1399,29 @@ else:
                     # 2. Monolith Body
                     st.markdown("<div class='capsule-body'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        _f = st.file_uploader("UP", key=f"up_v21.26_{i}", label_visibility="collapsed")
+                        # Cargador Real sin texto basura
+                        _f = st.file_uploader("", key=f"up_v21.28_{i}", label_visibility="collapsed")
                         if _f:
                             with st.spinner(""):
                                 st.session_state['expediente'][doc['doc']] = {"score": 100, "validado": True}
                                 save_audit_state(); st.rerun()
                     else:
-                        st.markdown("<div class='capsule-validado'>SISTEMA PROTEGIDO POR HMO</div>", unsafe_allow_html=True)
+                        st.markdown("<div class='capsule-validado'>SISTEMA PROTEGIDO</div>", unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
                     
-                    # 3. Monolith Footer (Fusión Atómica)
+                    # 3. Monolith Footer (Iconos Transparentes Fusionados)
                     st.markdown("<div class='capsule-footer'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        st.button("🤖", key=f"ia_v21.26_{i}", help="Analizar con HMO AI")
-                        st.button("⚖️", key=f"jus_v21.26_{i}", help="Generar Justificación")
+                        st.button("🤖", key=f"ia_v21.28_{i}")
+                        st.button("⚖️", key=f"jus_v21.28_{i}")
                     else:
-                        st.button("🔍", key=f"view_v21.26_{i}")
+                        st.button("🔍", key=f"view_v21.28_{i}")
                         is_jus = doc['doc'] in st.session_state['justificados']
-                        if st.button("⚖️" if is_jus else "📝", key=f"jus_st_v21.26_{i}"):
+                        if st.button("⚖️" if is_jus else "📝", key=f"jus_st_v21.28_{i}"):
                             if is_jus: st.session_state['justificados'].remove(doc['doc'])
                             else: st.session_state['justificados'].append(doc['doc'])
                             save_audit_state(); st.rerun()
-                        if st.button("🗑️", key=f"del_v21.26_{i}"):
-                            del st.session_state['expediente'][doc['doc']]
-                            save_audit_state(); st.rerun()
+                        st.button("🗑️", key=f"del_v21.28_{i}")
                     st.markdown("</div>", unsafe_allow_html=True)
                     
                     st.markdown("</div>", unsafe_allow_html=True) # Cierre Vault
