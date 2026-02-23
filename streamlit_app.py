@@ -239,24 +239,26 @@ st.markdown("""
     }
     [data-testid="stSidebar"] hr { margin: 0.5rem 0 !important; }
 
-    /* COMPACTACIÓN EXTREMA CARGADORES (V21.2) */
+    /* ESTABILIZACIÓN CARGADORES V21.3 (FULL VISIBILITY) */
     [data-testid="stFileUploader"] {
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
+        padding: 0.8rem !important;
+        background: rgba(255,255,255,0.02) !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(0, 194, 255, 0.1) !important;
+        margin-bottom: 0.5rem !important;
     }
     [data-testid="stFileUploader"] section {
-        padding: 0.1rem !important;
-        min-height: 45px !important; /* Altura mínima para ver el botón */
+        min-height: 100px !important;
     }
-    [data-testid="stFileUploader"] section > div {
-        display: none !important; /* Ocultar texto "Drag and drop" */
-    }
-    [data-testid="stFileUploader"] button {
+    [data-testid="stFileUploader"] label { 
+        display: block !important; 
+        font-family: 'Orbitron', sans-serif !important;
         font-size: 0.7rem !important;
-        padding: 0.2rem 0.6rem !important;
-        width: 100% !important;
+        font-weight: 700 !important;
+        color: #00C2FF !important;
+        text-transform: uppercase;
+        margin-bottom: 8px !important;
     }
-    [data-testid="stFileUploader"] label { display: none !important; }
     [data-testid="stFileUploaderDropzone"] div { font-size: 0.65rem !important; }
     
     [data-testid="stExpander"] {
@@ -1370,54 +1372,38 @@ else:
         with c3: phase_btn("FASE C\nRevisión", 'C', f, pct_fase_c)
         with c4: phase_btn("FINAL\nCierre", 'FINAL', f, 100 if st.session_state.get('revisado_plantillas') else 0)
 
-        st.divider()
-
         if f == 'A':
-            # --- FASE A: IDENTIDAD SMART (VERSION DOCUMENTOS PRIMERO V19.7) ---
-            st.markdown("##### 🏢 Identidad: Validación Documental Obligatoria")
-            st.caption("Suba los documentos base para desbloquear el perfil de auditoría.")
-
-            # Estado de validación
+            # Estado de validación (V21.3)
             cc_ready = st.session_state.get('expediente', {}).get("Camara de Comercio (Existencia Legal)") is not None
             rut_ready = st.session_state.get('expediente', {}).get("RUT (Registro Unico Tributario)") is not None
 
-            # Cargadores Centrales (V19.9) - Fijos en la parte superior para guía
+            st.markdown("<div class='elite-card' style='border-top: 3px solid #00C2FF;'>", unsafe_allow_html=True)
+            st.markdown("##### 🏢 Paso 1: Identidad Documental")
+            st.write("Cargue los documentos base para configurar el perfil.")
+            
             c_doc_a, c_doc_b = st.columns(2)
             with c_doc_a:
-                st.markdown(f"<div class='elite-card' style='border-top: 3px solid {'#10B981' if cc_ready else '#00C2FF'};'>", unsafe_allow_html=True)
-                st.markdown("<p style='font-size:0.75rem; font-weight:700; color:#94A3B8; margin-bottom:0.5rem;'>📄 CÁMARA DE COMERCIO (Existencia y Rep. Legal)</p>", unsafe_allow_html=True)
-                uploaded_cc = st.file_uploader("CC_UPLOAD", type=["pdf", "jpg", "jpeg", "png"], key="smart_cc", label_visibility="collapsed")
-                
+                uploaded_cc = st.file_uploader("📄 CÁMARA DE COMERCIO (Rep. Legal)", type=["pdf", "jpg", "jpeg", "png"], key="smart_cc")
                 if uploaded_cc and not cc_ready:
                     with st.spinner("Procesando CC..."):
                         res = procesar_documento(uploaded_cc.read(), uploaded_cc.name) if OCR_DISPONIBLE else {"tipo_doc":"unknown"}
                     if res.get("tipo_doc") == "camara_comercio":
-                        # Aplicar datos automáticamente
                         for k,v in resultado_a_session_state(res).items(): st.session_state[k] = v
-                        if res.get('rep_legal'): st.session_state['rep_legal'] = res['rep_legal']
-                        if res.get('rep_id'): st.session_state['rep_id'] = res['rep_id']
-                        st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {"validado":True, "confianza":res.get('confianza')}
+                        st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {"validado":True}
                         save_audit_state(); st.rerun()
-                elif cc_ready:
-                    st.success("✅ Documento detectado y vinculado.")
-                st.markdown("</div>", unsafe_allow_html=True)
+                elif cc_ready: st.success("✅ Documento Validado")
 
             with c_doc_b:
-                st.markdown(f"<div class='elite-card' style='border-top: 3px solid {'#10B981' if rut_ready else '#00C2FF'};'>", unsafe_allow_html=True)
-                st.markdown("<p style='font-size:0.75rem; font-weight:700; color:#94A3B8; margin-bottom:0.5rem;'>🧾 RUT (DIAN)</p>", unsafe_allow_html=True)
-                uploaded_rut = st.file_uploader("RUT_UPLOAD", type=["pdf", "jpg", "jpeg", "png"], key="smart_rut", label_visibility="collapsed")
-                
+                uploaded_rut = st.file_uploader("🧾 RUT (Registro Único Tributario)", type=["pdf", "jpg", "jpeg", "png"], key="smart_rut")
                 if uploaded_rut and not rut_ready:
                     with st.spinner("Procesando RUT..."):
                         res_r = procesar_documento(uploaded_rut.read(), uploaded_rut.name) if OCR_DISPONIBLE else {"tipo_doc":"unknown"}
                     if res_r.get("tipo_doc") == "rut":
-                        # Aplicar datos automáticamente
                         for k,v in resultado_a_session_state(res_r).items(): st.session_state[k] = v
-                        st.session_state['expediente']["RUT (Registro Unico Tributario)"] = {"validado":True, "confianza":res_r.get('confianza')}
+                        st.session_state['expediente']["RUT (Registro Unico Tributario)"] = {"validado":True}
                         save_audit_state(); st.rerun()
-                elif rut_ready:
-                    st.success("✅ Documento detectado y vinculado.")
-                st.markdown("</div>", unsafe_allow_html=True)
+                elif rut_ready: st.success("✅ Documento Validado")
+            st.markdown("</div>", unsafe_allow_html=True)
 
             # --- CAMPOS DE IDENTIDAD (RESTRICCIÓN ESTRICTA V21.2) ---
             if cc_ready and rut_ready:
@@ -1518,12 +1504,13 @@ else:
                     
                     if not doc_ready:
                         with ca1:
-                            # Cargador ultra-compacto + Validar
-                            _f = st.file_uploader("UP", key=f"up_v19.9_{i}", label_visibility="collapsed")
+                            # Cargador con Label (Evita colapso visual)
+                            _f = st.file_uploader("EVIDENCIA", key=f"up_v21.3_{i}")
                             if _f:
                                 with st.spinner(""):
                                     st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
                                     save_audit_state(); st.rerun()
+                        st.markdown("<div style='margin-bottom:0.8rem;'></div>", unsafe_allow_html=True)
                         with ca2:
                             # ⚖️ Justificar
                             if st.button("⚖️", key=f"jus_v19.9_{i}", help="Justificar Requisito", use_container_width=True):
