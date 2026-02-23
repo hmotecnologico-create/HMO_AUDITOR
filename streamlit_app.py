@@ -153,10 +153,53 @@ st.markdown("""
         transform: translateY(-1px) !important;
     }
 
-    /* RESTAURACIÓN DE BOTONES GLOBALES (FASES A, B, D) */
-    .stButton > button {
-        border-radius: 6px !important;
-        transition: all 0.3s ease !important;
+    /* NAVEGACIÓN ELITE POR FASES (WIZARD) */
+    [data-testid="column"] .stButton button[key*="btn_fase_"] {
+        background: #0D1117 !important;
+        border: 2px solid #1E293B !important;
+        color: #94A3B8 !important;
+        border-radius: 10px !important;
+        height: auto !important;
+        padding: 0.8rem !important;
+        font-family: 'Orbitron', sans-serif !important;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4) !important;
+        white-space: pre-wrap !important;
+    }
+
+    [data-testid="column"] .stButton button[key*="btn_fase_"]:hover {
+        border-color: #00C2FF !important;
+        color: #FFFFFF !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(0, 194, 255, 0.2) !important;
+    }
+
+    /* ESTADO ACTIVO (PRIMARY) */
+    [data-testid="column"] .stButton button[key*="btn_fase_"][data-testid="stBaseButton-primary"] {
+        background: linear-gradient(180deg, rgba(0, 194, 255, 0.15) 0%, rgba(0, 0, 0, 0.3) 100%) !important;
+        border: 2px solid #00C2FF !important;
+        color: #00C2FF !important;
+        box-shadow: 0 0 30px rgba(0, 194, 255, 0.3) !important;
+    }
+
+    /* BOTONES DE AVANCE / GUARDAR (ACTION HARDWARE) */
+    .stButton button[key*="smart_save"] {
+        background: linear-gradient(90deg, #1E293B 0%, #0D1117 100%) !important;
+        border: 1px solid #00C2FF !important;
+        color: #00C2FF !important;
+        font-family: 'Orbitron', sans-serif !important;
+        font-weight: 800 !important;
+        letter-spacing: 2px !important;
+        height: 55px !important;
+        border-radius: 8px !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.6) !important;
+        margin-top: 1rem !important;
+    }
+
+    .stButton button[key*="smart_save"]:hover {
+        background: #00C2FF !important;
+        color: #000000 !important;
+        box-shadow: 0 0 40px rgba(0, 194, 255, 0.4) !important;
     }
 
     .capsule-validado {
@@ -1255,7 +1298,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.32 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.33 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1339,7 +1382,7 @@ else:
 
                 # Botón de Avance habilitado solo con ambos documentos
                 if cc_ready and rut_ready:
-                    if st.button("💾 GUARDAR IDENTIDAD Y CONTINUAR", use_container_width=True, type="primary"):
+                    if st.button("💾 GUARDAR IDENTIDAD Y CONTINUAR", use_container_width=True, type="primary", key="smart_save_a"):
                         if not st.session_state['auditor_name']:
                             st.error("Por favor, ingrese el nombre del Auditor Líder para continuar.")
                         else:
@@ -1348,7 +1391,7 @@ else:
                             st.rerun()
                 else:
                     st.warning("⚠️ Se requieren AMBOS documentos (CC y RUT) cargados para avanzar a la Fase B.")
-                    st.button("💾 GUARDAR IDENTIDAD Y CONTINUAR", disabled=True, use_container_width=True)
+                    st.button("💾 GUARDAR IDENTIDAD Y CONTINUAR", disabled=True, use_container_width=True, key="smart_save_a_dis")
                 st.markdown("</div>", unsafe_allow_html=True)
             # --- FASE B: DIMENSIÓN ---
         elif f == 'B':
@@ -1367,7 +1410,7 @@ else:
                 # Dirección compacta
                 st.session_state['empresa_direccion'] = st.text_input("Dirección Domicilio Principal", value=st.session_state['empresa_direccion'], placeholder="Ej: Calle 123 # 45-67, Bogotá", key="b_dir")
             
-            if st.button("💾 GUARDAR DIMENSIÓN Y CONTINUAR", use_container_width=True, type="primary"):
+            if st.button("💾 GUARDAR DIMENSIÓN Y CONTINUAR", use_container_width=True, type="primary", key="smart_save_b"):
                 save_audit_state(); st.success("Perfilado exitoso.")
                 st.session_state['ing_f'] = 'C'
                 st.rerun()
