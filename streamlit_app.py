@@ -302,14 +302,22 @@ st.markdown("""
     .fase-c-card [data-testid="stFileUploader"] section {
         min-height: 45px !important;
         padding: 0 !important;
+        background: transparent !important;
+        border: none !important;
     }
     .fase-c-card [data-testid="stFileUploader"] section > div {
-        display: none !important; /* Ocultar "Drag and drop" */
+        display: none !important;
     }
-    .fase-c-card [data-testid="stFileUploader"] button {
-        font-size: 0.75rem !important;
-        padding: 0.2rem 0.4rem !important;
-        width: 100% !important;
+    /* BOTONES INTEGRADOS (SIN CAJAS BLANCAS) */
+    .fase-c-card button {
+        background: rgba(0, 194, 255, 0.05) !important;
+        border: 1px solid rgba(0, 194, 255, 0.1) !important;
+        color: #00C2FF !important;
+        border-radius: 4px !important;
+    }
+    .fase-c-card button:hover {
+        background: rgba(0, 194, 255, 0.2) !important;
+        border-color: #00C2FF !important;
     }
     
     [data-testid="stExpander"] {
@@ -1400,7 +1408,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.11 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.12 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1547,10 +1555,10 @@ else:
                     # 1. Cabecera Elite (Título Completo + Status)
                     st.markdown(f"""
                     <div class='fase-c-cabecera'>
-                        <span style='font-size:1.2rem; filter: drop-shadow(0 0 5px {status_color});'>{status_icon}</span>
-                        <div style='display:flex; flex-direction:column;'>
-                            <span style='font-size:0.6rem; color:#00C2FF; font-weight:800; text-transform:uppercase; letter-spacing:1px;'>{doc.get('area','GENERAL')}</span>
-                            <span style='font-size:0.75rem; font-weight:700; color:#FFFFFF; line-height:1.2;'>{doc['doc']}</span>
+                        <span style='font-size:1.2rem; filter: drop-shadow(0 0 5px {status_color}); flex-shrink:0;'>{status_icon}</span>
+                        <div style='display:flex; flex-direction:column; min-width:0;'>
+                            <span style='font-size:0.6rem; color:#00C2FF; font-weight:800; text-transform:uppercase; letter-spacing:1px; opacity:0.8;'>{doc.get('area','GENERAL')}</span>
+                            <span style='font-size:0.75rem; font-weight:700; color:#FFFFFF; line-height:1.2; overflow-wrap: break-word;'>{doc['doc']}</span>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
