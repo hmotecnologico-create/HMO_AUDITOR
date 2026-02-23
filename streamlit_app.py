@@ -268,74 +268,64 @@ st.markdown("""
         display: none !important; /* Ocultar texto decorativo para ahorrar espacio */
     }
     
-    /* ARQUITECTURA CORPORATIVA FASE C V21.22 (PROFESSIONAL EDITION) */
-    /* El Cuadro Maestro (Contenedor Global) */
-    .fase-c-main-box {
-        background: #0f172a !important; /* Slate 900 sólido */
-        border: 2px solid #334155 !important; /* Border Slate 700 */
-        border-radius: 12px !important;
-        padding: 20px !important;
-        margin-bottom: 2rem !important;
-        box-shadow: none !important;
-    }
-
-    /* Tarjeta Individual Estilo Cuadro Interno */
-    .fase-c-card-pro {
-        background: #1e293b !important; /* Slate 800 */
-        border: 1px solid #475569 !important; /* Slate 600 */
-        border-radius: 8px !important;
-        margin-bottom: 1rem !important;
+    /* ARQUITECTURA CYBER-CAPSULE FASE C V21.23 (ALINEACIÓN REFERENCIA) */
+    .cyber-capsule {
+        background: rgba(14, 20, 31, 0.95) !important;
+        border: 2px solid var(--capsule-border, #334155) !important;
+        border-radius: 18px !important;
+        padding: 0 !important;
+        margin-bottom: 0.8rem !important;
+        overflow: hidden !important;
         display: flex !important;
         flex-direction: column !important;
-        overflow: hidden !important;
-        transition: border-color 0.2s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+        transition: transform 0.2s ease, border-color 0.2s ease !important;
     }
-    .fase-c-card-pro:hover {
-        border-color: #3b82f6 !important; /* Azul corporativo suave */
+    .cyber-capsule:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(0, 194, 255, 0.15) !important;
     }
 
-    .fase-c-header-pro {
-        background: #111827 !important; /* Gray 900 */
-        border-bottom: 1px solid #374151 !important;
-        padding: 10px 14px !important;
+    .capsule-header {
+        background: rgba(255, 255, 255, 0.03) !important;
+        padding: 10px 12px !important;
         display: flex !important;
         align-items: center !important;
-        gap: 12px !important;
+        gap: 10px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
     }
 
-    /* Botón de Carga Corporativo */
-    .fase-c-card-pro [data-testid="stFileUploader"] button {
-        background: #3b82f6 !important; /* Azul sólido */
-        color: white !important;
-        font-weight: 600 !important;
-        font-size: 0.8rem !important;
-        height: 38px !important;
-        border: none !important;
-        border-radius: 6px !important;
-        width: 100% !important;
+    .capsule-body {
+        padding: 10px 12px !important;
+        flex-grow: 1 !important;
     }
 
-    /* Footer de Herramientas Corporativo */
-    .fase-c-footer-pro {
-        background: #111827 !important;
-        border-top: 1px solid #374151 !important;
-        padding: 8px !important;
+    /* Botones de Iconos Directos (Estilo Referencia) */
+    .capsule-footer {
+        padding: 8px 12px 12px 12px !important;
         display: flex !important;
-        gap: 8px !important;
+        justify-content: flex-start !important;
+        gap: 10px !important;
     }
 
-    .fase-c-footer-pro button {
-        background: transparent !important;
-        border: 1px solid #4b5563 !important;
-        color: #94a3b8 !important;
-        font-size: 1.1rem !important;
+    .capsule-footer button {
+        background: rgba(0, 194, 255, 0.08) !important;
+        border: 1px solid rgba(0, 194, 255, 0.3) !important;
+        color: #00C2FF !important;
+        width: 36px !important;
         height: 36px !important;
-        border-radius: 4px !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 8px !important;
+        font-size: 1.1rem !important;
+        transition: all 0.2s ease !important;
     }
-    .fase-c-footer-pro button:hover {
-        background: #374151 !important;
+    .capsule-footer button:hover {
+        background: #00C2FF !important;
         color: white !important;
-        border-color: #60a5fa !important;
+        transform: scale(1.1) !important;
     }
 
     /* Erradicación Blindada de Fondos Streamlit */
@@ -346,6 +336,16 @@ st.markdown("""
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
+        min-height: unset !important;
+    }
+    
+    [data-testid="stFileUploader"] button {
+        background: #00C2FF !important;
+        border: none !important;
+        font-weight: 700 !important;
+        border-radius: 6px !important;
+        height: 32px !important;
+        font-size: 0.75rem !important;
     }
     /* MISSIÓN CONTROL FASE D V21.21 (ELITE FINAL) */
     .fase-d-mission-control {
@@ -1474,7 +1474,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.22 PROFESSIONAL</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.23 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1605,71 +1605,58 @@ else:
             </div>
             """, unsafe_allow_html=True)
 
-            # --- CONTENEDOR MAESTRO (EL CUADRO GRANDE) ---
-            st.markdown("<div class='fase-c-main-box'>", unsafe_allow_html=True)
-            
-            # Malla de Documentos 2 Columnas (Arquitectura Profesional V21.22)
-            cols = st.columns(2)
+            # Malla de Documentos 4 Columnas (Arquitectura Cyber-Capsule V21.23)
+            cols = st.columns(4)
             for i, doc in enumerate(cartas_todas):
-                with cols[i % 2]:
+                with cols[i % 4]:
                     doc_ready = doc['doc'] in st.session_state['expediente']
-                    is_vital = doc.get('prioridad') == "VITAL (Obligatorio)"
-                    status_icon = "✅" if doc_ready else ("⏳" if is_vital else "📁")
+                    is_prio = doc.get('prioridad') == "VITAL (Obligatorio)"
                     
-                    # TARJETA PROFESIONAL (CUADRO INTERNO)
-                    st.markdown("<div class='fase-c-card-pro'>", unsafe_allow_html=True)
+                    # Colores Dinámicos Estilo Referencia
+                    border_color = "#10b981" if doc_ready else ("#00c2ff" if is_prio else "#334155")
+                    status_icon = "✅" if doc_ready else ("⌛" if is_prio else "📁")
                     
-                    # 1. Header Sobrio
+                    # CYBER-CAPSULE
+                    st.markdown(f"<div class='cyber-capsule' style='--capsule-border: {border_color};'>", unsafe_allow_html=True)
+                    
+                    # 1. Capsule Header
                     st.markdown(f"""
-                    <div class='fase-c-header-pro'>
-                        <span style='font-size:1.4rem;'>{status_icon}</span>
-                        <div style='display:flex; flex-direction:column;'>
-                            <span style='font-size:0.6rem; color:#94a3b8; font-weight:700; text-transform:uppercase;'>{doc.get('area','REQUISITO')}</span>
-                            <span style='font-size:0.9rem; font-weight:600; color:#f1f5f9; line-height:1.2; overflow-wrap:anywhere;'>{doc['doc']}</span>
-                        </div>
+                    <div class='capsule-header'>
+                        <span style='font-size:1.1rem;'>{status_icon}</span>
+                        <span style='font-size:0.75rem; font-weight:700; color:white; line-height:1.1; overflow-wrap:anywhere;'>{doc['doc']}</span>
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # 2. Cuerpo de Gestión Limpio
-                    st.markdown("<div style='padding:12px 14px 4px 14px; background:transparent;'>", unsafe_allow_html=True)
+                    # 2. Capsule Body (Cargador Compacto)
+                    st.markdown("<div class='capsule-body'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        _f = st.file_uploader("UP", key=f"up_v21.22_{i}", label_visibility="collapsed")
+                        _f = st.file_uploader("UP", key=f"up_v21.23_{i}", label_visibility="collapsed")
                         if _f:
                             with st.spinner(""):
                                 st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
                                 save_audit_state(); st.rerun()
                     else:
-                        st.markdown(f"""
-                        <div style='text-align:center; color:#10b981; font-weight:700; font-size:0.8rem; padding:10px; border:1px solid #059669; border-radius:6px; background:rgba(16,185,129,0.05);'>
-                            VALIDACIÓN COMPLETADA
-                        </div>
-                        """, unsafe_allow_html=True)
+                        st.markdown("<p style='color:#10b981; font-weight:700; font-size:0.6rem; text-align:center; margin-top:5px;'>SISTEMA PROTEGIDO / VALIDADO</p>", unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
                     
-                    # 3. Footer de Herramientas Estructurado
-                    st.markdown("<div class='fase-c-footer-pro'>", unsafe_allow_html=True)
-                    cta1, cta2, cta3 = st.columns(3)
+                    # 3. Capsule Footer (Botones de Iconos Directos)
+                    st.markdown("<div class='capsule-footer'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        with cta1: st.button("🤖", key=f"ia_v21.22_{i}", help="Sugerencia IA", use_container_width=True)
-                        with cta2: st.button("⚖️", key=f"jus_v21.22_{i}", help="Justificar", use_container_width=True)
-                        with cta3: st.button("⏳", key=f"wait_v21.22_{i}", disabled=True, use_container_width=True)
+                        st.button("🤖", key=f"ia_v21.23_{i}", help="IA Analysis")
+                        st.button("⚖️", key=f"jus_v21.23_{i}", help="Justificar")
                     else:
-                        with cta1: st.button("🔍", key=f"view_v21.22_{i}", use_container_width=True)
-                        with cta2:
-                            is_jus = doc['doc'] in st.session_state['justificados']
-                            if st.button("⚖️" if is_jus else "📜", key=f"jus_st_v21.22_{i}", use_container_width=True):
-                                if is_jus: st.session_state['justificados'].remove(doc['doc'])
-                                else: st.session_state['justificados'].append(doc['doc'])
-                                save_audit_state(); st.rerun()
-                        with cta3:
-                            if st.button("🗑️", key=f"del_v21.22_{i}", use_container_width=True):
-                                del st.session_state['expediente'][doc['doc']]
-                                save_audit_state(); st.rerun()
+                        st.button("🔍", key=f"view_v21.23_{i}")
+                        is_jus = doc['doc'] in st.session_state['justificados']
+                        if st.button("⚖️" if is_jus else "📝", key=f"jus_st_v21.23_{i}"):
+                            if is_jus: st.session_state['justificados'].remove(doc['doc'])
+                            else: st.session_state['justificados'].append(doc['doc'])
+                            save_audit_state(); st.rerun()
+                        if st.button("🗑️", key=f"del_v21.23_{i}"):
+                            del st.session_state['expediente'][doc['doc']]
+                            save_audit_state(); st.rerun()
                     st.markdown("</div>", unsafe_allow_html=True)
                     
-                    st.markdown("</div>", unsafe_allow_html=True) # Cierre Tarjeta
-            
-            st.markdown("</div>", unsafe_allow_html=True) # Cierre Cuadro Maestro
+                    st.markdown("</div>", unsafe_allow_html=True) # Cierre Capsule
 
         elif f == 'FINAL':
             st.markdown("<h3 style='text-align:center; color:#00C2FF; margin-bottom:20px;'>🏁 CONTROL DE MISIÓN: CIERRE & EMISIÓN</h3>", unsafe_allow_html=True)
