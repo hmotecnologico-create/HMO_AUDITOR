@@ -384,7 +384,18 @@ def generate_maturity_report_pdf(company_name, output_path, score, status_elite)
     pdf.output(full_path)
     return full_path
 
-def add_digital_signature(pdf, user_name, role, timestamp=None):
+# SELLOS DE CERTIFICACIÓN ELITE (V21.0)
+def add_premium_seal(pdf, score):
+    """Añade un sello de excelencia visual basado en el score."""
+    if score >= 86:
+        # Sello Gold de Excelencia
+        pdf.set_font("helvetica", "B", 8)
+        pdf.set_text_color(212, 175, 55) # Dorado
+        pdf.set_xy(160, 20)
+        pdf.cell(40, 10, "★ EXCELENCIA GOLD ★", border=1, align='C')
+        pdf.set_text_color(0, 0, 0)
+
+def add_digital_signature(pdf, user_name, role, timestamp=None, score=0):
     """
     Inyecta un sello de normalización SGC y validación técnica (Firma Digital Elite).
     """
@@ -395,36 +406,43 @@ def add_digital_signature(pdf, user_name, role, timestamp=None):
     pdf.set_y(-58)
     pdf.set_x(pdf.l_margin)
     
-    # Estilo de Sello de Normalización
-    pdf.set_fill_color(245, 250, 255)
-    pdf.rect(pdf.l_margin, pdf.get_y(), 95, 32, 'F') # Fondo suave
-    pdf.rect(pdf.l_margin, pdf.get_y(), 95, 32)      # Borde
+    # Estilo de Sello de Normalización Elite V21
+    pdf.set_fill_color(248, 250, 252)
+    pdf.rect(pdf.l_margin, pdf.get_y(), 105, 35, 'F') # Fondo
+    pdf.rect(pdf.l_margin, pdf.get_y(), 105, 35)      # Borde Simple
+    pdf.rect(pdf.l_margin + 1, pdf.get_y() + 1, 103, 33) # Borde Doble (Elite Style)
     
     pdf.set_font("helvetica", "B", 10)
-    pdf.set_text_color(0, 100, 180) # Azul Institucional
-    pdf.set_xy(pdf.l_margin + 3, pdf.get_y() + 2)
-    pdf.cell(0, 6, "✔ APROBACION OFICIAL - SGC ELITE", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.set_text_color(15, 23, 42) # Slate 900
+    pdf.set_xy(pdf.l_margin + 5, pdf.get_y() + 4)
+    pdf.cell(0, 6, "✔ EXPEDIENTE NORMALIZADO - SGC ELITE", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     
     pdf.set_font("helvetica", "", 8)
-    pdf.set_text_color(30, 41, 59)
-    pdf.set_x(pdf.l_margin + 3)
-    pdf.cell(0, 4, f"Validado por: {user_name.upper()}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-    pdf.set_x(pdf.l_margin + 3)
-    pdf.cell(0, 4, f"Cargo/Rol: {role.upper()}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-    pdf.set_x(pdf.l_margin + 3)
-    pdf.cell(0, 4, f"Fecha de Aprobacion: {timestamp}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.set_text_color(71, 85, 105) # Slate 600
+    pdf.set_x(pdf.l_margin + 5)
+    pdf.cell(0, 4, f"Validado: {user_name.upper()}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.set_x(pdf.l_margin + 5)
+    pdf.cell(0, 4, f"Cargo: {role.upper()}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.set_x(pdf.l_margin + 5)
+    pdf.cell(0, 4, f"Timestamp: {timestamp}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     
-    # Identificador Único de Normalización
-    h = f"V17-HMO-{abs(hash(user_name + timestamp)) % 10**8:08d}"
+    # Identificador Único de Normalización (Blockchain Style Hash)
+    h = f"HMO-{abs(hash(user_name + timestamp)) % 10**10:010d}-ELITE"
     pdf.set_font("courier", "B", 7)
-    pdf.set_text_color(100, 100, 100)
-    pdf.set_x(pdf.l_margin + 3)
-    pdf.cell(0, 5, f"ID VERIFICACION: {h}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.set_text_color(100, 116, 139)
+    pdf.set_x(pdf.l_margin + 5)
+    pdf.cell(0, 5, f"VERIFICACIÓN: {h}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     
-    # Marca de Agua / Sello Visual
-    pdf.set_font("helvetica", "B", 35)
-    pdf.set_text_color(200, 220, 240)
-    pdf.text(pdf.l_margin + 45, pdf.get_y() - 15, "APROBADO")
+    # Marca de Agua sutil
+    pdf.set_font("helvetica", "B", 40)
+    pdf.set_text_color(241, 245, 249)
+    pdf.text(pdf.l_margin + 35, pdf.get_y() - 15, "PRO ELITE")
+
+    # Sello de Excelencia si aplica
+    if score >= 86:
+        pdf.set_font("helvetica", "B", 12)
+        pdf.set_text_color(212, 175, 55)
+        pdf.text(pdf.l_margin + 75, pdf.get_y() - 25, "GOLD")
 
 if __name__ == "__main__":
     # Test session

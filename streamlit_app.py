@@ -8,6 +8,7 @@ import sys
 import io
 import shutil
 import json
+import zipfile
 
 # --- CONFIGURACIÓN DE RUTAS PARA DESPLIEGUE ---
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -15,7 +16,7 @@ GEN_PATH = os.path.join(SCRIPT_DIR, "HMO_Auditor_Master_V1", "04_Arquitectura_y_
 if GEN_PATH not in sys.path:
     sys.path.append(GEN_PATH)
 
-from HMO_PDF_Generator import generate_audit_program_pdf, generate_preparation_guide_pdf, generate_document_template_pdf
+from HMO_PDF_Generator import generate_audit_program_pdf, generate_preparation_guide_pdf, generate_document_template_pdf, generate_maturity_report_pdf
 from HMO_AI_Engine import HMO_AI_Engine
 from HMO_Auditor_Master_V2_Generator import create_audit_program_v2
 from HMO_Checklist_Legal_Generator import create_legal_checklist
@@ -1368,27 +1369,25 @@ else:
             cc_ready = st.session_state.get('expediente', {}).get("Camara de Comercio (Existencia Legal)") is not None
             rut_ready = st.session_state.get('expediente', {}).get("RUT (Registro Unico Tributario)") is not None
 
-            # Cargadores Centrales (V19.7)
+            # Cargadores Centrales (V19.9) - Fijos en la parte superior para guía
             c_doc_a, c_doc_b = st.columns(2)
             with c_doc_a:
                 st.markdown(f"<div class='elite-card' style='border-top: 3px solid {'#10B981' if cc_ready else '#00C2FF'};'>", unsafe_allow_html=True)
                 st.markdown("<p style='font-size:0.75rem; font-weight:700; color:#94A3B8; margin-bottom:0.5rem;'>📄 CÁMARA DE COMERCIO (Existencia y Rep. Legal)</p>", unsafe_allow_html=True)
                 uploaded_cc = st.file_uploader("CC_UPLOAD", type=["pdf", "jpg", "jpeg", "png"], key="smart_cc", label_visibility="collapsed")
                 
-                # Procesamiento Inmediato CC
-                if uploaded_cc:
-                    with st.spinner("Validando CC..."):
+                if uploaded_cc and not cc_ready:
+                    with st.spinner("Procesando CC..."):
                         res = procesar_documento(uploaded_cc.read(), uploaded_cc.name) if OCR_DISPONIBLE else {"tipo_doc":"unknown"}
                     if res.get("tipo_doc") == "camara_comercio":
-                        st.success(f"✅ CC Validada ({res.get('confianza',0)}%)")
-                        if st.button("⚡ SINCRONIZAR DATOS CC", key="apply_cc_smart"):
-                            for k,v in resultado_a_session_state(res).items(): st.session_state[k] = v
-                            if res.get('rep_legal'): st.session_state['rep_legal'] = res['rep_legal']
-                            if res.get('rep_id'): st.session_state['rep_id'] = res['rep_id']
-                            st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {"validado":True, "confianza":res.get('confianza')}
-                            save_audit_state(); st.rerun()
-                    else:
-                        st.error("Tipo de documento no válido para Cámara de Comercio.")
+                        # Aplicar datos automáticamente
+                        for k,v in resultado_a_session_state(res).items(): st.session_state[k] = v
+                        if res.get('rep_legal'): st.session_state['rep_legal'] = res['rep_legal']
+                        if res.get('rep_id'): st.session_state['rep_id'] = res['rep_id']
+                        st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {"validado":True, "confianza":res.get('confianza')}
+                        save_audit_state(); st.rerun()
+                elif cc_ready:
+                    st.success("✅ Documento detectado y vinculado.")
                 st.markdown("</div>", unsafe_allow_html=True)
 
             with c_doc_b:
@@ -1396,38 +1395,49 @@ else:
                 st.markdown("<p style='font-size:0.75rem; font-weight:700; color:#94A3B8; margin-bottom:0.5rem;'>🧾 RUT (DIAN)</p>", unsafe_allow_html=True)
                 uploaded_rut = st.file_uploader("RUT_UPLOAD", type=["pdf", "jpg", "jpeg", "png"], key="smart_rut", label_visibility="collapsed")
                 
-                # Procesamiento Inmediato RUT
-                if uploaded_rut:
-                    with st.spinner("Validando RUT..."):
+                if uploaded_rut and not rut_ready:
+                    with st.spinner("Procesando RUT..."):
                         res_r = procesar_documento(uploaded_rut.read(), uploaded_rut.name) if OCR_DISPONIBLE else {"tipo_doc":"unknown"}
                     if res_r.get("tipo_doc") == "rut":
-                        st.success(f"✅ RUT Validado ({res_r.get('confianza',0)}%)")
-                        if st.button("⚡ SINCRONIZAR DATOS RUT", key="apply_rut_smart"):
-                            for k,v in resultado_a_session_state(res_r).items(): st.session_state[k] = v
-                            st.session_state['expediente']["RUT (Registro Unico Tributario)"] = {"validado":True, "confianza":res_r.get('confianza')}
-                            save_audit_state(); st.rerun()
-                    else:
-                        st.error("Tipo de documento no válido para RUT.")
+                        # Aplicar datos automáticamente
+                        for k,v in resultado_a_session_state(res_r).items(): st.session_state[k] = v
+                        st.session_state['expediente']["RUT (Registro Unico Tributario)"] = {"validado":True, "confianza":res_r.get('confianza')}
+                        save_audit_state(); st.rerun()
+                elif rut_ready:
+                    st.success("✅ Documento detectado y vinculado.")
                 st.markdown("</div>", unsafe_allow_html=True)
 
-            # --- CAMPOS DE IDENTIDAD (Sólo si hay documentos) ---
+            # --- CAMPOS DE IDENTIDAD (Desbloqueados por documentos) ---
             if cc_ready or rut_ready:
                 st.markdown("<br>", unsafe_allow_html=True)
-                st.markdown("<div class='elite-card' style='background:rgba(0,194,255,0.02);'>", unsafe_allow_html=True)
-                st.markdown("##### 📝 Confirmación de Identidad Extraída")
-                ci1, ci2, ci3 = st.columns(3)
-                st.session_state['auditor_name'] = ci1.text_input("Auditor Líder", value=st.session_state.get('auditor_name',''), key="smart_aud")
-                st.session_state['rep_legal'] = ci2.text_input("Representante Legal", value=st.session_state.get('rep_legal',''), key="smart_rep")
-                st.session_state['rep_id'] = ci3.text_input("N° Identificación", value=st.session_state.get('rep_id',''), key="smart_id")
+                st.markdown("<div class='elite-card' style='background:rgba(0,194,255,0.03); border: 1.5px dashed rgba(0,194,255,0.3);'>", unsafe_allow_html=True)
+                st.markdown("##### 📝 Perfil de Auditoría (Edición Manual/HITL)")
                 
+                ci1, ci2 = st.columns(2)
+                st.session_state['empresa_nombre'] = ci1.text_input("Nombre de la Empresa", value=st.session_state.get('empresa_nombre',''), key="smart_name")
+                st.session_state['auditor_name'] = ci2.text_input("Auditor Líder (Diligenciamiento Manual)", value=st.session_state.get('auditor_name',''), key="smart_aud", placeholder="Nombre completo del auditor")
+                
+                ci3, ci4 = st.columns(2)
+                st.session_state['rep_legal'] = ci3.text_input("Representante Legal", value=st.session_state.get('rep_legal',''), key="smart_rep")
+                st.session_state['rep_id'] = ci4.text_input("N° Identificación Representante", value=st.session_state.get('rep_id',''), key="smart_id")
+                
+                # Checkbox de re-carga
+                if st.checkbox("🔄 Re-subir documentos base"):
+                    st.session_state['expediente'].pop("Camara de Comercio (Existencia Legal)", None)
+                    st.session_state['expediente'].pop("RUT (Registro Unico Tributario)", None)
+                    save_audit_state(); st.rerun()
+
                 # Botón de Avance habilitado solo con ambos documentos
                 if cc_ready and rut_ready:
                     if st.button("💾 GUARDAR IDENTIDAD Y CONTINUAR", use_container_width=True, type="primary"):
-                        save_audit_state(); st.success("Identidad Blindada.")
-                        st.session_state['ing_f'] = 'B'
-                        st.rerun()
+                        if not st.session_state['auditor_name']:
+                            st.error("Por favor, ingrese el nombre del Auditor Líder para continuar.")
+                        else:
+                            save_audit_state(); st.success("Identidad Guardada.")
+                            st.session_state['ing_f'] = 'B'
+                            st.rerun()
                 else:
-                    st.warning("⚠️ Se requieren AMBOS documentos (CC y RUT) para avanzar a la Fase B.")
+                    st.warning("⚠️ Se requieren AMBOS documentos (CC y RUT) cargados para avanzar a la Fase B.")
                     st.button("💾 GUARDAR IDENTIDAD Y CONTINUAR", disabled=True, use_container_width=True)
                 st.markdown("</div>", unsafe_allow_html=True)
             # --- FASE B: DIMENSIÓN ---
@@ -1488,33 +1498,42 @@ else:
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # Botonera de Acción Integrada (V19.7 Fix UI)
+                    # Botonera de Acción Elite (V19.9 - Estandarizada)
                     st.markdown("<div style='background:rgba(255,255,255,0.03); border-radius:0 0 12px 12px; padding:0.2rem; border-top:1px solid rgba(255,255,255,0.05);'>", unsafe_allow_html=True)
                     ca1, ca2, ca3 = st.columns([1,1,1])
                     
                     if not doc_ready:
                         with ca1:
-                            # Cargador ultra-compacto via CSS (V19.7)
-                            _f = st.file_uploader("UP_MINI", key=f"up_v19.7_{i}", label_visibility="collapsed")
+                            # Cargador ultra-compacto + Validar
+                            _f = st.file_uploader("UP", key=f"up_v19.9_{i}", label_visibility="collapsed")
                             if _f:
-                                st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
-                                save_audit_state(); st.rerun()
+                                with st.spinner(""):
+                                    st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
+                                    save_audit_state(); st.rerun()
                         with ca2:
-                            if st.button("🤖", key=f"ia_v19.7_{i}", help="IA Draft", use_container_width=True):
-                                ui_generar_borrador_ia(doc['doc'], doc['area'], doc.get('justificacion',''))
+                            # ⚖️ Justificar
+                            if st.button("⚖️", key=f"jus_v19.9_{i}", help="Justificar Requisito", use_container_width=True):
+                                if doc['doc'] not in st.session_state['justificados']:
+                                    st.session_state['justificados'].append(doc['doc'])
+                                    save_audit_state(); st.toast(f"Justificado: {doc['doc'][:20]}...")
                         with ca3:
-                            ejemplo = formatear_ejemplo(doc, st.session_state)
-                            if st.button("📄", key=f"tpl_v19.7_{i}", help="Template", use_container_width=True):
-                                with st.spinner("..."):
-                                    path_tpl = generate_document_template_pdf(
-                                        doc['doc'], doc.get('instrucciones','Completar.'), 
-                                        st.session_state['base_path'], company, st.session_state['norma'], ejemplo_base=ejemplo
-                                    )
-                                    with open(path_tpl, "rb") as f:
-                                        st.download_button("💾", f, file_name=os.path.basename(path_tpl), key=f"dl_v19.7_{i}", use_container_width=True)
+                            # 🤖 IA Suggest
+                            if st.button("🤖", key=f"ia_v19.9_{i}", help="Generar con IA", use_container_width=True):
+                                ui_generar_borrador_ia(doc['doc'], doc['area'], doc.get('justificacion',''))
                     else:
+                        with ca1:
+                            # Re-Validar / Ver
+                            st.button("🔍", key=f"view_v19.9_{i}", help="Ver Evidencia", use_container_width=True)
                         with ca2:
-                            if st.button("🗑️", key=f"del_v19.7_{i}", help="Eliminar", use_container_width=True):
+                            # Status Justificación (si aplica)
+                            is_jus = doc['doc'] in st.session_state['justificados']
+                            if st.button("⚖️" if is_jus else "📜", key=f"jus_st_v19.9_{i}", help="Cambiar Estatus", use_container_width=True):
+                                if is_jus: st.session_state['justificados'].remove(doc['doc'])
+                                else: st.session_state['justificados'].append(doc['doc'])
+                                save_audit_state(); st.rerun()
+                        with ca3:
+                            # 🗑️ Eliminar
+                            if st.button("🗑️", key=f"del_v19.9_{i}", help="Eliminar", use_container_width=True):
                                 del st.session_state['expediente'][doc['doc']]
                                 save_audit_state(); st.rerun()
                     st.markdown("</div>", unsafe_allow_html=True)
@@ -1589,69 +1608,83 @@ else:
             }))
             
         with tab_emision:
-            st.write("### Generación de Activos Certificados")
-            c_doc1, c_doc2 = st.columns(2)
+            st.markdown("<div class='elite-card' style='padding:0.8rem;'><b>🏗️ Centro de Emisión Digital: Selección de Activos</b>", unsafe_allow_html=True)
             
-            # --- DOCUMENTO 1: PROGRAMA ---
-            with c_doc1:
-                st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
-                st.write("**GAD-PROG-01: Programa de Auditoría**")
-                st.caption("Documento maestro de planeación.")
-                
-                # Consolidar Identidad Legal (V1.6.0)
-                identity_data = {
-                    "auditor": st.session_state['auditor_name'],
-                    "rep_legal": st.session_state['rep_legal'],
-                    "rep_id": st.session_state['rep_id'],
-                    "tamanio": st.session_state['empresa_tamanio'],
-                    "sector": st.session_state['empresa_sector'],
-                    "nit": st.session_state['empresa_nit'],
-                    "direccion": st.session_state['empresa_direccion'],
-                    "web": st.session_state['empresa_web'],
-                    "objeto_social": st.session_state['empresa_objeto']
-                }
+            # --- RESUMEN DE IDENTIDAD (PARA LOS GENERADORES) ---
+            identity_data = {
+                "auditor": st.session_state['auditor_name'],
+                "rep_legal": st.session_state['rep_legal'],
+                "rep_id": st.session_state['rep_id'],
+                "tamanio": st.session_state['empresa_tamanio'],
+                "sector": st.session_state['empresa_sector'],
+                "nit": st.session_state['empresa_nit'],
+                "direccion": st.session_state['empresa_direccion'],
+                "web": st.session_state['empresa_web'],
+                "objeto_social": st.session_state['empresa_objeto']
+            }
 
-                # Botón de Plantilla Vacía (Siempre disponible)
-                from HMO_Auditor_Master_V2_Generator import create_audit_program_v2
-                if st.button("📥 Descargar Plantilla Vacía", key="empty_prog"):
-                    path = os.path.join(base_path, "01_Templates_Vacios", f"PLANTILLA_PROG.docx")
-                    create_audit_program_v2(company, os.path.dirname(path), st.session_state['logo_path'], {}, identity_data)
-                    with open(path, "rb") as f: st.download_button("Guardar Template", f, file_name="Plantilla_Vacia_PROG.docx")
-                
-            if st.session_state['autorizado_emision']:
-                st.markdown("<div class='elite-card' style='border-color: #10B981;'>", unsafe_allow_html=True)
-                st.write("### 🚀 DESCARGA DUAL ELITE: PAQUETE DE AUDITORÍA")
-                st.info("El sistema ha procesado la materia prima y está listo para emitir los formatos oficiales en múltiples formatos.")
-                
-                if st.button("🏁 GENERAR Y EMITIR DOCUMENTACIÓN"):
-                    with st.spinner("Consolidando Expediente Profesional..."):
-                        # Programa de Auditoría
+            # --- REJILLA DE EMISIÓN ALTA DENSIDAD ---
+            em_col1, em_col2, em_col3, em_col4 = st.columns(4)
+            
+            with em_col1:
+                st.markdown("<div class='elite-card' style='text-align:center;'>", unsafe_allow_html=True)
+                st.write("**PROG-01**")
+                st.caption("Programa de Auditoría")
+                if st.button("📥 WORD", key="em_prog_w", use_container_width=True):
+                    p_prog = os.path.join(st.session_state['base_path'], "01_Direccion_y_Estrategia")
+                    f = create_audit_program_v2(company, p_prog, st.session_state['logo_path'], st.session_state['expediente'], identity_data)
+                    st.toast("Word Generado")
+                st.markdown("</div>", unsafe_allow_html=True)
+
+            with em_col2:
+                st.markdown("<div class='elite-card' style='text-align:center;'>", unsafe_allow_html=True)
+                st.write("**LIST-02**")
+                st.caption("Checklist Legal")
+                if st.button("📥 EXCEL", key="em_list_e", use_container_width=True):
+                    p_check = os.path.join(st.session_state['base_path'], "02_Gestion_de_Calidad")
+                    f = create_legal_checklist(company, p_check, st.session_state['logo_path'], st.session_state['expediente'], identity_data)
+                    st.toast("Excel Generado")
+                st.markdown("</div>", unsafe_allow_html=True)
+
+            with em_col3:
+                st.markdown("<div class='elite-card' style='text-align:center;'>", unsafe_allow_html=True)
+                st.write("**REP-V20**")
+                st.caption("Reporte Madurez")
+                if st.button("📥 PDF", key="em_rep_p", use_container_width=True):
+                    f = generate_maturity_report_pdf(company, st.session_state['base_path'], chs['score'], chs['level'])
+                    st.toast("PDF Generado")
+                st.markdown("</div>", unsafe_allow_html=True)
+
+            with em_col4:
+                st.markdown("<div class='elite-card' style='text-align:center; border: 1px solid #10B981;'>", unsafe_allow_html=True)
+                st.write("**💎 ZIP**")
+                st.caption("Master Pack Elite")
+                if st.button("🏗️ COMPILAR", key="em_zip_all", use_container_width=True, type="primary"):
+                    with st.spinner("Empaquetando..."):
+                        # Generar todos los archivos
                         p_prog = os.path.join(st.session_state['base_path'], "01_Direccion_y_Estrategia")
                         f1 = create_audit_program_v2(company, p_prog, st.session_state['logo_path'], st.session_state['expediente'], identity_data)
-                        
-                        # Checklist Legal
                         p_check = os.path.join(st.session_state['base_path'], "02_Gestion_de_Calidad")
                         f2 = create_legal_checklist(company, p_check, st.session_state['logo_path'], st.session_state['expediente'], identity_data)
+                        f3 = generate_maturity_report_pdf(company, st.session_state['base_path'], chs['score'], chs['level'])
                         
-                        st.success("✅ Documentación Generada Exitosamente")
+                        # Crear ZIP en memoria
+                        buf = io.BytesIO()
+                        with zipfile.ZipFile(buf, "x") as csv_zip:
+                            csv_zip.write(f1, arcname=os.path.basename(f1))
+                            csv_zip.write(f2, arcname=os.path.basename(f2))
+                            csv_zip.write(f3, arcname=os.path.basename(f3))
                         
-                        c1, c2 = st.columns(2)
-                        with c1:
-                            st.write("#### 📝 Word/Excel (Editables)")
-                            with open(f1, "rb") as f: st.download_button("📂 Programa de Auditoría (Word)", f, file_name=os.path.basename(f1))
-                            with open(f2, "rb") as f: st.download_button("📊 Checklist Legal (Excel)", f, file_name=os.path.basename(f2))
-                        
-                        with c2:
-                            st.write("#### 🔒 PDF (Certificados)")
-                            # Generación REAL de PDF
-                            try:
-                                f_pdf = generate_audit_program_pdf(company, st.session_state['base_path'], st.session_state['expediente'], identity_data)
-                                with open(f_pdf, "rb") as f:
-                                    st.download_button("📄 Descargar Programa Certificado (PDF)", f, file_name=os.path.basename(f_pdf))
-                            except Exception as e:
-                                st.error(f"Error PDF: {e}")
-                                st.button("📄 Exportar PDF (ELITE)", disabled=True)
+                        st.download_button(
+                            label="📂 DESCARGAR EXPEDIENTE .ZIP",
+                            data=buf.getvalue(),
+                            file_name=f"EXPEDIENTE_ELITE_{company}.zip",
+                            mime="application/zip",
+                            use_container_width=True
+                        )
                         st.balloons()
+                st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
     # --- SECCIÓN: PORTAL DE COLABORADOR (V16.0) ---
     elif menu == "📋 Portal de Entrega":
         st.markdown(f"<h1 class='norm-header'>📋 Portal de Colaboración: {st.session_state['user_role'].upper()}</h1>", unsafe_allow_html=True)
