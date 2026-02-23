@@ -1035,7 +1035,11 @@ else:
                 try:
                     import subprocess
                     _pull = subprocess.run(
-                        ["git", "pull", "origin", "main"],
+                        ["git", "fetch", "--all"],
+                        capture_output=True, text=True, cwd=os.path.dirname(os.path.abspath(__file__))
+                    )
+                    _reset = subprocess.run(
+                        ["git", "reset", "--hard", "origin/main"],
                         capture_output=True, text=True, cwd=os.path.dirname(os.path.abspath(__file__))
                     )
                     if "Already up to date" in _pull.stdout:
@@ -1382,7 +1386,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.4 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.8 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
