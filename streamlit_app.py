@@ -268,84 +268,84 @@ st.markdown("""
         display: none !important; /* Ocultar texto decorativo para ahorrar espacio */
     }
     
-    /* ARQUITECTURA CYBER-CAPSULE FASE C V21.23 (ALINEACIÓN REFERENCIA) */
+    /* ARQUITECTURA CYBER-CAPSULE PRO FASE C V21.24 (STABILITY 3xN) */
     .cyber-capsule {
-        background: rgba(14, 20, 31, 0.95) !important;
+        background: rgba(14, 20, 31, 0.98) !important;
         border: 2px solid var(--capsule-border, #334155) !important;
-        border-radius: 18px !important;
+        border-radius: 16px !important;
         padding: 0 !important;
-        margin-bottom: 0.8rem !important;
+        margin-bottom: 1.5rem !important;
         overflow: hidden !important;
         display: flex !important;
         flex-direction: column !important;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
-        transition: transform 0.2s ease, border-color 0.2s ease !important;
-    }
-    .cyber-capsule:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 20px rgba(0, 194, 255, 0.15) !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
     }
 
     .capsule-header {
-        background: rgba(255, 255, 255, 0.03) !important;
-        padding: 10px 12px !important;
+        background: rgba(255, 255, 255, 0.04) !important;
+        padding: 12px 15px !important;
         display: flex !important;
         align-items: center !important;
-        gap: 10px !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        gap: 12px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        min-height: 65px !important;
     }
 
     .capsule-body {
-        padding: 10px 12px !important;
+        padding: 12px 15px 5px 15px !important;
         flex-grow: 1 !important;
+        background: transparent !important;
     }
 
-    /* Botones de Iconos Directos (Estilo Referencia) */
+    /* Fusión Total: Footer pegado al cuerpo sin espacios */
     .capsule-footer {
-        padding: 8px 12px 12px 12px !important;
+        padding: 5px 15px 12px 15px !important;
         display: flex !important;
         justify-content: flex-start !important;
-        gap: 10px !important;
+        gap: 12px !important;
+        background: transparent !important;
     }
 
     .capsule-footer button {
-        background: rgba(0, 194, 255, 0.08) !important;
-        border: 1px solid rgba(0, 194, 255, 0.3) !important;
+        background: rgba(0, 194, 255, 0.1) !important;
+        border: 1px solid rgba(0, 194, 255, 0.4) !important;
         color: #00C2FF !important;
-        width: 36px !important;
-        height: 36px !important;
+        width: 42px !important;
+        height: 42px !important;
         padding: 0 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        border-radius: 8px !important;
-        font-size: 1.1rem !important;
+        border-radius: 10px !important;
+        font-size: 1.3rem !important;
         transition: all 0.2s ease !important;
     }
     .capsule-footer button:hover {
         background: #00C2FF !important;
         color: white !important;
-        transform: scale(1.1) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(0, 194, 255, 0.3) !important;
     }
 
-    /* Erradicación Blindada de Fondos Streamlit */
-    [data-testid="stFileUploader"], [data-testid="stFileUploader"] section, 
-    [data-testid="stFileUploader"] div, [data-testid="stFileUploaderDropzone"],
-    section[data-testid="stFileUploaderSection"] {
-        background-color: transparent !important;
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        min-height: unset !important;
+    /* Blindaje Extremo contra Espacios Streamlit */
+    [data-testid="stFileUploader"] {
+        padding: 0 !important;
+        margin-top: 5px !important;
+    }
+    
+    [data-testid="stFileUploader"] section {
+        padding: 0 !important;
     }
     
     [data-testid="stFileUploader"] button {
         background: #00C2FF !important;
         border: none !important;
         font-weight: 700 !important;
-        border-radius: 6px !important;
-        height: 32px !important;
-        font-size: 0.75rem !important;
+        border-radius: 8px !important;
+        height: 40px !important;
+        font-size: 0.85rem !important;
+        width: 100% !important;
+        margin-bottom: 5px !important;
     }
     /* MISSIÓN CONTROL FASE D V21.21 (ELITE FINAL) */
     .fase-d-mission-control {
@@ -1474,7 +1474,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.23 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.24 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1605,53 +1605,53 @@ else:
             </div>
             """, unsafe_allow_html=True)
 
-            # Malla de Documentos 4 Columnas (Arquitectura Cyber-Capsule V21.23)
-            cols = st.columns(4)
+            # Malla de Documentos 3 Columnas (Arquitectura Cyber-Capsule PRO V21.24)
+            cols = st.columns(3)
             for i, doc in enumerate(cartas_todas):
-                with cols[i % 4]:
+                with cols[i % 3]:
                     doc_ready = doc['doc'] in st.session_state['expediente']
                     is_prio = doc.get('prioridad') == "VITAL (Obligatorio)"
                     
                     # Colores Dinámicos Estilo Referencia
-                    border_color = "#10b981" if doc_ready else ("#00c2ff" if is_prio else "#334155")
+                    border_color = "#10b981" if doc_ready else ("#00c2ff" if is_prio else "#374151")
                     status_icon = "✅" if doc_ready else ("⌛" if is_prio else "📁")
                     
-                    # CYBER-CAPSULE
+                    # CYBER-CAPSULE PRO
                     st.markdown(f"<div class='cyber-capsule' style='--capsule-border: {border_color};'>", unsafe_allow_html=True)
                     
                     # 1. Capsule Header
                     st.markdown(f"""
                     <div class='capsule-header'>
-                        <span style='font-size:1.1rem;'>{status_icon}</span>
-                        <span style='font-size:0.75rem; font-weight:700; color:white; line-height:1.1; overflow-wrap:anywhere;'>{doc['doc']}</span>
+                        <span style='font-size:1.4rem;'>{status_icon}</span>
+                        <span style='font-size:0.85rem; font-weight:700; color:white; line-height:1.2; overflow-wrap:anywhere;'>{doc['doc']}</span>
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # 2. Capsule Body (Cargador Compacto)
+                    # 2. Capsule Body (Cargador Fusionado)
                     st.markdown("<div class='capsule-body'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        _f = st.file_uploader("UP", key=f"up_v21.23_{i}", label_visibility="collapsed")
+                        _f = st.file_uploader("UP", key=f"up_v21.24_{i}", label_visibility="collapsed")
                         if _f:
                             with st.spinner(""):
                                 st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
                                 save_audit_state(); st.rerun()
                     else:
-                        st.markdown("<p style='color:#10b981; font-weight:700; font-size:0.6rem; text-align:center; margin-top:5px;'>SISTEMA PROTEGIDO / VALIDADO</p>", unsafe_allow_html=True)
+                        st.markdown("<div style='text-align:center; color:#10b981; font-weight:700; font-size:0.75rem; padding:12px; border:1px solid #10b981; border-radius:8px; background:rgba(16,185,129,0.05);'>VALIDADO Y PROTEGIDO</div>", unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
                     
-                    # 3. Capsule Footer (Botones de Iconos Directos)
+                    # 3. Capsule Footer (Iconos Directos sin Huecos)
                     st.markdown("<div class='capsule-footer'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        st.button("🤖", key=f"ia_v21.23_{i}", help="IA Analysis")
-                        st.button("⚖️", key=f"jus_v21.23_{i}", help="Justificar")
+                        st.button("🤖", key=f"ia_v21.24_{i}", help="IA Analysis")
+                        st.button("⚖️", key=f"jus_v21.24_{i}", help="Justificar")
                     else:
-                        st.button("🔍", key=f"view_v21.23_{i}")
+                        st.button("🔍", key=f"view_v21.24_{i}", help="View File")
                         is_jus = doc['doc'] in st.session_state['justificados']
-                        if st.button("⚖️" if is_jus else "📝", key=f"jus_st_v21.23_{i}"):
+                        if st.button("⚖️" if is_jus else "📝", key=f"jus_st_v21.24_{i}", help="Edit Justification"):
                             if is_jus: st.session_state['justificados'].remove(doc['doc'])
                             else: st.session_state['justificados'].append(doc['doc'])
                             save_audit_state(); st.rerun()
-                        if st.button("🗑️", key=f"del_v21.23_{i}"):
+                        if st.button("🗑️", key=f"del_v21.24_{i}", help="Delete Document"):
                             del st.session_state['expediente'][doc['doc']]
                             save_audit_state(); st.rerun()
                     st.markdown("</div>", unsafe_allow_html=True)
