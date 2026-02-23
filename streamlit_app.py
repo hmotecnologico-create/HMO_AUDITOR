@@ -37,11 +37,8 @@ except Exception as _ae:
 # Configuración de página
 st.set_page_config(page_title="HMO Auditor Pro - V1.4 Elite", layout="wide", page_icon="🛡️")
 
-/* 
-   =================================================================
-   SISTEMA DE DISEÑO VAULT-MONOLITH V21.28 (NUCLEAR CLEANUP)
-   =================================================================
-*/
+# --- SISTEMA DE DISEÑO DARK-VOID V21.29 (PURGA TOTAL) ---
+st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
     
@@ -50,121 +47,122 @@ st.set_page_config(page_title="HMO Auditor Pro - V1.4 Elite", layout="wide", pag
         background-image: radial-gradient(circle at 50% 50%, #0A0F1A 0%, #05070A 100%) !important;
     }
 
-    /* COMPACTACIÓN Y REGLAS GLOBALES */
-    .block-container { padding-top: 1.5rem !important; max-width: 96% !important; }
-    .stApp, p, li { color: #CBD5E1 !important; font-family: 'Inter', sans-serif !important; }
+    /* COMPACTACIÓN EXTREMA */
+    .block-container { padding-top: 1rem !important; max-width: 96% !important; }
+    .stApp, p, li { color: #E2E8F0 !important; font-family: 'Inter', sans-serif !important; }
     h1, h2, h3 { font-family: 'Orbitron', sans-serif !important; color: #FFFFFF !important; text-align: center; letter-spacing: 2px; }
 
-    /* VAULT-MONOLITH CAPSULE (ARQUITECTURA DE UNA SOLA PIEZA) */
+    /* DARK-VOID CAPSULE (FUSIÓN ATÓMICA) */
     .cyber-capsule {
         background: #0D1117 !important;
         border: 2px solid var(--capsule-border, #1E293B) !important;
         border-radius: 12px !important;
         padding: 0 !important;
-        margin-bottom: 2rem !important;
+        margin-bottom: 1.5rem !important;
         overflow: hidden !important;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8) !important;
-        transition: transform 0.3s ease;
+        display: flex !important;
+        flex-direction: column !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9) !important;
     }
 
     .capsule-header {
-        background: rgba(255, 255, 255, 0.03) !important;
-        padding: 18px !important;
+        background: rgba(255, 255, 255, 0.02) !important;
+        padding: 15px !important;
         display: flex !important;
         align-items: center !important;
-        gap: 15px !important;
+        gap: 12px !important;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
     }
 
     .capsule-body {
-        padding: 20px !important;
+        padding: 0 !important;
         background: #0D1117 !important;
     }
 
-    /* EXTERMINIO DE WIDGETS DE STREAMLIT (FONDOS BLANCOS) */
+    /* ELIMINACIÓN DE BASURA STREAMLIT (FONDOS BLANCOS) */
     [data-testid="stFileUploader"], 
     [data-testid="stFileUploader"] section, 
     [data-testid="stFileUploader"] div,
-    [data-testid="stFileUploaderDropzone"] {
+    [data-testid="stFileUploaderDropzone"],
+    .stFileUploader div, .stFileUploader section {
         background: transparent !important;
+        background-color: transparent !important;
         border: none !important;
         box-shadow: none !important;
-        color: #94A3B8 !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
-    /* EL BOTÓN "BROWSE FILES" ES AHORA UNA PIEZA DE HARDWARE */
+    /* BOTÓN BROWSE INTEGRADO */
     [data-testid="stFileUploader"] button {
-        background: #1E293B !important;
-        border: 1px solid #334155 !important;
+        background: #111827 !important;
+        border: 1px solid rgba(0, 194, 255, 0.3) !important;
         color: #00C2FF !important;
         font-weight: 800 !important;
         text-transform: uppercase !important;
         width: 100% !important;
-        height: 45px !important;
-        border-radius: 6px !important;
+        height: 50px !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        font-family: 'Orbitron' !important;
         letter-spacing: 1px !important;
     }
     [data-testid="stFileUploader"] button:hover {
         background: #00C2FF !important;
         color: #000 !important;
-        border-color: #00C2FF !important;
     }
 
-    /* ICONOS DE ACCIÓN FUSIONADOS (BOTONES TRANSPARENTES) */
+    /* FOOTER DE ACCIÓN (FUSIÓN FÍSICA) */
     .capsule-footer {
-        padding: 10px 20px 20px 20px !important;
         display: flex !important;
-        gap: 15px !important;
-        background: #0D1117 !important;
+        background: rgba(255, 255, 255, 0.02) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+        padding: 0 !important;
+        gap: 0 !important;
     }
 
-    /* ESTILO DE BOTONES DE ACCIÓN PARA QUE NO PAREZCAN "PIEZAS SUELTAS" */
-    .stButton > button[key*="v21.28"] {
+    .stButton > button[key*="v21.29"] {
         background: transparent !important;
-        border: 1.5px solid rgba(0, 194, 255, 0.3) !important;
+        border: none !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
         color: #00C2FF !important;
-        width: 44px !important;
-        height: 44px !important;
-        border-radius: 8px !important;
-        font-size: 1.4rem !important;
+        height: 50px !important;
+        width: 100% !important;
+        border-radius: 0 !important;
+        font-size: 1.5rem !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         padding: 0 !important;
+        margin: 0 !important;
+        transition: all 0.2s ease !important;
     }
-    .stButton > button[key*="v21.28"]:hover {
-        border-color: #00C2FF !important;
+    .stButton > button[key*="v21.29"]:hover {
         background: rgba(0, 194, 255, 0.1) !important;
-        transform: translateY(-2px) !important;
+        color: #FFFFFF !important;
     }
 
-    /* ESTADO VALIDADO (MODO VAULT) */
     .capsule-validado {
-        padding: 15px !important;
-        border: 1.5px solid #10B981 !important;
-        border-radius: 8px !important;
-        background: rgba(16, 185, 129, 0.05) !important;
+        padding: 20px !important;
+        background: rgba(16, 185, 129, 0.08) !important;
         color: #10B981 !important;
         text-align: center !important;
         font-weight: 800 !important;
+        font-family: 'Orbitron' !important;
         font-size: 0.8rem !important;
         text-transform: uppercase !important;
+        letter-spacing: 2px !important;
     }
 
-    /* SIDEBAR COMPACTO */
     [data-testid="stSidebar"] {
         background: #05070A !important;
         border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     }
     [data-testid="stSidebarNav"] { display: none; }
     
-    .floating-help {
-        position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
-        background: #0D1117 !important; border: 1px solid #1E293B !important;
-        border-radius: 50% !important; display: flex; align-items: center;
-        justify-content: center; color: #00C2FF !important; font-size: 24px !important;
-        z-index: 1001; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-decoration: none !important;
-    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #05070A; }
+    ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 10px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -1240,7 +1238,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.28 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.29 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1371,7 +1369,7 @@ else:
             </div>
             """, unsafe_allow_html=True)
 
-            # Malla de Documentos 3 Columnas (Arquitectura Vault-Monolith V21.28)
+            # Malla de Documentos 3 Columnas (Arquitectura Dark-Void V21.29)
             cols = st.columns(3)
             for i, doc in enumerate(cartas_todas):
                 with cols[i % 3]:
@@ -1382,7 +1380,7 @@ else:
                     border_color = "#10b981" if doc_ready else ("#00c2ff" if is_prio else "#1E293B")
                     status_icon = "✅" if doc_ready else ("⌛" if is_prio else "📁")
                     
-                    # VAULT-MONOLITH CAPSULE
+                    # DARK-VOID CAPSULE
                     st.markdown(f"<div class='cyber-capsule' style='--capsule-border: {border_color};'>", unsafe_allow_html=True)
                     
                     # 1. Monolith Header
@@ -1391,16 +1389,15 @@ else:
                         <span style='font-size:1.6rem;'>{status_icon}</span>
                         <div style='display:flex; flex-direction:column;'>
                             <span style='font-size:0.6rem; color:#64748b; font-weight:800; text-transform:uppercase;'>{doc.get('area','GENERAL')}</span>
-                            <span style='font-size:0.9rem; font-weight:800; color:white; line-height:1.2;'>{doc['doc']}</span>
+                            <span style='font-size:0.9rem; font-weight:800; color:white; line-height:1.2; text-transform:uppercase;'>{doc['doc']}</span>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # 2. Monolith Body
+                    # 2. Monolith Body & Uploader (Fusión Void)
                     st.markdown("<div class='capsule-body'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        # Cargador Real sin texto basura
-                        _f = st.file_uploader("", key=f"up_v21.28_{i}", label_visibility="collapsed")
+                        _f = st.file_uploader("", key=f"up_v21.29_{i}", label_visibility="collapsed")
                         if _f:
                             with st.spinner(""):
                                 st.session_state['expediente'][doc['doc']] = {"score": 100, "validado": True}
@@ -1409,19 +1406,19 @@ else:
                         st.markdown("<div class='capsule-validado'>SISTEMA PROTEGIDO</div>", unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
                     
-                    # 3. Monolith Footer (Iconos Transparentes Fusionados)
+                    # 3. Monolith Footer (Acciones de Hardware)
                     st.markdown("<div class='capsule-footer'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        st.button("🤖", key=f"ia_v21.28_{i}")
-                        st.button("⚖️", key=f"jus_v21.28_{i}")
+                        st.button("🤖", key=f"ia_v21.29_{i}", use_container_width=True)
+                        st.button("⚖️", key=f"jus_v21.29_{i}", use_container_width=True)
                     else:
-                        st.button("🔍", key=f"view_v21.28_{i}")
+                        st.button("🔍", key=f"view_v21.29_{i}", use_container_width=True)
                         is_jus = doc['doc'] in st.session_state['justificados']
-                        if st.button("⚖️" if is_jus else "📝", key=f"jus_st_v21.28_{i}"):
+                        if st.button("⚖️" if is_jus else "📝", key=f"jus_st_v21.29_{i}", use_container_width=True):
                             if is_jus: st.session_state['justificados'].remove(doc['doc'])
                             else: st.session_state['justificados'].append(doc['doc'])
                             save_audit_state(); st.rerun()
-                        st.button("🗑️", key=f"del_v21.28_{i}")
+                        st.button("🗑️", key=f"del_v21.29_{i}", use_container_width=True)
                     st.markdown("</div>", unsafe_allow_html=True)
                     
                     st.markdown("</div>", unsafe_allow_html=True) # Cierre Vault
@@ -1627,62 +1624,6 @@ else:
                         )
                         st.balloons()
                 st.markdown("</div>", unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)
-    # --- SECCIÓN: PORTAL DE COLABORADOR (V16.0) ---
-    elif menu == "📋 Portal de Entrega":
-        st.markdown(f"<h1 class='norm-header'>📋 Portal de Colaboración: {st.session_state['user_role'].upper()}</h1>", unsafe_allow_html=True)
-        st.info(f"Bienvenido. Aquí podrá gestionar los documentos requeridos para el área de **{st.session_state['user_role']}**.")
-        
-        # Filtrar documentos por el área del usuario
-        area_map = {"juridica": "Juridico", "finanzas": "Financiera", "responsable": "Talento Humano"}
-        mi_area = area_map.get(st.session_state['user_role'], "Operaciones")
-        mis_docs = [c for c in cartas_todas if c.get('area') == mi_area or c.get('prioridad') == "VITAL (Obligatorio)"]
-        
-        c_p1, c_p2 = st.columns([2, 1])
-        with c_p1:
-            # Malla para Colaborador (V19.5 Unificada)
-            st.write("### Mis Pendientes de Entrega")
-            if not mis_docs:
-                st.info("No tienes requerimientos pendientes para tu área.")
-            else:
-                cols_colab = st.columns(4)
-                for i, d in enumerate(mis_docs):
-                    with cols_colab[i % 4]:
-                        doc_ready = d['doc'] in st.session_state['expediente']
-                        status_icon = "✅" if doc_ready else "⏳"
-                        status_color = "#10B981" if doc_ready else "#00C2FF"
-                        
-                        st.markdown(f"""
-                        <div class="doc-card-mini" style="border-left: 4px solid {status_color};">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
-                                <span style="font-size:1.1rem; filter: drop-shadow(0 0 5px {status_color}80);">{status_icon}</span>
-                                <span class="status-badge">VITAL</span>
-                            </div>
-                            <p style="font-size:0.8rem; font-weight:700; color:#FFFFFF; margin:0; line-height:1.2; height: 2.4rem; overflow:hidden;">{d['doc']}</p>
-                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin: 0.5rem 0;">
-                        </div>
-                        """, unsafe_allow_html=True)
-                        
-                        st.markdown("<div style='margin-top:-3.8rem; padding: 0 0.5rem;'>", unsafe_allow_html=True)
-                        ca1, ca2 = st.columns(2)
-                        if not doc_ready:
-                            with ca1:
-                                _f = st.file_uploader("📥", key=f"up_colab_{i}", label_visibility="collapsed")
-                                if _f:
-                                    st.session_state['expediente'][d['doc']] = {"validado": True, "hitl": True}
-                                    save_audit_state(); st.rerun()
-                            with ca2:
-                                if st.button("🤖", key=f"ia_colab_{i}", help="Draft IA", use_container_width=True):
-                                    ui_generar_borrador_ia(d['doc'], d['area'], d['justificacion'])
-                        else:
-                            st.markdown("<p style='font-size:0.6rem; color:#10B981; text-align:center;'>LISTO</p>", unsafe_allow_html=True)
-                        st.markdown("</div><br>", unsafe_allow_html=True)
-        
-        with c_p2:
-            st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
-            st.write("### Estatus de Cumplimiento")
-            pct_area = int((len([d for d in mis_docs if d['doc'] in st.session_state['expediente']]) / len(mis_docs)) * 100) if mis_docs else 100
-            draw_donut(pct_area, "MI PROGRESO", "#00C2FF")
             st.markdown("</div>", unsafe_allow_html=True)
 
     # --- SECCIÓN: AYUDA ---
