@@ -263,71 +263,86 @@ st.markdown("""
         font-weight: 700 !important;
         font-size: 0.75rem !important;
         margin-bottom: 4px !important;
-    }
     [data-testid="stFileUploaderDropzone"] div {
         display: none !important; /* Ocultar texto decorativo para ahorrar espacio */
     }
     
-    /* MONOBLOK ABSOLUTO FASE C V21.19 (ULTRA-BLINDAJE) */
-    /* Erradicación total de fondos Streamlit en Modo Elite */
-    [data-testid="stFileUploader"], [data-testid="stFileUploader"] section, 
-    [data-testid="stFileUploader"] div, [data-testid="stFileUploaderDropzone"],
-    .stFileUploader section[data-testid="stFileUploaderSection"] {
+    /* ARQUITECTURA TITANIUM FASE C V21.20 (SINTONÍA ELITE) */
+    /* Blindaje Nivel Sistema contra parches blancos de Streamlit */
+    [data-testid="stFileUploader"], 
+    [data-testid="stFileUploader"] section, 
+    [data-testid="stFileUploader"] div, 
+    [data-testid="stFileUploaderDropzone"],
+    [data-testid="stWidgetLabel"],
+    section[data-testid="stFileUploaderSection"] {
         background-color: transparent !important;
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
+        padding: 0 !important;
     }
     
-    /* La tarjeta total */
-    .fase-c-monoblok-card {
-        background: rgba(14, 20, 31, 0.96) !important;
-        border: 2.5px solid rgba(0, 194, 255, 0.5) !important;
-        border-radius: 12px !important;
-        margin-bottom: 1rem !important;
+    /* Tarjeta Horizontal Titanium */
+    .fase-c-card-titan {
+        background: rgba(14, 20, 31, 0.98) !important;
+        border: 2px solid rgba(0, 194, 255, 0.6) !important;
+        border-radius: 14px !important;
+        margin-bottom: 1.2rem !important;
         display: flex !important;
         flex-direction: column !important;
         overflow: hidden !important;
-        box-shadow: 0 4px 25px rgba(0, 194, 255, 0.2) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7) !important;
+        transition: transform 0.3s ease;
     }
-
-    .fase-c-header-elite {
-        background: linear-gradient(90deg, rgba(0, 194, 255, 0.25) 0%, rgba(0, 194, 255, 0.05) 100%) !important;
-        border-bottom: 2px solid rgba(0, 194, 255, 0.4) !important;
-        padding: 10px !important;
-    }
-
-    /* MINI-BOTÓN BROWSE (ELIMINAR CAJA GIGANTE) */
-    .fase-c-monoblok-card [data-testid="stFileUploader"] button {
-        background: #0070E0 !important;
-        color: white !important;
-        font-weight: 800 !important;
-        font-size: 0.7rem !important;
-        height: 28px !important;
-        width: 100% !important;
-        padding: 0px 10px !important;
-        border: 1px solid rgba(255,255,255,0.2) !important;
-        border-radius: 4px !important;
-    }
-
-    /* TOOLBAR INTEGRADA (FOOTER) */
-    .fase-c-toolbar-elite {
-        background: rgba(0, 194, 255, 0.15) !important;
-        border-top: 2px solid rgba(0, 194, 255, 0.3) !important;
-        padding: 4px !important;
-    }
-
-    .fase-c-toolbar-elite button {
-        background: rgba(255, 255, 255, 0.08) !important;
-        border: 1px solid rgba(0, 194, 255, 0.4) !important;
-        color: #00C2FF !important;
-        font-size: 1.1rem !important;
-        height: 32px !important;
-        border-radius: 6px !important;
-    }
-    .fase-c-toolbar-elite button:hover {
-        background: rgba(0, 194, 255, 0.3) !important;
+    .fase-c-card-titan:hover {
         border-color: #01F6FF !important;
+        box-shadow: 0 12px 40px rgba(0, 194, 255, 0.25) !important;
+    }
+
+    .fase-c-header-titan {
+        background: linear-gradient(90deg, rgba(0, 194, 255, 0.3) 0%, rgba(0, 194, 255, 0.08) 100%) !important;
+        border-bottom: 2px solid rgba(0, 194, 255, 0.4) !important;
+        padding: 12px 15px !important;
+    }
+
+    /* Botón de Carga Estilo Elite */
+    .fase-c-card-titan [data-testid="stFileUploader"] button {
+        background: linear-gradient(135deg, #0070E0 0%, #00C2FF 100%) !important;
+        color: white !important;
+        font-weight: 900 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        font-size: 0.75rem !important;
+        height: 34px !important;
+        border: none !important;
+        border-radius: 6px !important;
+        margin: 8px 0 !important;
+        width: 100% !important;
+    }
+
+    /* Footer de Herramientas Fusionado */
+    .fase-c-footer-titan {
+        background: rgba(0, 194, 255, 0.15) !important;
+        border-top: 2px solid rgba(0, 194, 255, 0.4) !important;
+        padding: 8px !important;
+        display: flex !important;
+        gap: 8px !important;
+    }
+
+    .fase-c-footer-titan button {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1.5px solid rgba(0, 194, 255, 0.5) !important;
+        color: #00C2FF !important;
+        font-size: 1.2rem !important;
+        height: 38px !important;
+        border-radius: 8px !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    .fase-c-footer-titan button:hover {
+        background: rgba(0, 194, 255, 0.35) !important;
+        border-color: #01F6FF !important;
+        color: white !important;
+        transform: translateY(-2px) !important;
     }
     
     [data-testid="stExpander"] {
@@ -1418,7 +1433,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.19 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.20 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1549,64 +1564,68 @@ else:
             </div>
             """, unsafe_allow_html=True)
 
-            # Malla de Documentos 4 Columnas (Estilo Mockup)
-            cols = st.columns(4)
+            # Malla de Documentos 2 Columnas (Arquitectura Titanium V21.20)
+            cols = st.columns(2)
             for i, doc in enumerate(cartas_todas):
-                with cols[i % 4]:
+                with cols[i % 2]:
                     doc_ready = doc['doc'] in st.session_state['expediente']
                     is_vital = doc.get('prioridad') == "VITAL (Obligatorio)"
                     status_icon = "✅" if doc_ready else ("⏳" if is_vital else "📁")
                     
-                    # MONOBLOK ABSOLUTO FASE C (V21.19 ELITE)
-                    st.markdown("<div class='fase-c-monoblok-card'>", unsafe_allow_html=True)
+                    # TARJETA TITANIUM MONOLÍTICA
+                    st.markdown("<div class='fase-c-card-titan'>", unsafe_allow_html=True)
                     
-                    # 1. Cabecera Elite
+                    # 1. Header (Identidad Elite)
                     st.markdown(f"""
-                    <div class='fase-c-header-elite'>
-                        <div style='display:flex; align-items:center; gap:12px;'>
-                            <span style='font-size:1.6rem;'>{status_icon}</span>
+                    <div class='fase-c-header-titan'>
+                        <div style='display:flex; align-items:center; gap:15px;'>
+                            <span style='font-size:1.8rem;'>{status_icon}</span>
                             <div style='display:flex; flex-direction:column;'>
-                                <span style='font-size:0.6rem; color:#00C2FF; font-weight:900;'>{doc.get('area','GENERAL')}</span>
-                                <span style='font-size:0.85rem; font-weight:700; color:white; line-height:1.2; overflow-wrap:anywhere;'>{doc['doc']}</span>
+                                <span style='font-size:0.65rem; color:#00C2FF; font-weight:900; letter-spacing:1px;'>{doc.get('area','REQUISITO')}</span>
+                                <span style='font-size:1rem; font-weight:700; color:white; line-height:1.2; overflow-wrap:anywhere;'>{doc['doc']}</span>
                             </div>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # 2. Zona de Carga / Status
-                    st.markdown("<div style='padding:12px 10px 4px 10px; background:transparent;'>", unsafe_allow_html=True)
+                    # 2. Cuerpo de Gestión (Cargador / Status)
+                    st.markdown("<div style='padding:15px 15px 5px 15px; background:transparent;'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        _f = st.file_uploader("UP", key=f"up_v21.19_{i}", label_visibility="collapsed")
+                        _f = st.file_uploader("UP", key=f"up_v21.20_{i}", label_visibility="collapsed")
                         if _f:
                             with st.spinner(""):
                                 st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
                                 save_audit_state(); st.rerun()
                     else:
-                        st.markdown("<div style='text-align:center; color:#10B981; font-weight:900; font-size:0.75rem; padding:10px; border:1px solid rgba(16,185,129,0.3); border-radius:6px; background:rgba(16,185,129,0.05);'>✅ VALIDADO</div>", unsafe_allow_html=True)
+                        st.markdown(f"""
+                        <div style='text-align:center; color:#10B981; font-weight:900; font-size:0.85rem; padding:15px; border:2px solid rgba(16,185,129,0.4); border-radius:10px; background:rgba(16,185,129,0.08);'>
+                            ✅ DOCUMENTO SEGURO Y VALIDADO
+                        </div>
+                        """, unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
                     
-                    # 3. Toolbar de Herramientas (Fusión Física)
-                    st.markdown("<div class='fase-c-toolbar-elite'>", unsafe_allow_html=True)
-                    ct1, ct2, ct3 = st.columns(3)
+                    # 3. Footer de Herramientas (Fusión Física)
+                    st.markdown("<div class='fase-c-footer-titan'>", unsafe_allow_html=True)
+                    cta1, cta2, cta3 = st.columns(3)
                     if not doc_ready:
-                        with ct1: st.button("🤖", key=f"ia_v21.19_{i}", help="IA Suggest", use_container_width=True)
-                        with ct2: st.button("⚖️", key=f"jus_v21.19_{i}", help="Justificar", use_container_width=True)
-                        with ct3: st.button("⏳", key=f"wait_v21.19_{i}", disabled=True, use_container_width=True)
+                        with cta1: st.button("🤖", key=f"ia_v21.20_{i}", help="Sugerencia IA", use_container_width=True)
+                        with cta2: st.button("⚖️", key=f"jus_v21.20_{i}", help="Justificar Falta", use_container_width=True)
+                        with cta3: st.button("⏳", key=f"wait_v21.20_{i}", disabled=True, use_container_width=True)
                     else:
-                        with ct1: st.button("🔍", key=f"view_v21.19_{i}", use_container_width=True)
-                        with ct2:
+                        with cta1: st.button("🔍", key=f"view_v21.20_{i}", use_container_width=True)
+                        with cta2:
                             is_jus = doc['doc'] in st.session_state['justificados']
-                            if st.button("⚖️" if is_jus else "📜", key=f"jus_st_v21.19_{i}", use_container_width=True):
+                            if st.button("⚖️" if is_jus else "📜", key=f"jus_st_v21.20_{i}", use_container_width=True):
                                 if is_jus: st.session_state['justificados'].remove(doc['doc'])
                                 else: st.session_state['justificados'].append(doc['doc'])
                                 save_audit_state(); st.rerun()
-                        with ct3:
-                            if st.button("🗑️", key=f"del_v21.19_{i}", use_container_width=True):
+                        with cta3:
+                            if st.button("🗑️", key=f"del_v21.20_{i}", use_container_width=True):
                                 del st.session_state['expediente'][doc['doc']]
                                 save_audit_state(); st.rerun()
-                    st.markdown("</div>", unsafe_allow_html=True) # Cierre Toolbar
+                    st.markdown("</div>", unsafe_allow_html=True) # Cierre Footer
                     
-                    st.markdown("</div>", unsafe_allow_html=True) # Cierre Monoblok
+                    st.markdown("</div>", unsafe_allow_html=True) # Cierre Titan Card
 
         elif f == 'FINAL':
             st.markdown("##### 🏁 Cierre de Ingesta & Validación de Suficiencia")
