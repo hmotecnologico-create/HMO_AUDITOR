@@ -239,36 +239,33 @@ st.markdown("""
     }
     [data-testid="stSidebar"] hr { margin: 0.5rem 0 !important; }
 
-    /* VISIBILIDAD EXTREMA V21.5 (PRO-ELITE) */
+    /* COMPACTACIÓN QUIRÚRGICA V21.10 (ZERO-SCROLL) */
     [data-testid="stFileUploader"] {
-        padding: 1.5rem !important;
-        background: rgba(0, 194, 255, 0.08) !important;
-        border: 2px solid #00C2FF !important;
-        border-radius: 15px !important;
-        margin-bottom: 2rem !important; /* Espacio extra abajo */
+        padding: 0.3rem !important;
+        background: rgba(0, 194, 255, 0.04) !important;
+        border: 1px solid rgba(0, 194, 255, 0.2) !important;
+        border-radius: 8px !important;
+        margin-bottom: 0.5rem !important;
     }
     [data-testid="stFileUploader"] section {
-        min-height: 120px !important;
+        min-height: 60px !important;
     }
-    /* EL BOTÓN AHORA ES TOTALMENTE VISIBLE Y EN NEGRITA */
     [data-testid="stFileUploader"] button {
-        font-weight: 950 !important;
-        font-size: 1.1rem !important;
+        font-weight: 900 !important;
+        font-size: 0.85rem !important;
         color: #FFFFFF !important;
         background-color: #0080FF !important;
-        border: 3px solid #FFFFFF !important;
-        padding: 0.5rem 1rem !important;
+        padding: 0.2rem 0.6rem !important;
         text-transform: uppercase !important;
     }
     [data-testid="stFileUploader"] label {
-        color: #FFFFFF !important;
-        font-weight: 900 !important;
-        font-size: 1rem !important;
-        margin-bottom: 1rem !important;
+        color: #00C2FF !important;
+        font-weight: 700 !important;
+        font-size: 0.75rem !important;
+        margin-bottom: 4px !important;
     }
     [data-testid="stFileUploaderDropzone"] div {
-        color: #FFFFFF !important;
-        font-weight: 700 !important;
+        display: none !important; /* Ocultar texto decorativo para ahorrar espacio */
     }
     
     /* INTEGRACIÓN FASE C (V21.7 ULTRA-DENSE) */
@@ -1386,7 +1383,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.8 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.10 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1418,15 +1415,13 @@ else:
             cc_ready = st.session_state.get('expediente', {}).get("Camara de Comercio (Existencia Legal)") is not None
             rut_ready = st.session_state.get('expediente', {}).get("RUT (Registro Unico Tributario)") is not None
 
-            st.markdown("<div class='elite-card' style='border-top: 5px solid #00C2FF;'>", unsafe_allow_html=True)
-            st.header("🏢 FASE A: IDENTIFICACIÓN CORPORATIVA")
-            st.subheader("Paso 1: Validación Documental Obligatoria")
-            st.info("Suba Cámara de Comercio y RUT para habilitar el perfil de auditoría.")
+            st.markdown("<div class='elite-card' style='border-top: 3px solid #00C2FF; padding: 0.5rem;'>", unsafe_allow_html=True)
+            st.markdown("##### 🏢 FASE A: IDENTIFICACIÓN CORPORATIVA")
+            st.caption("Validación Documental Obligatoria (CC y RUT)")
             
             c_doc_a, c_doc_b = st.columns(2)
             with c_doc_a:
-                st.write("---")
-                uploaded_cc = st.file_uploader("📂 SUBIR CÁMARA DE COMERCIO (REQUERIDO)", type=["pdf", "jpg", "jpeg", "png"], key="smart_cc_v21.5")
+                uploaded_cc = st.file_uploader("📂 SUBIR CÁMARA DE COMERCIO", type=["pdf", "jpg", "jpeg", "png"], key="smart_cc_v21.10")
                 if uploaded_cc and not cc_ready:
                     with st.spinner("Validando CC..."):
                         res = procesar_documento(uploaded_cc.read(), uploaded_cc.name) if OCR_DISPONIBLE else {"tipo_doc":"unknown"}
@@ -1434,11 +1429,10 @@ else:
                         for k,v in resultado_a_session_state(res).items(): st.session_state[k] = v
                         st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {"validado":True}
                         save_audit_state(); st.rerun()
-                elif cc_ready: st.success("✅ CÁMARA DE COMERCIO VALIDADA")
+                elif cc_ready: st.success("✅ CC OK")
 
             with c_doc_b:
-                st.write("---")
-                uploaded_rut = st.file_uploader("📂 SUBIR RUT DIAN (REQUERIDO)", type=["pdf", "jpg", "jpeg", "png"], key="smart_rut_v21.5")
+                uploaded_rut = st.file_uploader("📂 SUBIR RUT DIAN", type=["pdf", "jpg", "jpeg", "png"], key="smart_rut_v21.10")
                 if uploaded_rut and not rut_ready:
                     with st.spinner("Validando RUT..."):
                         res_r = procesar_documento(uploaded_rut.read(), uploaded_rut.name) if OCR_DISPONIBLE else {"tipo_doc":"unknown"}
@@ -1446,7 +1440,7 @@ else:
                         for k,v in resultado_a_session_state(res_r).items(): st.session_state[k] = v
                         st.session_state['expediente']["RUT (Registro Unico Tributario)"] = {"validado":True}
                         save_audit_state(); st.rerun()
-                elif rut_ready: st.success("✅ RUT VALIDADO")
+                elif rut_ready: st.success("✅ RUT OK")
             st.markdown("</div>", unsafe_allow_html=True)
 
             # --- CAMPOS DE IDENTIDAD (RESTRICCIÓN ESTRICTA V21.2) ---
@@ -1542,9 +1536,8 @@ else:
                     """, unsafe_allow_html=True)
                     
                     if not doc_ready:
-                        # 2. Cargador Mini Integrado
-                        _f = st.file_uploader("UP", key=f"up_v21.7_{i}", label_visibility="collapsed")
-                        # Aplicar clase mini vía CSS (Selección por key de Streamlit no es directa en CSS, usamos la clase global si aplica o el contenedor)
+                        # 2. Cargador Ultra-Compacto
+                        _f = st.file_uploader("UP", key=f"up_v21.10_{i}", label_visibility="collapsed")
                         if _f:
                             with st.spinner(""):
                                 st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
@@ -1552,8 +1545,8 @@ else:
                         
                         # 3. Iconos pegados
                         ca1, ca2, ca3 = st.columns(3)
-                        with ca1: st.button("🤖", key=f"ia_v19.9_{i}", help="IA", use_container_width=True)
-                        with ca2: st.button("⚖️", key=f"jus_v19.9_{i}", help="Justificar", use_container_width=True)
+                        with ca1: st.button("🤖", key=f"ia_v19.9_{i}", use_container_width=True)
+                        with ca2: st.button("⚖️", key=f"jus_v19.9_{i}", use_container_width=True)
                         with ca3: st.button("⏳", key=f"wait_v19.9_{i}", disabled=True, use_container_width=True)
                     else:
                         st.markdown("<div style='height:45px; display:flex; align-items:center; justify-content:center; color:#10B981; font-weight:700;'>✅ LISTO</div>", unsafe_allow_html=True)
