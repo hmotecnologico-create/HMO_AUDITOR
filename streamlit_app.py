@@ -239,21 +239,21 @@ st.markdown("""
     }
     [data-testid="stSidebar"] hr { margin: 0.5rem 0 !important; }
 
-    /* COMPACTACIÓN EXTREMA CARGADORES (V21.1) */
+    /* COMPACTACIÓN EXTREMA CARGADORES (V21.2) */
     [data-testid="stFileUploader"] {
         padding-top: 0 !important;
         padding-bottom: 0 !important;
     }
     [data-testid="stFileUploader"] section {
         padding: 0.1rem !important;
-        min-height: 35px !important;
+        min-height: 45px !important; /* Altura mínima para ver el botón */
     }
     [data-testid="stFileUploader"] section > div {
         display: none !important; /* Ocultar texto "Drag and drop" */
     }
     [data-testid="stFileUploader"] button {
-        font-size: 0.6rem !important;
-        padding: 0.2rem 0.5rem !important;
+        font-size: 0.7rem !important;
+        padding: 0.2rem 0.6rem !important;
         width: 100% !important;
     }
     [data-testid="stFileUploader"] label { display: none !important; }
@@ -1419,15 +1419,17 @@ else:
                     st.success("✅ Documento detectado y vinculado.")
                 st.markdown("</div>", unsafe_allow_html=True)
 
-            # --- CAMPOS DE IDENTIDAD (Desbloqueados por documentos) ---
-            if cc_ready or rut_ready:
+            # --- CAMPOS DE IDENTIDAD (RESTRICCIÓN ESTRICTA V21.2) ---
+            if cc_ready and rut_ready:
                 st.markdown("<br>", unsafe_allow_html=True)
                 st.markdown("<div class='elite-card' style='background:rgba(0,194,255,0.03); border: 1.5px dashed rgba(0,194,255,0.3);'>", unsafe_allow_html=True)
                 st.markdown("##### 📝 Perfil de Auditoría (Edición Manual/HITL)")
                 
                 ci1, ci2 = st.columns(2)
-                st.session_state['empresa_nombre'] = ci1.text_input("Nombre de la Empresa", value=st.session_state.get('empresa_nombre',''), key="smart_name")
-                st.session_state['auditor_name'] = ci2.text_input("Auditor Líder (Diligenciamiento Manual)", value=st.session_state.get('auditor_name',''), key="smart_aud", placeholder="Nombre completo del auditor")
+                st.session_state['empresa_nombre'] = ci1.text_input("Nombre de la Empresa (Auto-poblado)", value=st.session_state.get('empresa_nombre',''), key="smart_name")
+                # El campo auditor se inicializa vacío si no existe previamente
+                if 'auditor_name' not in st.session_state: st.session_state['auditor_name'] = ""
+                st.session_state['auditor_name'] = ci2.text_input("Auditor Líder (MANUAL OBLIGATORIO)", value=st.session_state.get('auditor_name',''), key="smart_aud", placeholder="Nombre completo del auditor")
                 
                 ci3, ci4 = st.columns(2)
                 st.session_state['rep_legal'] = ci3.text_input("Representante Legal", value=st.session_state.get('rep_legal',''), key="smart_rep")
