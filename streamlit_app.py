@@ -271,6 +271,33 @@ st.markdown("""
         font-weight: 700 !important;
     }
     
+    /* INTEGRACIÓN FASE C (V21.7 ULTRA-DENSE) */
+    .fase-c-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(0, 194, 255, 0.2);
+        border-radius: 12px;
+        padding: 0.1rem;
+        margin-bottom: 0.5rem;
+    }
+    .fase-c-card [data-testid="stFileUploader"] {
+        padding: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        margin-bottom: 0 !important;
+    }
+    .fase-c-card [data-testid="stFileUploader"] section {
+        min-height: 45px !important;
+        padding: 0 !important;
+    }
+    .fase-c-card [data-testid="stFileUploader"] section > div {
+        display: none !important; /* Ocultar "Drag and drop" */
+    }
+    .fase-c-card [data-testid="stFileUploader"] button {
+        font-size: 0.75rem !important;
+        padding: 0.2rem 0.4rem !important;
+        width: 100% !important;
+    }
+    
     [data-testid="stExpander"] {
         background: rgba(14, 20, 31, 0.4) !important;
         border: 1.5px solid rgba(0, 194, 255, 0.2) !important;
@@ -1499,55 +1526,46 @@ else:
                     status_icon = "✅" if doc_ready else ("⏳" if is_vital else "📁")
                     status_color = "#10B981" if doc_ready else ("#00C2FF" if is_vital else "#475569")
                     
-                    # Carcasa de Tarjeta (V19.5 Elite Tech Style)
+                    # Bloque Integrado Fase C (V21.7)
+                    st.markdown("<div class='fase-c-card'>", unsafe_allow_html=True)
+                    
+                    # 1. Cabecera (Título + Icono)
                     st.markdown(f"""
-                    <div class="doc-card-mini" style="border-left: 4px solid {status_color};">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
-                            <span style="font-size:1.1rem; filter: drop-shadow(0 0 5px {status_color}80);">{status_icon}</span>
-                            <span class="status-badge">{doc.get('area','SIG')[:12]}</span>
-                        </div>
-                        <p style="font-size:0.8rem; font-weight:700; color:#FFFFFF; margin:0; line-height:1.2; height: 2.4rem; overflow:hidden;">{doc['doc']}</p>
-                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin: 0.5rem 0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding: 0.4rem; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <span style="font-size:1rem;">{status_icon}</span>
+                        <span style="font-size:0.7rem; font-weight:700; color:#FFFFFF; overflow:hidden;">{doc['doc'][:20]}</span>
                     </div>
                     """, unsafe_allow_html=True)
                     
                     if not doc_ready:
-                        # 1. Cargador arriba (Ancho completo)
-                        _f = st.file_uploader(f"SUBIR: {doc['doc'][:15]}...", key=f"up_v21.6_{i}", label_visibility="collapsed")
+                        # 2. Cargador Mini Integrado
+                        _f = st.file_uploader("UP", key=f"up_v21.7_{i}", label_visibility="collapsed")
+                        # Aplicar clase mini vía CSS (Selección por key de Streamlit no es directa en CSS, usamos la clase global si aplica o el contenedor)
                         if _f:
                             with st.spinner(""):
                                 st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
                                 save_audit_state(); st.rerun()
                         
-                        # 2. Botonera abajo (Iconos alineados)
-                        st.markdown("<div style='margin-top:0.5rem;'></div>", unsafe_allow_html=True)
+                        # 3. Iconos pegados
                         ca1, ca2, ca3 = st.columns(3)
-                        with ca1:
-                            if st.button("🤖", key=f"ia_v19.9_{i}", help="Generar con IA", use_container_width=True):
-                                ui_generar_borrador_ia(doc['doc'], doc['area'], doc.get('justificacion',''))
-                        with ca2:
-                            if st.button("⚖️", key=f"jus_v19.9_{i}", help="Justificar Requisito", use_container_width=True):
-                                if doc['doc'] not in st.session_state['justificados']:
-                                    st.session_state['justificados'].append(doc['doc'])
-                                    save_audit_state(); st.toast(f"Justificado: {doc['doc'][:20]}...")
-                        with ca3:
-                            st.button("⏳", key=f"wait_v19.9_{i}", disabled=True, use_container_width=True)
-
+                        with ca1: st.button("🤖", key=f"ia_v19.9_{i}", help="IA", use_container_width=True)
+                        with ca2: st.button("⚖️", key=f"jus_v19.9_{i}", help="Justificar", use_container_width=True)
+                        with ca3: st.button("⏳", key=f"wait_v19.9_{i}", disabled=True, use_container_width=True)
                     else:
-                        # Documento listo: Botonera de gestión
+                        st.markdown("<div style='height:45px; display:flex; align-items:center; justify-content:center; color:#10B981; font-weight:700;'>✅ LISTO</div>", unsafe_allow_html=True)
                         ca1, ca2, ca3 = st.columns(3)
-                        with ca1:
-                            st.button("🔍", key=f"view_v19.9_{i}", help="Ver Evidencia", use_container_width=True)
+                        with ca1: st.button("🔍", key=f"view_v19.9_{i}", use_container_width=True)
                         with ca2:
                             is_jus = doc['doc'] in st.session_state['justificados']
-                            if st.button("⚖️" if is_jus else "📜", key=f"jus_st_v19.9_{i}", help="Cambiar Estatus", use_container_width=True):
+                            if st.button("⚖️" if is_jus else "📜", key=f"jus_st_v19.9_{i}", use_container_width=True):
                                 if is_jus: st.session_state['justificados'].remove(doc['doc'])
                                 else: st.session_state['justificados'].append(doc['doc'])
                                 save_audit_state(); st.rerun()
                         with ca3:
-                            if st.button("🗑️", key=f"del_v19.9_{i}", help="Eliminar", use_container_width=True):
+                            if st.button("🗑️", key=f"del_v19.9_{i}", use_container_width=True):
                                 del st.session_state['expediente'][doc['doc']]
                                 save_audit_state(); st.rerun()
+                    
                     st.markdown("</div>", unsafe_allow_html=True)
 
         elif f == 'FINAL':
