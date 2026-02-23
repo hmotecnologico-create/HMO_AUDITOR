@@ -113,33 +113,42 @@ st.markdown("""
     }
 
     /* FOOTER DE ACCIÓN (FUSIÓN FÍSICA) */
-    .capsule-footer {
-        display: flex !important;
-        background: rgba(255, 255, 255, 0.02) !important;
-        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-        padding: 0 !important;
-        gap: 0 !important;
+    /* EXTERMINIO NUCLEAR DE FONDOS BLANCOS (V21.31) */
+    .stButton, .stButton div, .stButton button, 
+    [data-testid="stBaseButton-secondary"],
+    [data-testid="stBaseButton-secondary"] div,
+    div:has(> button[key*="v21.31"]) {
+        background: transparent !important;
+        background-color: transparent !important;
+        background-image: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        color: #00C2FF !important;
     }
 
-    .stButton > button[key*="v21.29"] {
-        background: transparent !important;
-        border: none !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    /* BOTÓN TÉCNICO ELITE */
+    .stButton > button {
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(0, 194, 255, 0.2) !important;
         color: #00C2FF !important;
-        height: 50px !important;
         width: 100% !important;
-        border-radius: 0 !important;
-        font-size: 1.5rem !important;
+        height: 44px !important;
+        border-radius: 4px !important;
+        font-family: 'Orbitron', sans-serif !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        transition: all 0.2s ease !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        transition: all 0.2s ease !important;
     }
-    .stButton > button[key*="v21.29"]:hover {
+    
+    .stButton > button:hover {
         background: rgba(0, 194, 255, 0.1) !important;
+        border-color: #00C2FF !important;
         color: #FFFFFF !important;
+        transform: translateY(-1px) !important;
     }
 
     .capsule-validado {
@@ -1238,7 +1247,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.29 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.31 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1369,7 +1378,7 @@ else:
             </div>
             """, unsafe_allow_html=True)
 
-            # Malla de Documentos 3 Columnas (Arquitectura Dark-Void V21.29)
+            # Malla de Documentos 3 Columnas (Arquitectura Dark-Void V21.31)
             cols = st.columns(3)
             for i, doc in enumerate(cartas_todas):
                 with cols[i % 3]:
@@ -1397,7 +1406,7 @@ else:
                     # 2. Monolith Body & Uploader (Fusión Void)
                     st.markdown("<div class='capsule-body'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        _f = st.file_uploader("", key=f"up_v21.29_{i}", label_visibility="collapsed")
+                        _f = st.file_uploader("", key=f"up_v21.31_{i}", label_visibility="collapsed")
                         if _f:
                             with st.spinner(""):
                                 st.session_state['expediente'][doc['doc']] = {"score": 100, "validado": True}
@@ -1406,19 +1415,22 @@ else:
                         st.markdown("<div class='capsule-validado'>SISTEMA PROTEGIDO</div>", unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
                     
-                    # 3. Monolith Footer (Acciones de Hardware)
-                    st.markdown("<div class='capsule-footer'>", unsafe_allow_html=True)
+                    # 3. Monolith Footer (Fusión Horizontal Atómica V21.31)
+                    st.markdown("<div class='capsule-footer' style='padding: 5px; background: rgba(0,0,0,0.2) !important;'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        st.button("🤖", key=f"ia_v21.29_{i}", use_container_width=True)
-                        st.button("⚖️", key=f"jus_v21.29_{i}", use_container_width=True)
+                        bt_c1, bt_c2 = st.columns(2)
+                        with bt_c1: st.button("🤖", key=f"ia_v21.31_{i}", use_container_width=True)
+                        with bt_c2: st.button("⚖️", key=f"jus_v21.31_{i}", use_container_width=True)
                     else:
-                        st.button("🔍", key=f"view_v21.29_{i}", use_container_width=True)
-                        is_jus = doc['doc'] in st.session_state['justificados']
-                        if st.button("⚖️" if is_jus else "📝", key=f"jus_st_v21.29_{i}", use_container_width=True):
-                            if is_jus: st.session_state['justificados'].remove(doc['doc'])
-                            else: st.session_state['justificados'].append(doc['doc'])
-                            save_audit_state(); st.rerun()
-                        st.button("🗑️", key=f"del_v21.29_{i}", use_container_width=True)
+                        bt_v1, bt_v2, bt_v3 = st.columns(3)
+                        with bt_v1: st.button("🔍", key=f"view_v21.31_{i}", use_container_width=True)
+                        with bt_v2:
+                            is_jus = doc['doc'] in st.session_state['justificados']
+                            if st.button("⚖️" if is_jus else "📝", key=f"jus_st_v21.31_{i}", use_container_width=True):
+                                if is_jus: st.session_state['justificados'].remove(doc['doc'])
+                                else: st.session_state['justificados'].append(doc['doc'])
+                                save_audit_state(); st.rerun()
+                        with bt_v3: st.button("🗑️", key=f"del_v21.31_{i}", use_container_width=True)
                     st.markdown("</div>", unsafe_allow_html=True)
                     
                     st.markdown("</div>", unsafe_allow_html=True) # Cierre Vault
