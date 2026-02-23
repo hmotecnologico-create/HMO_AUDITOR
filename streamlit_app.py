@@ -239,45 +239,36 @@ st.markdown("""
     }
     [data-testid="stSidebar"] hr { margin: 0.5rem 0 !important; }
 
-    /* ESTABILIZACIÓN CARGADORES V21.4 (HIGH VISIBILITY BOLD) */
+    /* VISIBILIDAD EXTREMA V21.5 (PRO-ELITE) */
     [data-testid="stFileUploader"] {
-        padding: 1rem !important;
-        background: rgba(0, 194, 255, 0.05) !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(0, 194, 255, 0.3) !important;
-        margin-bottom: 0.8rem !important;
+        padding: 1.5rem !important;
+        background: rgba(0, 194, 255, 0.08) !important;
+        border: 2px solid #00C2FF !important;
+        border-radius: 15px !important;
+        margin-bottom: 2rem !important; /* Espacio extra abajo */
     }
     [data-testid="stFileUploader"] section {
-        min-height: 110px !important;
+        min-height: 120px !important;
     }
-    [data-testid="stFileUploader"] label { 
-        display: block !important; 
-        font-family: 'Orbitron', sans-serif !important;
-        font-size: 0.8rem !important;
-        font-weight: 800 !important;
-        color: #00C2FF !important;
-        text-transform: uppercase;
-        margin-bottom: 12px !important;
-        line-height: 1.4 !important;
-    }
-    /* El botón de carga ahora es NEGRITA EXTREMA */
+    /* EL BOTÓN AHORA ES TOTALMENTE VISIBLE Y EN NEGRITA */
     [data-testid="stFileUploader"] button {
+        font-weight: 950 !important;
+        font-size: 1.1rem !important;
+        color: #FFFFFF !important;
+        background-color: #0080FF !important;
+        border: 3px solid #FFFFFF !important;
+        padding: 0.5rem 1rem !important;
+        text-transform: uppercase !important;
+    }
+    [data-testid="stFileUploader"] label {
+        color: #FFFFFF !important;
         font-weight: 900 !important;
         font-size: 1rem !important;
-        color: white !important;
-        background-color: #00C2FF !important;
-        border: 2px solid #00C2FF !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important;
-        transition: all 0.2s ease;
+        margin-bottom: 1rem !important;
     }
-    [data-testid="stFileUploader"] button:hover {
-        background-color: #00A3D9 !important;
-        transform: translateY(-2px);
-    }
-    [data-testid="stFileUploaderDropzone"] div { 
-        font-size: 0.75rem !important; 
-        color: rgba(255,255,255,0.7) !important;
-        font-weight: 600 !important;
+    [data-testid="stFileUploaderDropzone"] div {
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
     }
     
     [data-testid="stExpander"] {
@@ -1396,26 +1387,29 @@ else:
             cc_ready = st.session_state.get('expediente', {}).get("Camara de Comercio (Existencia Legal)") is not None
             rut_ready = st.session_state.get('expediente', {}).get("RUT (Registro Unico Tributario)") is not None
 
-            st.markdown("<div class='elite-card' style='border-top: 4px solid #00C2FF; background: rgba(0, 194, 255, 0.02);'>", unsafe_allow_html=True)
-            st.markdown("<h4 style='color:#00C2FF; margin-top:0;'>Step 1: Validación Documental Obligatoria</h4>", unsafe_allow_html=True)
-            st.write("Cargue los documentos base para desbloquear el auditor (SGC Protocolo).")
+            st.markdown("<div class='elite-card' style='border-top: 5px solid #00C2FF;'>", unsafe_allow_html=True)
+            st.header("🏢 FASE A: IDENTIFICACIÓN CORPORATIVA")
+            st.subheader("Paso 1: Validación Documental Obligatoria")
+            st.info("Suba Cámara de Comercio y RUT para habilitar el perfil de auditoría.")
             
             c_doc_a, c_doc_b = st.columns(2)
             with c_doc_a:
-                uploaded_cc = st.file_uploader("📄 CARGAR CÁMARA DE COMERCIO", type=["pdf", "jpg", "jpeg", "png"], key="smart_cc")
+                st.write("---")
+                uploaded_cc = st.file_uploader("📂 SUBIR CÁMARA DE COMERCIO (REQUERIDO)", type=["pdf", "jpg", "jpeg", "png"], key="smart_cc_v21.5")
                 if uploaded_cc and not cc_ready:
-                    with st.spinner("Procesando CC..."):
+                    with st.spinner("Validando CC..."):
                         res = procesar_documento(uploaded_cc.read(), uploaded_cc.name) if OCR_DISPONIBLE else {"tipo_doc":"unknown"}
                     if res.get("tipo_doc") == "camara_comercio":
                         for k,v in resultado_a_session_state(res).items(): st.session_state[k] = v
                         st.session_state['expediente']["Camara de Comercio (Existencia Legal)"] = {"validado":True}
                         save_audit_state(); st.rerun()
-                elif cc_ready: st.success("✅ CC VALIDADA")
+                elif cc_ready: st.success("✅ CÁMARA DE COMERCIO VALIDADA")
 
             with c_doc_b:
-                uploaded_rut = st.file_uploader("🧾 CARGAR RUT (DIAN)", type=["pdf", "jpg", "jpeg", "png"], key="smart_rut")
+                st.write("---")
+                uploaded_rut = st.file_uploader("📂 SUBIR RUT DIAN (REQUERIDO)", type=["pdf", "jpg", "jpeg", "png"], key="smart_rut_v21.5")
                 if uploaded_rut and not rut_ready:
-                    with st.spinner("Procesando RUT..."):
+                    with st.spinner("Validando RUT..."):
                         res_r = procesar_documento(uploaded_rut.read(), uploaded_rut.name) if OCR_DISPONIBLE else {"tipo_doc":"unknown"}
                     if res_r.get("tipo_doc") == "rut":
                         for k,v in resultado_a_session_state(res_r).items(): st.session_state[k] = v
@@ -1523,15 +1517,16 @@ else:
                     
                     if not doc_ready:
                         with ca1:
-                            # Espaciador físico antes del cargador
-                            st.divider()
-                            _f = st.file_uploader("EVIDENCIA (PULSE AQUÍ)", key=f"up_v21.4_{i}")
+                            # Espaciador físico de 50px
+                            st.markdown("<div style='height:30px;'></div>", unsafe_allow_html=True)
+                            st.write(f"**Cargar:** {doc['doc'][:20]}")
+                            _f = st.file_uploader("SELECCIONAR ARCHIVO", key=f"up_v21.5_{i}")
                             if _f:
                                 with st.spinner(""):
                                     st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
                                     save_audit_state(); st.rerun()
-                        # Espaciador físico post-cargador
-                        st.markdown("<div style='margin-bottom:1.5rem;'></div>", unsafe_allow_html=True)
+                        # Margen preventivo de solapamiento
+                        st.markdown("<div style='margin-bottom:3rem;'></div>", unsafe_allow_html=True)
                         with ca2:
                             # ⚖️ Justificar
                             if st.button("⚖️", key=f"jus_v19.9_{i}", help="Justificar Requisito", use_container_width=True):
