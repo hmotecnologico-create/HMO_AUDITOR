@@ -338,11 +338,43 @@ st.markdown("""
         border-radius: 8px !important;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
-    .fase-c-footer-titan button:hover {
-        background: rgba(0, 194, 255, 0.35) !important;
+    /* MISSIÓN CONTROL FASE D V21.21 (ELITE FINAL) */
+    .fase-d-mission-control {
+        background: rgba(15, 23, 42, 0.98) !important;
+        border: 2px solid rgba(0, 194, 255, 0.7) !important;
+        border-radius: 20px !important;
+        padding: 2rem !important;
+        box-shadow: 0 0 50px rgba(0, 194, 255, 0.3) !important;
+        margin-top: 1rem !important;
+    }
+    .fase-d-metric-capsule {
+        background: rgba(0, 194, 255, 0.05) !important;
+        border: 1.5px solid rgba(0, 194, 255, 0.3) !important;
+        border-radius: 12px !important;
+        padding: 1.5rem !important;
+        text-align: center !important;
+        transition: all 0.3s ease !important;
+    }
+    .fase-d-metric-capsule:hover {
+        background: rgba(0, 194, 255, 0.1) !important;
         border-color: #01F6FF !important;
-        color: white !important;
-        transform: translateY(-2px) !important;
+    }
+
+    .fase-d-btn-titan {
+        background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%) !important;
+        border: 2px solid #00C2FF !important;
+        color: #00C2FF !important;
+        font-weight: 900 !important;
+        height: 55px !important;
+        border-radius: 10px !important;
+        font-size: 1.1rem !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    .fase-d-btn-titan:hover {
+        background: #00C2FF !important;
+        color: #0F172A !important;
+        box-shadow: 0 0 30px rgba(0, 194, 255, 0.5) !important;
+        transform: scale(1.02) !important;
     }
     
     [data-testid="stExpander"] {
@@ -1433,7 +1465,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.20 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.21 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1623,33 +1655,81 @@ else:
                             if st.button("🗑️", key=f"del_v21.20_{i}", use_container_width=True):
                                 del st.session_state['expediente'][doc['doc']]
                                 save_audit_state(); st.rerun()
-                    st.markdown("</div>", unsafe_allow_html=True) # Cierre Footer
+                        st.markdown("</div>", unsafe_allow_html=True) # Cierre Footer
                     
                     st.markdown("</div>", unsafe_allow_html=True) # Cierre Titan Card
 
         elif f == 'FINAL':
-            st.markdown("##### 🏁 Cierre de Ingesta & Validación de Suficiencia")
+            st.markdown("<h3 style='text-align:center; color:#00C2FF; margin-bottom:20px;'>🏁 CONTROL DE MISIÓN: CIERRE & EMISIÓN</h3>", unsafe_allow_html=True)
             
-            # Panel de Validación
-            st.markdown("<div class='elite-card'>", unsafe_allow_html=True)
-            st.write("### 🔍 Checklist de Suficiencia SGC")
+            # --- PANEL DE MÉTRICAS TITANIUM ---
+            st.markdown("<div class='fase-d-mission-control'>", unsafe_allow_html=True)
             
+            # Cálculo de Madurez (CHS)
             docs_v_total = [c for c in cartas_todas if c.get('prioridad') == "VITAL (Obligatorio)"]
             docs_v_ok = [c for c in docs_v_total if c['doc'] in st.session_state['expediente']]
-            docs_v_missing = [c for c in docs_v_total if c['doc'] not in st.session_state['expediente']]
+            score_final = int((len(docs_v_ok)/len(docs_v_total))*100) if docs_v_total else 0
             
-            c_s1, c_s2 = st.columns([1, 2])
-            with c_s1:
-                draw_donut(int((len(docs_v_ok)/len(docs_v_total))*100), "VITALES", "#10B981")
+            # Definición de Estatus Elite
+            if score_final >= 90: elite_status, elite_color = "PLATINUM", "#E5E7EB"
+            elif score_final >= 75: elite_status, elite_color = "GOLD", "#FBBF24"
+            elif score_final >= 50: elite_status, elite_color = "SILVER", "#94A3B8"
+            else: elite_status, elite_color = "BRONZE", "#B45309"
+
+            m1, m2, m3 = st.columns(3)
+            with m1:
+                st.markdown("<div class='fase-d-metric-capsule'>", unsafe_allow_html=True)
+                draw_donut(score_final, "C.H.S", "#00C2FF")
+                st.markdown(f"<span style='font-size:0.7rem; color:#94A3B8;'>CORPORATE HEALTH SCORE</span>", unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
             
-            with c_s2:
-                if not docs_v_missing:
-                    st.success("✅ **Blindaje SGC Completo:** Todos los documentos vitales han sido cargados.")
-                else:
-                    st.warning(f"⚠️ **Pendiente:** Faltan {len(docs_v_missing)} documentos vitales para el blindaje reglamentario.")
-                    with st.expander("Ver documentos faltantes"):
-                        for m in docs_v_missing:
-                            st.write(f"❌ {m['doc']}")
+            with m2:
+                st.markdown("<div class='fase-d-metric-capsule'>", unsafe_allow_html=True)
+                st.markdown(f"<h1 style='color:{elite_color}; margin:0; font-size:2.5rem;'>{elite_status}</h1>", unsafe_allow_html=True)
+                st.markdown(f"<span style='font-size:0.7rem; color:#94A3B8;'>ESTATUS DE MADUREZ</span>", unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
+
+            with m3:
+                st.markdown("<div class='fase-d-metric-capsule'>", unsafe_allow_html=True)
+                missing = len(docs_v_total) - len(docs_v_ok)
+                icon_s = "🛡️" if missing == 0 else "⚠️"
+                st.markdown(f"<h1 style='margin:0; font-size:2.5rem;'>{icon_s} {missing}</h1>", unsafe_allow_html=True)
+                st.markdown(f"<span style='font-size:0.7rem; color:#94A3B8;'>PENDIENTES VITALES</span>", unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            
+            # --- ACCIONES DE EMISIÓN ---
+            st.markdown("<h4 style='text-align:center; color:white; font-size:0.9rem;'>🚀 EMISIÓN DE FORMATOS OFICIALES</h4>", unsafe_allow_html=True)
+            ca1, ca2 = st.columns(2)
+            
+            with ca1:
+                if st.button("📄 PROGRAMA DE AUDITORÍA (A.G.A)", key="btn_pdf_prog", use_container_width=True, help="Generar PDF del Programa de Auditoría Interna"):
+                    with st.spinner("Generando..."):
+                        out_dir = "HMO_Outputs/Reportes"
+                        if not os.path.exists(out_dir): os.makedirs(out_dir)
+                        path_p = os.path.join(out_dir, f"PROGRAMA_AUDITORIA_{st.session_state['empresa'][:5].upper()}.pdf")
+                        generate_audit_program_pdf(st.session_state['empresa'], path_p, kb=st.session_state['expediente'], identity_data={"auditor": st.session_state.get('auditor_name', 'N/A'), "nit": st.session_state.get('empresa_nit', 'N/A'), "sector": st.session_state.get('empresa_sector', 'N/A')})
+                        st.success(f"✅ Programa Generado: {path_p}")
+                        with open(path_p, "rb") as f:
+                            st.download_button("Descargar Programa", f, file_name=os.path.basename(path_p), use_container_width=True)
+
+            with ca2:
+                if st.button("📊 REPORTE DE MADUREZ ELITE", key="btn_pdf_mad", use_container_width=True, help="Generar Reporte Detallado de Madurez CHS"):
+                    with st.spinner("Generando..."):
+                        out_dir = "HMO_Outputs/Reportes"
+                        if not os.path.exists(out_dir): os.makedirs(out_dir)
+                        path_r = os.path.join(out_dir, f"REPORTE_MADUREZ_{st.session_state['empresa'][:5].upper()}.pdf")
+                        generate_maturity_report_pdf(st.session_state['empresa'], path_r, score_final, elite_status)
+                        st.success(f"✅ Reporte Generado: {path_r}")
+                        with open(path_r, "rb") as f:
+                            st.download_button("Descargar Reporte", f, file_name=os.path.basename(path_r), use_container_width=True)
+
+            st.markdown("</div>", unsafe_allow_html=True) # Cierre Mission Control
+            
+            if st.button("🏁 SELLAR EXPEDIENTE & FINALIZAR AUDITORÍA", key="btn_seal", use_container_width=True):
+                st.balloons()
+                st.success("💼 Auditoría Finalizada Exitosamente. Expediente Sellado.")
             
             st.divider()
             
@@ -1658,7 +1738,7 @@ else:
             st.session_state['autorizado_emision'] = st.toggle("HABILITAR EMISIÓN DE FORMATOS IA", value=st.session_state.get('autorizado_emision', False))
             
             if st.session_state['autorizado_emision']:
-                if not docs_v_missing:
+                if not missing: # Use 'missing' from the new calculation
                     st.success("🚀 ESTATUS ELITE: Listo para emisión.")
                 else:
                     st.info("💡 Puedes emitir, pero el cumplimiento se marcará como parcial.")
