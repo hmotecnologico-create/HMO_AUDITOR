@@ -239,14 +239,22 @@ st.markdown("""
     }
     [data-testid="stSidebar"] hr { margin: 0.5rem 0 !important; }
 
-    /* COMPACTACIÓN EXTREMA CARGADORES (V19.7) */
+    /* COMPACTACIÓN EXTREMA CARGADORES (V21.1) */
     [data-testid="stFileUploader"] {
         padding-top: 0 !important;
         padding-bottom: 0 !important;
     }
     [data-testid="stFileUploader"] section {
-        padding: 0.2rem !important;
-        min-height: 40px !important;
+        padding: 0.1rem !important;
+        min-height: 35px !important;
+    }
+    [data-testid="stFileUploader"] section > div {
+        display: none !important; /* Ocultar texto "Drag and drop" */
+    }
+    [data-testid="stFileUploader"] button {
+        font-size: 0.6rem !important;
+        padding: 0.2rem 0.5rem !important;
+        width: 100% !important;
     }
     [data-testid="stFileUploader"] label { display: none !important; }
     [data-testid="stFileUploaderDropzone"] div { font-size: 0.65rem !important; }
@@ -1033,7 +1041,7 @@ else:
         st.write(f"### Requisitos del Marco: {st.session_state['norma']}")
         st.info("Esta lista representa la materia prima necesaria para que el sistema genere los formatos oficiales.")
         
-        df_req = pd.DataFrame(cartas_todas)
+        df_req = pd.DataFrame(cartas_todas)[["doc", "area", "prioridad", "instrucciones"]]
         df_req.columns = ["📚 Documento Requerido", "🏢 Área Responsable", "🔗 Ref. Normativa", "📝 Descripción del Control"]
         st.dataframe(df_req, use_container_width=True, hide_index=True)
         st.markdown("</div>", unsafe_allow_html=True)
@@ -1051,6 +1059,10 @@ else:
         # --- CÁLCULO V15 ---
         engine = HMO_AI_Engine()
         chs = engine.calculate_corporate_health_score(st.session_state)
+        
+        # Definición global de estados para Radar V21.1
+        fase_a_ready = st.session_state.get('expediente', {}).get("Camara de Comercio (Existencia Legal)") and \
+                       st.session_state.get('expediente', {}).get("RUT (Registro Unico Tributario)")
         
         st.markdown(f"""
         <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;'>
@@ -1112,7 +1124,7 @@ else:
         with c3: kpi_card("Días p/ Cierre", max(0, dias_restantes), delta=-1 if dias_restantes > 0 else 0, color="#F59E0B")
         with c4:
             if st.button("📊 REPORTE ELITE", use_container_width=True):
-                _path = generate_maturity_report_pdf(company, st.session_state['base_path'], chs, "Elite V20")
+                _path = generate_maturity_report_pdf(company, st.session_state['base_path'], chs['score'], chs['level'])
                 st.toast(f"Reporte Generado: {os.path.basename(_path)}")
             if st.button("💾 SNAPSHOT", use_container_width=True, type="primary"):
                 snapshot = {"fecha": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), "score": chs['score'], "level": chs['level']}
@@ -1603,8 +1615,8 @@ else:
             st.table(pd.DataFrame({
                 "Código": ["GAD-PROG-01", "GAD-LIST-02"],
                 "Nombre": ["Programa de Auditoría ELITE", "Checklist de Verificación ELITE"],
-                "Diligenciamiento IA": ["Habilitado ✅" if st.session_state['autorizado_emision'] else "Bloqueado 🔒"],
-                "Motivación / Hallazgo": ["Cargado (Inyección RAG)" if st.session_state['kb'] else "Dato Sugerido"]
+                "Diligenciamiento IA": ["Habilitado ✅" if st.session_state['autorizado_emision'] else "Bloqueado 🔒"] * 2,
+                "Motivación / Hallazgo": ["Cargado (Inyección RAG)" if st.session_state['kb'] else "Dato Sugerido"] * 2
             }))
             
         with tab_emision:
