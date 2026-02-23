@@ -368,51 +368,70 @@ st.markdown("""
         text-transform: uppercase !important;
         letter-spacing: 1px !important;
     }
-    /* MISSIÓN CONTROL FASE D V21.21 (ELITE FINAL) */
+    /* MISSIÓN CONTROL FASE D V21.27 (VAULT-MONOLITH FINAL) */
     .fase-d-mission-control {
-        background: rgba(15, 23, 42, 0.98) !important;
-        border: 2px solid rgba(0, 194, 255, 0.7) !important;
+        background: #0B0F17 !important;
+        border: 2.5px solid rgba(0, 194, 255, 0.6) !important;
         border-radius: 20px !important;
         padding: 2rem !important;
-        box-shadow: 0 0 50px rgba(0, 194, 255, 0.3) !important;
+        box-shadow: 0 0 60px rgba(0, 0, 0, 0.8) !important;
         margin-top: 1rem !important;
+        overflow: hidden !important;
     }
     .fase-d-metric-capsule {
-        background: rgba(0, 194, 255, 0.05) !important;
+        background: rgba(255, 255, 255, 0.03) !important;
         border: 1.5px solid rgba(0, 194, 255, 0.3) !important;
-        border-radius: 12px !important;
+        border-radius: 15px !important;
         padding: 1.5rem !important;
         text-align: center !important;
         transition: all 0.3s ease !important;
+        box-shadow: inset 0 0 20px rgba(0, 194, 255, 0.05) !important;
     }
     .fase-d-metric-capsule:hover {
-        background: rgba(0, 194, 255, 0.1) !important;
-        border-color: #01F6FF !important;
+        background: rgba(0, 194, 255, 0.08) !important;
+        border-color: #00C2FF !important;
+        transform: translateY(-3px) !important;
     }
 
-    .fase-d-btn-titan {
-        background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%) !important;
-        border: 2px solid #00C2FF !important;
+    /* Botones de Emisión Estilo Vault-Monolith */
+    .fase-d-btn-vault {
+        background: rgba(0, 194, 255, 0.06) !important;
+        border: 2px solid rgba(0, 194, 255, 0.4) !important;
         color: #00C2FF !important;
-        font-weight: 900 !important;
+        font-weight: 800 !important;
         height: 55px !important;
-        border-radius: 10px !important;
-        font-size: 1.1rem !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        border-radius: 12px !important;
+        font-size: 1rem !important;
+        transition: all 0.3s ease !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
     }
-    .fase-d-btn-titan:hover {
+    .fase-d-btn-vault:hover {
         background: #00C2FF !important;
-        color: #0F172A !important;
+        color: #000 !important;
         box-shadow: 0 0 30px rgba(0, 194, 255, 0.5) !important;
-        transform: scale(1.02) !important;
+    }
+
+    /* Botón de Sello Final */
+    .fase-d-btn-seal {
+        background: linear-gradient(90deg, #10b981, #059669) !important;
+        border: none !important;
+        color: white !important;
+        font-weight: 900 !important;
+        height: 60px !important;
+        border-radius: 15px !important;
+        font-size: 1.2rem !important;
+        box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 2px !important;
     }
     
     [data-testid="stExpander"] {
-        background: rgba(14, 20, 31, 0.4) !important;
+        background: #0B0F17 !important;
         border: 1.5px solid rgba(0, 194, 255, 0.2) !important;
-        border-radius: 12px !important;
+        border-radius: 15px !important;
         margin-bottom: 1rem !important;
-        padding: 0.2rem !important;
+        padding: 0.5rem !important;
     }
     [data-testid="stExpander"] summary {
         color: #00C2FF !important;
@@ -1495,7 +1514,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.26 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.27 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1685,7 +1704,7 @@ else:
         elif f == 'FINAL':
             st.markdown("<h3 style='text-align:center; color:#00C2FF; margin-bottom:20px;'>🏁 CONTROL DE MISIÓN: CIERRE & EMISIÓN</h3>", unsafe_allow_html=True)
             
-            # --- PANEL DE MÉTRICAS TITANIUM ---
+            # --- PANEL DE MÉTRICAS VAULT ---
             st.markdown("<div class='fase-d-mission-control'>", unsafe_allow_html=True)
             
             # Cálculo de Madurez (CHS)
@@ -1703,50 +1722,57 @@ else:
             with m1:
                 st.markdown("<div class='fase-d-metric-capsule'>", unsafe_allow_html=True)
                 draw_donut(score_final, "C.H.S", "#00C2FF")
-                st.markdown(f"<span style='font-size:0.7rem; color:#94A3B8;'>CORPORATE HEALTH SCORE</span>", unsafe_allow_html=True)
+                st.markdown(f"<span style='font-size:0.75rem; color:#00C2FF; font-weight:800;'>HEALTH SCORE</span>", unsafe_allow_html=True)
                 st.markdown("</div>", unsafe_allow_html=True)
             
             with m2:
                 st.markdown("<div class='fase-d-metric-capsule'>", unsafe_allow_html=True)
-                st.markdown(f"<h1 style='color:{elite_color}; margin:0; font-size:2.5rem;'>{elite_status}</h1>", unsafe_allow_html=True)
-                st.markdown(f"<span style='font-size:0.7rem; color:#94A3B8;'>ESTATUS DE MADUREZ</span>", unsafe_allow_html=True)
+                st.markdown(f"<h1 style='color:{elite_color}; margin:0; font-size:2.8rem; font-weight:900;'>{elite_status}</h1>", unsafe_allow_html=True)
+                st.markdown(f"<span style='font-size:0.75rem; color:{elite_color}; font-weight:800;'>ESTATUS ELITE</span>", unsafe_allow_html=True)
                 st.markdown("</div>", unsafe_allow_html=True)
 
             with m3:
                 st.markdown("<div class='fase-d-metric-capsule'>", unsafe_allow_html=True)
                 missing = len(docs_v_total) - len(docs_v_ok)
                 icon_s = "🛡️" if missing == 0 else "⚠️"
-                st.markdown(f"<h1 style='margin:0; font-size:2.5rem;'>{icon_s} {missing}</h1>", unsafe_allow_html=True)
-                st.markdown(f"<span style='font-size:0.7rem; color:#94A3B8;'>PENDIENTES VITALES</span>", unsafe_allow_html=True)
+                st.markdown(f"<h1 style='margin:0; font-size:2.8rem; font-weight:900;'>{icon_s} {missing}</h1>", unsafe_allow_html=True)
+                st.markdown(f"<span style='font-size:0.75rem; color:#FF4B4B; font-weight:800;'>PENDIENTES</span>", unsafe_allow_html=True)
                 st.markdown("</div>", unsafe_allow_html=True)
 
             st.markdown("<br>", unsafe_allow_html=True)
             
-            # --- ACCIONES DE EMISIÓN ---
-            st.markdown("<h4 style='text-align:center; color:white; font-size:0.9rem;'>🚀 EMISIÓN DE FORMATOS OFICIALES</h4>", unsafe_allow_html=True)
-            ca1, ca2 = st.columns(2)
+            # --- ACCIONES DE EMISIÓN VAULT ---
+            st.markdown("<h4 style='text-align:center; color:white; font-size:1.1rem; font-weight:800; letter-spacing:1px;'>🚀 EMISIÓN DE FORMATOS VAULT-MONOLITH</h4>", unsafe_allow_html=True)
             
+            # Action Cards
+            ca1, ca2 = st.columns(2)
             with ca1:
-                if st.button("📄 PROGRAMA DE AUDITORÍA (A.G.A)", key="btn_pdf_prog", use_container_width=True, help="Generar PDF del Programa de Auditoría Interna"):
+                st.markdown("<div class='fase-d-metric-capsule' style='padding:1rem;'>", unsafe_allow_html=True)
+                st.markdown("<p style='font-size:0.7rem; color:#94a3b8; font-weight:700;'>PROGRAMA (A.G.A)</p>", unsafe_allow_html=True)
+                if st.button("📄 GENERAR PDF", key="btn_pdf_prog_v27", use_container_width=True):
                     with st.spinner("Generando..."):
                         out_dir = "HMO_Outputs/Reportes"
                         if not os.path.exists(out_dir): os.makedirs(out_dir)
                         path_p = os.path.join(out_dir, f"PROGRAMA_AUDITORIA_{st.session_state['empresa'][:5].upper()}.pdf")
                         generate_audit_program_pdf(st.session_state['empresa'], path_p, kb=st.session_state['expediente'], identity_data={"auditor": st.session_state.get('auditor_name', 'N/A'), "nit": st.session_state.get('empresa_nit', 'N/A'), "sector": st.session_state.get('empresa_sector', 'N/A')})
-                        st.success(f"✅ Programa Generado: {path_p}")
+                        st.success(f"✅ Generado")
                         with open(path_p, "rb") as f:
-                            st.download_button("Descargar Programa", f, file_name=os.path.basename(path_p), use_container_width=True)
+                            st.download_button("📥 DESCARGAR", f, file_name=os.path.basename(path_p), use_container_width=True)
+                st.markdown("</div>", unsafe_allow_html=True)
 
             with ca2:
-                if st.button("📊 REPORTE DE MADUREZ ELITE", key="btn_pdf_mad", use_container_width=True, help="Generar Reporte Detallado de Madurez CHS"):
+                st.markdown("<div class='fase-d-metric-capsule' style='padding:1rem;'>", unsafe_allow_html=True)
+                st.markdown("<p style='font-size:0.7rem; color:#94a3b8; font-weight:700;'>REPORTE MADUREZ</p>", unsafe_allow_html=True)
+                if st.button("📊 GENERAR ELITE", key="btn_pdf_mad_v27", use_container_width=True):
                     with st.spinner("Generando..."):
                         out_dir = "HMO_Outputs/Reportes"
                         if not os.path.exists(out_dir): os.makedirs(out_dir)
                         path_r = os.path.join(out_dir, f"REPORTE_MADUREZ_{st.session_state['empresa'][:5].upper()}.pdf")
                         generate_maturity_report_pdf(st.session_state['empresa'], path_r, score_final, elite_status)
-                        st.success(f"✅ Reporte Generado: {path_r}")
+                        st.success(f"✅ Generado")
                         with open(path_r, "rb") as f:
-                            st.download_button("Descargar Reporte", f, file_name=os.path.basename(path_r), use_container_width=True)
+                            st.download_button("📥 DESCARGAR", f, file_name=os.path.basename(path_r), use_container_width=True)
+                st.markdown("</div>", unsafe_allow_html=True)
 
             st.markdown("</div>", unsafe_allow_html=True) # Cierre Mission Control
             
