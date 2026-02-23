@@ -268,68 +268,78 @@ st.markdown("""
         display: none !important; /* Ocultar texto decorativo para ahorrar espacio */
     }
     
-    /* BLOQUE MONOLÍTICO FASE C V21.17 (ALPHA-BLINDAJE) */
-    .fase-c-card-container {
-        background: rgba(14, 20, 31, 0.98) !important;
-        border: 2px solid rgba(0, 194, 255, 0.4) !important;
+    /* ULTRA-BLINDAJE MONOLÍTICO FASE C V21.18 (ELITE-TOTAL) */
+    .fase-c-monoblock {
+        background: rgba(15, 23, 42, 0.95) !important;
+        border: 2px solid rgba(0, 194, 255, 0.5) !important;
         border-radius: 12px !important;
-        margin-bottom: 1.2rem !important;
+        padding: 0px !important;
+        margin-bottom: 1.5rem !important;
         overflow: hidden !important;
-        display: block !important;
-        box-shadow: 0 4px 30px rgba(0,0,0,0.6) !important;
+        box-shadow: 0 0 20px rgba(0, 194, 255, 0.2) !important;
+        display: flex !important;
+        flex-direction: column !important;
     }
 
-    .fase-c-header-capsule {
-        background: linear-gradient(90deg, rgba(0, 194, 255, 0.2) 0%, rgba(0, 194, 255, 0.05) 100%) !important;
-        border-bottom: 2px solid rgba(0, 194, 255, 0.3) !important;
+    /* CABECERA INTEGRADA */
+    .fase-c-header-elite {
+        background: linear-gradient(90deg, rgba(0, 194, 255, 0.25) 0%, rgba(0, 194, 255, 0.05) 100%) !important;
+        border-bottom: 2px solid rgba(0, 194, 255, 0.4) !important;
         padding: 10px !important;
+        min-height: 55px !important;
     }
 
-    /* ELIMINACIÓN RADICAL DE FONDOS DE CARGA */
-    .fase-c-card-container [data-testid="stFileUploader"],
-    .fase-c-card-container [data-testid="stFileUploader"] section,
-    .fase-c-card-container [data-testid="stFileUploader"] div,
-    .fase-c-card-container [data-testid="stFileUploaderDropzone"] {
+    /* ELIMINACIÓN ATÓMICA DE FONDOS (CAJAS BLANCAS) */
+    .fase-c-monoblock [data-testid="stFileUploader"],
+    .fase-c-monoblock [data-testid="stFileUploader"] section,
+    .fase-c-monoblock [data-testid="stFileUploader"] div,
+    .fase-c-monoblock [data-testid="stFileUploaderDropzone"],
+    .fase-c-monoblock [data-testid="stBaseButton-secondary"],
+    .fase-c-monoblock [data-testid="stWidgetLabel"] {
         background-color: transparent !important;
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
-        padding: 0 !important;
-        min-height: auto !important;
+        color: white !important;
     }
 
-    .fase-c-card-container [data-testid="stFileUploader"] button {
+    /* BOTÓN BROWSE ELITE */
+    .fase-c-monoblock [data-testid="stFileUploader"] button {
         background: #0070E0 !important;
         color: white !important;
         font-weight: 800 !important;
         font-size: 0.7rem !important;
-        height: 30px !important;
-        width: 90% !important;
-        margin: 5px auto !important;
-        display: block !important;
-        border: 1px solid rgba(255,255,255,0.2) !important;
+        height: 28px !important;
+        width: 100% !important;
+        margin: 5px 0 !important;
+        border: 1px solid rgba(255,255,255,0.3) !important;
+        border-radius: 4px !important;
     }
 
-    /* TOOLBAR INTEGRADA (FOOTER) */
-    .fase-c-toolbar-capsule {
-        background: rgba(0, 194, 255, 0.1) !important;
-        border-top: 2px solid rgba(0, 194, 255, 0.3) !important;
-        padding: 6px !important;
-        margin-top: 5px !important;
+    /* BARRA DE HERRAMIENTAS (FOOTER) */
+    .fase-c-toolbar-elite {
+        background: rgba(0, 194, 255, 0.12) !important;
+        border-top: 2px solid rgba(0, 194, 255, 0.4) !important;
+        padding: 5px !important;
+        display: flex !important;
+        gap: 5px !important;
     }
 
-    .fase-c-toolbar-capsule button {
-        background: rgba(255, 255, 255, 0.08) !important;
-        border: 1.5px solid rgba(0, 194, 255, 0.4) !important;
+    /* BOTONES DE ACCIÓN (ZERO-WHITE) */
+    .fase-c-monoblock div.stButton > button {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1.5px solid rgba(0, 194, 255, 0.3) !important;
         color: #00C2FF !important;
-        font-size: 1rem !important;
-        height: 32px !important;
+        font-size: 1.1rem !important;
+        height: 34px !important;
         border-radius: 6px !important;
         transition: all 0.2s ease !important;
+        width: 100% !important;
     }
-    .fase-c-toolbar-capsule button:hover {
+    .fase-c-monoblock div.stButton > button:hover {
         background: rgba(0, 194, 255, 0.3) !important;
-        transform: scale(1.05) !important;
+        border-color: #00C2FF !important;
+        transform: scale(1.05);
     }
     
     [data-testid="stExpander"] {
@@ -1420,7 +1430,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.17 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.18 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1559,56 +1569,56 @@ else:
                     is_vital = doc.get('prioridad') == "VITAL (Obligatorio)"
                     status_icon = "✅" if doc_ready else ("⏳" if is_vital else "📁")
                     
-                    # MONOBLOQUE FÍSICO FASE C (V21.17 ELITE)
-                    st.markdown("<div class='fase-c-card-container'>", unsafe_allow_html=True)
+                    # BLOQUE MONOLÍTICO SELLA FASE C (V21.18 ELITE)
+                    st.markdown("<div class='fase-c-monoblock'>", unsafe_allow_html=True)
                     
-                    # 1. Cabecera Elite
+                    # 1. Header Elite (Agregamos Icono y Título)
                     st.markdown(f"""
-                    <div class='fase-c-header-capsule'>
+                    <div class='fase-c-header-elite'>
                         <div style='display:flex; align-items:center; gap:12px;'>
                             <span style='font-size:1.6rem;'>{status_icon}</span>
                             <div style='display:flex; flex-direction:column;'>
                                 <span style='font-size:0.6rem; color:#00C2FF; font-weight:900;'>{doc.get('area','GENERAL')}</span>
-                                <span style='font-size:0.85rem; font-weight:700; color:white; line-height:1.2;'>{doc['doc']}</span>
+                                <span style='font-size:0.85rem; font-weight:700; color:white; line-height:1.2; overflow-wrap:anywhere;'>{doc['doc']}</span>
                             </div>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # 2. Cuerpo de Gestión (Cargador / Status)
-                    st.markdown("<div style='padding:12px 10px 5px 10px; background:transparent;'>", unsafe_allow_html=True)
+                    # 2. Zona de Carga / Status (Directa)
+                    st.markdown("<div style='padding:10px; background:transparent;'>", unsafe_allow_html=True)
                     if not doc_ready:
-                        _f = st.file_uploader("UP", key=f"up_v21.17_{i}", label_visibility="collapsed")
+                        _f = st.file_uploader("UP", key=f"up_v21.18_{i}", label_visibility="collapsed")
                         if _f:
                             with st.spinner(""):
                                 st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
                                 save_audit_state(); st.rerun()
                     else:
-                        st.markdown("<div style='text-align:center; color:#10B981; font-weight:900; font-size:0.8rem; padding:10px; border:1px dashed rgba(16,185,129,0.3); border-radius:8px;'>✅ DOCUMENTO VALIDADO</div>", unsafe_allow_html=True)
+                        st.markdown("<div style='text-align:center; color:#10B981; font-weight:900; font-size:0.8rem; padding:12px; border:1px solid rgba(16,185,129,0.4); border-radius:6px; background:rgba(16,185,129,0.05);'>✅ DOC VALIDADO</div>", unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
                     
-                    # 3. Toolbar de Herramientas (Anclada al Footer)
-                    st.markdown("<div class='fase-c-toolbar-capsule'>", unsafe_allow_html=True)
-                    ca1, ca2, ca3 = st.columns(3)
+                    # 3. Footer de Controles (Agrupación Física)
+                    st.markdown("<div class='fase-c-toolbar-elite'>", unsafe_allow_html=True)
+                    cta1, cta2, cta3 = st.columns(3)
                     if not doc_ready:
-                        with ca1: st.button("🤖", key=f"ia_v21.17_{i}", help="IA Suggest", use_container_width=True)
-                        with ca2: st.button("⚖️", key=f"jus_v21.17_{i}", help="Justificar", use_container_width=True)
-                        with ca3: st.button("⏳", key=f"wait_v21.17_{i}", disabled=True, use_container_width=True)
+                        with cta1: st.button("🤖", key=f"ia_v21.18_{i}", help="IA Suggest")
+                        with cta2: st.button("⚖️", key=f"jus_v21.18_{i}", help="Justificar")
+                        with cta3: st.button("⏳", key=f"wait_v21.18_{i}", disabled=True)
                     else:
-                        with ca1: st.button("🔍", key=f"view_v21.17_{i}", use_container_width=True)
-                        with ca2:
+                        with cta1: st.button("🔍", key=f"view_v21.18_{i}")
+                        with cta2:
                             is_jus = doc['doc'] in st.session_state['justificados']
-                            if st.button("⚖️" if is_jus else "📜", key=f"jus_st_v21.17_{i}", use_container_width=True):
+                            if st.button("⚖️" if is_jus else "📜", key=f"jus_st_v21.18_{i}"):
                                 if is_jus: st.session_state['justificados'].remove(doc['doc'])
                                 else: st.session_state['justificados'].append(doc['doc'])
                                 save_audit_state(); st.rerun()
-                        with ca3:
-                            if st.button("🗑️", key=f"del_v21.17_{i}", use_container_width=True):
+                        with cta3:
+                            if st.button("🗑️", key=f"del_v21.18_{i}"):
                                 del st.session_state['expediente'][doc['doc']]
                                 save_audit_state(); st.rerun()
-                    st.markdown("</div>", unsafe_allow_html=True) # Cierre Toolbar
+                    st.markdown("</div>", unsafe_allow_html=True) # Cierre Footer
                     
-                    st.markdown("</div>", unsafe_allow_html=True) # Cierre Contenedor Monolítico
+                    st.markdown("</div>", unsafe_allow_html=True) # Cierre Monoblock
 
         elif f == 'FINAL':
             st.markdown("##### 🏁 Cierre de Ingesta & Validación de Suficiencia")
