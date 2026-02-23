@@ -1511,45 +1511,40 @@ else:
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # Botonera de Acción Elite (V19.9 - Estandarizada)
-                    st.markdown("<div style='background:rgba(255,255,255,0.03); border-radius:0 0 12px 12px; padding:0.2rem; border-top:1px solid rgba(255,255,255,0.05);'>", unsafe_allow_html=True)
-                    ca1, ca2, ca3 = st.columns([1,1,1])
-                    
                     if not doc_ready:
+                        # 1. Cargador arriba (Ancho completo)
+                        _f = st.file_uploader(f"SUBIR: {doc['doc'][:15]}...", key=f"up_v21.6_{i}", label_visibility="collapsed")
+                        if _f:
+                            with st.spinner(""):
+                                st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
+                                save_audit_state(); st.rerun()
+                        
+                        # 2. Botonera abajo (Iconos alineados)
+                        st.markdown("<div style='margin-top:0.5rem;'></div>", unsafe_allow_html=True)
+                        ca1, ca2, ca3 = st.columns(3)
                         with ca1:
-                            # Espaciador físico de 50px
-                            st.markdown("<div style='height:30px;'></div>", unsafe_allow_html=True)
-                            st.write(f"**Cargar:** {doc['doc'][:20]}")
-                            _f = st.file_uploader("SELECCIONAR ARCHIVO", key=f"up_v21.5_{i}")
-                            if _f:
-                                with st.spinner(""):
-                                    st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
-                                    save_audit_state(); st.rerun()
-                        # Margen preventivo de solapamiento
-                        st.markdown("<div style='margin-bottom:3rem;'></div>", unsafe_allow_html=True)
+                            if st.button("🤖", key=f"ia_v19.9_{i}", help="Generar con IA", use_container_width=True):
+                                ui_generar_borrador_ia(doc['doc'], doc['area'], doc.get('justificacion',''))
                         with ca2:
-                            # ⚖️ Justificar
                             if st.button("⚖️", key=f"jus_v19.9_{i}", help="Justificar Requisito", use_container_width=True):
                                 if doc['doc'] not in st.session_state['justificados']:
                                     st.session_state['justificados'].append(doc['doc'])
                                     save_audit_state(); st.toast(f"Justificado: {doc['doc'][:20]}...")
                         with ca3:
-                            # 🤖 IA Suggest
-                            if st.button("🤖", key=f"ia_v19.9_{i}", help="Generar con IA", use_container_width=True):
-                                ui_generar_borrador_ia(doc['doc'], doc['area'], doc.get('justificacion',''))
+                            st.button("⏳", key=f"wait_v19.9_{i}", disabled=True, use_container_width=True)
+
                     else:
+                        # Documento listo: Botonera de gestión
+                        ca1, ca2, ca3 = st.columns(3)
                         with ca1:
-                            # Re-Validar / Ver
                             st.button("🔍", key=f"view_v19.9_{i}", help="Ver Evidencia", use_container_width=True)
                         with ca2:
-                            # Status Justificación (si aplica)
                             is_jus = doc['doc'] in st.session_state['justificados']
                             if st.button("⚖️" if is_jus else "📜", key=f"jus_st_v19.9_{i}", help="Cambiar Estatus", use_container_width=True):
                                 if is_jus: st.session_state['justificados'].remove(doc['doc'])
                                 else: st.session_state['justificados'].append(doc['doc'])
                                 save_audit_state(); st.rerun()
                         with ca3:
-                            # 🗑️ Eliminar
                             if st.button("🗑️", key=f"del_v19.9_{i}", help="Eliminar", use_container_width=True):
                                 del st.session_state['expediente'][doc['doc']]
                                 save_audit_state(); st.rerun()
