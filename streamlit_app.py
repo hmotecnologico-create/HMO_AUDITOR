@@ -268,64 +268,62 @@ st.markdown("""
         display: none !important; /* Ocultar texto decorativo para ahorrar espacio */
     }
     
-    /* HARD RESET FASE C V21.13 (CLEAN-ULTRA-ELITE) */
+    /* MONOBLOQUE ELITE FASE C V21.14 (HARD-BLINDADO) */
     .fase-c-card {
         background: rgba(255, 255, 255, 0.02) !important;
-        border: 1px solid rgba(0, 194, 255, 0.2) !important;
-        border-radius: 12px !important;
-        margin-bottom: 0.8rem !important;
+        border: 1.5px solid rgba(0, 194, 255, 0.2) !important;
+        border-radius: 10px !important;
+        margin-bottom: 0.6rem !important;
         display: flex !important;
         flex-direction: column !important;
         overflow: hidden !important;
-        box-shadow: none !important;
-        transition: border 0.3s ease !important;
-    }
-    .fase-c-card:hover {
-        border-color: rgba(0, 194, 255, 0.5) !important;
     }
     .fase-c-cabecera {
-        padding: 0.6rem !important;
+        padding: 0.5rem !important;
         background: rgba(0, 194, 255, 0.08) !important;
-        border-bottom: 1px solid rgba(0, 194, 255, 0.2) !important;
-        min-height: 55px !important;
+        border-bottom: 1.5px solid rgba(0, 194, 255, 0.2) !important;
+        min-height: 50px !important;
     }
-    /* BLINDAJE DE COMPONENTES INTERNOS (STREAMLIT RESET) */
-    .fase-c-card [data-testid="stFileUploader"], 
-    .fase-c-card [data-testid="stFileUploader"] section, 
+    /* BLINDAJE RADICAL DE FONDOS (ZERO-GAP) */
+    .fase-c-card [data-testid="stFileUploader"],
+    .fase-c-card [data-testid="stFileUploader"] > section,
     .fase-c-card [data-testid="stFileUploaderDropzone"],
-    .fase-c-card [data-testid="stBaseButton-secondary"] {
+    .fase-c-card [data-testid="stBaseButton-secondary"],
+    .fase-c-card [data-testid="stWidgetLabel"],
+    .fase-c-card [data-testid="uploader-instructions"],
+    .fase-c-card section[data-testid="stFileUploaderSection"] {
         background-color: transparent !important;
         background: transparent !important;
         border: none !important;
+        box-shadow: none !important;
         padding: 0 !important;
         margin: 0 !important;
-        box-shadow: none !important;
     }
-    .fase-c-card [data-testid="stFileUploader"] section {
-        min-height: 40px !important;
-        justify-content: center !important;
+    .fase-c-card section[data-testid="stFileUploaderSection"] {
+        min-height: 32px !important;
         align-items: center !important;
+        justify-content: center !important;
     }
-    .fase-c-card [data-testid="stFileUploaderDropzone"] div {
-        display: none !important;
+    .fase-c-card [data-testid="stFileUploader"] button {
+        background: #0080FF !important;
+        color: white !important;
+        font-weight: 800 !important;
+        font-size: 0.75rem !important;
+        height: 28px !important;
+        width: 90% !important;
+        margin: 4px auto !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
     }
-    /* BOTONERA TIPO HARDWARE (FOOTER) */
     .fase-c-footer {
-        background: rgba(0, 194, 255, 0.05) !important;
+        background: rgba(0, 194, 255, 0.04) !important;
         border-top: 1px solid rgba(0, 194, 255, 0.1) !important;
-        padding: 0.2rem !important;
+        padding: 0.25rem !important;
     }
-    .fase-c-card button {
-        background: rgba(0, 194, 255, 0.1) !important;
-        border: 1px solid rgba(0, 194, 255, 0.2) !important;
-        color: #00C2FF !important;
-        height: 32px !important;
-        font-size: 1rem !important;
-        border-radius: 4px !important;
-    }
-    .fase-c-card button:hover {
-        background: rgba(0, 194, 255, 0.3) !important;
-        border-color: #00C2FF !important;
+    .fase-c-footer button {
+        background: rgba(0, 194, 255, 0.08) !important;
+        border: 1px solid rgba(0, 194, 255, 0.15) !important;
+        font-size: 0.9rem !important;
+        height: 30px !important;
     }
     
     [data-testid="stExpander"] {
@@ -1416,7 +1414,7 @@ else:
 
     # --- SECCIÓN: INGESTA DE MATERIA PRIMA (HITL) ---
     elif menu == "🗺️ Camino de Ingesta":
-        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.13 ELITE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align:center;'>🗺️ CAMINO DE INGESTA V21.14 ELITE</h2>", unsafe_allow_html=True)
         
         # Selector de Fases V15
         if 'ing_f' not in st.session_state: st.session_state['ing_f'] = 'A'
@@ -1557,51 +1555,49 @@ else:
                     status_icon = "✅" if doc_ready else ("⏳" if is_vital else "📁")
                     status_color = "#10B981" if doc_ready else ("#00C2FF" if is_vital else "#475569")
                     
-                    # Construcción Quirúrgica Tarjeta Fase C (V21.13)
+                    # Monobloque Elite Fase C (V21.14)
                     st.markdown("<div class='fase-c-card'>", unsafe_allow_html=True)
                     
                     # 1. Cabecera Blindada
                     st.markdown(f"""
-                    <div class='fase-c-cabecera' style='display:flex; align-items:center; gap:10px;'>
-                        <span style='font-size:1.4rem; filter: drop-shadow(0 0 8px {status_color}); flex-shrink:0;'>{status_icon}</span>
+                    <div class='fase-c-cabecera' style='display:flex; align-items:center; gap:8px;'>
+                        <span style='font-size:1.3rem; filter: drop-shadow(0 0 5px {status_color}); flex-shrink:0;'>{status_icon}</span>
                         <div style='display:flex; flex-direction:column; min-width:0;'>
-                            <span style='font-size:0.6rem; color:#00C2FF; font-weight:900; text-transform:uppercase; letter-spacing:1.2px;'>{doc.get('area','GENERAL')}</span>
-                            <span style='font-size:0.75rem; font-weight:700; color:#FFFFFF; line-height:1.2; overflow-wrap: break-word;'>{doc['doc']}</span>
+                            <span style='font-size:0.55rem; color:#00C2FF; font-weight:900; text-transform:uppercase; letter-spacing:1px;'>{doc.get('area','GENERAL')}</span>
+                            <span style='font-size:0.75rem; font-weight:700; color:#FFFFFF; line-height:1.1; overflow-wrap: break-word;'>{doc['doc']}</span>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
                     
                     if not doc_ready:
-                        # 2. Zona de Carga (Totalmente Transparente)
-                        st.markdown("<div style='padding:0.4rem; background:transparent;'>", unsafe_allow_html=True)
-                        _f = st.file_uploader("UP", key=f"up_v21.13_{i}", label_visibility="collapsed")
+                        # 2. Zona de Carga (Blindaje Total)
+                        _f = st.file_uploader("UP", key=f"up_v21.14_{i}", label_visibility="collapsed")
                         if _f:
                             with st.spinner(""):
                                 st.session_state['expediente'][doc['doc']] = {"score": 90, "validado": True}
                                 save_audit_state(); st.rerun()
-                        st.markdown("</div>", unsafe_allow_html=True)
                         
-                        # 3. Footer Integrado (Toolbar)
+                        # 3. Footer Integrado (Zero-Gap)
                         st.markdown("<div class='fase-c-footer'>", unsafe_allow_html=True)
                         ca1, ca2, ca3 = st.columns(3)
-                        with ca1: st.button("🤖", key=f"ia_v21.13_{i}", help="IA Suggest: Generar borrador", use_container_width=True)
-                        with ca2: st.button("⚖️", key=f"jus_v21.13_{i}", help="Justificar: Nota narrativa", use_container_width=True)
-                        with ca3: st.button("⏳", key=f"wait_v21.13_{i}", disabled=True, use_container_width=True)
+                        with ca1: st.button("🤖", key=f"ia_v21.14_{i}", help="IA Suggest", use_container_width=True)
+                        with ca2: st.button("⚖️", key=f"jus_v21.14_{i}", help="Justificar", use_container_width=True)
+                        with ca3: st.button("⏳", key=f"wait_v21.14_{i}", disabled=True, use_container_width=True)
                         st.markdown("</div>", unsafe_allow_html=True)
                     else:
-                        # Estado Validado: Interfaz de Gestión
-                        st.markdown("<div style='padding:0.6rem; text-align:center; color:#10B981; font-weight:900; font-size:0.7rem; letter-spacing:1px;'>✅ VALIDADO</div>", unsafe_allow_html=True)
+                        # Estado Validado
+                        st.markdown("<div style='padding:0.4rem; text-align:center; color:#10B981; font-weight:900; font-size:0.65rem;'>✅ DOC OK</div>", unsafe_allow_html=True)
                         st.markdown("<div class='fase-c-footer'>", unsafe_allow_html=True)
                         ca1, ca2, ca3 = st.columns(3)
-                        with ca1: st.button("🔍", key=f"view_v21.13_{i}", help="Visualizar", use_container_width=True)
+                        with ca1: st.button("🔍", key=f"view_v21.14_{i}", use_container_width=True)
                         with ca2:
                             is_jus = doc['doc'] in st.session_state['justificados']
-                            if st.button("⚖️" if is_jus else "📜", key=f"jus_st_v21.13_{i}", help="Cambiar justificación", use_container_width=True):
+                            if st.button("⚖️" if is_jus else "📜", key=f"jus_st_v21.14_{i}", use_container_width=True):
                                 if is_jus: st.session_state['justificados'].remove(doc['doc'])
                                 else: st.session_state['justificados'].append(doc['doc'])
                                 save_audit_state(); st.rerun()
                         with ca3:
-                            if st.button("🗑️", key=f"del_v21.13_{i}", help="Resetear carga", use_container_width=True):
+                            if st.button("🗑️", key=f"del_v21.14_{i}", use_container_width=True):
                                 del st.session_state['expediente'][doc['doc']]
                                 save_audit_state(); st.rerun()
                         st.markdown("</div>", unsafe_allow_html=True)
