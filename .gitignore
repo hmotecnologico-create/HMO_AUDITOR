@@ -2,6 +2,7 @@
 
 # Ejecución Local y Datos de Usuario
 hmo_users.json
+hmo_credenciales_iniciales.txt
 hmo_audit_state.json
 hmo_recovery_log.txt
 *.log

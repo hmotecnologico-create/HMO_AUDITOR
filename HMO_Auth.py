@@ -8,11 +8,24 @@ import json
 import os
 import hashlib
 import datetime
+import secrets
 
 USERS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hmo_users.json")
 
 DEFAULT_ADMIN_USER = "admin"
-DEFAULT_ADMIN_PASS = "HMO2024!"  # Contraseña temporal — se fuerza cambio en primer login
+CREDENCIALES_INICIALES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hmo_credenciales_iniciales.txt")
+
+
+def _clave_inicial(variable: str, usuario: str, generadas: dict) -> str:
+    """Clave temporal de una cuenta base: la toma de la variable de entorno indicada o genera una aleatoria.
+    Las generadas se guardan una sola vez en hmo_credenciales_iniciales.txt (ignorado por Git) para el primer
+    acceso; admin y auditor deben cambiarla en el primer login."""
+    valor = os.environ.get(variable)
+    if valor:
+        return valor
+    valor = secrets.token_urlsafe(12)
+    generadas[usuario] = valor
+    return valor
 
 # ─── UTILIDADES ──────────────────────────────────────────────────────────────
 
@@ -44,6 +57,7 @@ def _create_default_users() -> None:
     El nombre de usuario ES el rol: admin, auditor, visitante.
     """
     _now = datetime.datetime.now().isoformat()
+    generadas = {}
     data = {
         "meta": {
             "version": "1.1",
@@ -53,7 +67,7 @@ def _create_default_users() -> None:
         "usuarios": [
             {
                 "user": "admin",
-                "hash": hash_password(DEFAULT_ADMIN_PASS),
+                "hash": hash_password(_clave_inicial("HMO_ADMIN_PASS", "admin", generadas)),
                 "rol": "admin",
                 "nombre": "Administrador HMO",
                 "activo": True,
@@ -63,7 +77,7 @@ def _create_default_users() -> None:
             },
             {
                 "user": "auditor",
-                "hash": hash_password("Auditor2024!"),
+                "hash": hash_password(_clave_inicial("HMO_AUDITOR_PASS", "auditor", generadas)),
                 "rol": "auditor",
                 "nombre": "Auditor HMO",
                 "activo": True,
@@ -73,7 +87,7 @@ def _create_default_users() -> None:
             },
             {
                 "user": "visitante",
-                "hash": hash_password("Visita2024!"),
+                "hash": hash_password(_clave_inicial("HMO_VISITANTE_PASS", "visitante", generadas)),
                 "rol": "visitante",
                 "nombre": "Visitante HMO",
                 "activo": True,
@@ -84,6 +98,12 @@ def _create_default_users() -> None:
         ]
     }
     save_users(data)
+    if generadas:
+        with open(CREDENCIALES_INICIALES, "w", encoding="utf-8") as f:
+            f.write("HMO Auditor - claves temporales de primer acceso (borra este archivo despues de cambiarlas)\n")
+            for u, c in generadas.items():
+                f.write(f"{u}: {c}\n")
+        print(f"[HMO Auth] Claves temporales generadas en: {CREDENCIALES_INICIALES}")
 
 
 def rol_desde_usuario(username: str) -> str:
