@@ -54,7 +54,7 @@ echo =====================================================
 echo   Instalacion completada!
 echo   Usa el acceso directo "HMO Auditor" en tu escritorio
 echo   Usuario inicial: admin
-echo   Contrasena inicial: HMO2024!  (debes cambiarla al primer login)
+echo   Contrasena inicial: ver hmo_credenciales_iniciales.txt en la carpeta de instalacion (debes cambiarla al primer login)
 echo =====================================================
 echo.
 pause
